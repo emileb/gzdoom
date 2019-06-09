@@ -195,6 +195,7 @@ void FGLRenderer::UpdateShadowMap()
 
 		mShadowMapShader->Bind();
 		mShadowMapShader->Uniforms->ShadowmapQuality = gl_shadowmap_quality;
+		mShadowMapShader->Uniforms->NodesCount = screen->mShadowMap.NodesCount();
 		mShadowMapShader->Uniforms.Set();
 
 		glViewport(0, 0, gl_shadowmap_quality, 1024);
@@ -340,6 +341,9 @@ void FGLRenderer::RenderTextureView(FCanvasTexture *tex, AActor *Viewpoint, doub
 //
 //===========================================================================
 
+#ifdef __MOBILE__
+uint8_t * gles_convertRGB(uint8_t * data, int width, int height);
+#endif
 void FGLRenderer::WriteSavePic (player_t *player, FileWriter *file, int width, int height)
 {
     IntRect bounds;
@@ -371,9 +375,14 @@ void FGLRenderer::WriteSavePic (player_t *player, FileWriter *file, int width, i
     glFinish();
     
 	int numpixels = width * height;
+#ifdef __MOBILE__
+	uint8_t * scr = (uint8_t *)M_Malloc(width * height * 4);
+	glReadPixels(0,0,width, height,GL_RGBA,GL_UNSIGNED_BYTE,scr);
+	gles_convertRGB(scr,width,height);
+#else
     uint8_t * scr = (uint8_t *)M_Malloc(numpixels * 3);
     glReadPixels(0,0,width, height,GL_RGB,GL_UNSIGNED_BYTE,scr);
-
+#endif
 	DoWriteSavePic(file, SS_RGB, scr, width, height, viewsector, true);
     M_Free(scr);
     

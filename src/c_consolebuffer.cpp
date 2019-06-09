@@ -88,7 +88,7 @@ void FConsoleBuffer::AddText(int printlevel, const char *text)
 	if (printlevel >= 0 && printlevel != PRINT_HIGH)
 	{
 		if (printlevel == 200) build = TEXTCOLOR_GREEN;
-		else if (printlevel < PRINTLEVELS) build.Format("%c%c", TEXTCOLOR_ESCAPE, PrintColors[printlevel]);
+		else if (printlevel < PRINTLEVELS) build.Format("%c%c", TEXTCOLOR_ESCAPE, PrintColors[printlevel]+'A');
 	}
 	
 	size_t textsize = strlen(text);
@@ -123,6 +123,8 @@ void FConsoleBuffer::FormatText(FFont *formatfont, int displaywidth)
 {
 	if (formatfont != mLastFont || displaywidth != mLastDisplayWidth || mBufferWasCleared)
 	{
+		if (mBufferWasCleared)
+			mLastLineNeedsUpdate = false;
 		m_BrokenConsoleText.Clear();
 		mBrokenStart.Clear();
 		mBrokenStart.Push(0);

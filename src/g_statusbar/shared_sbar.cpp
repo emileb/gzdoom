@@ -84,6 +84,7 @@ EXTERN_CVAR (Bool, am_showtotaltime)
 EXTERN_CVAR (Bool, noisedebug)
 EXTERN_CVAR (Int, con_scaletext)
 EXTERN_CVAR(Bool, vid_fps)
+EXTERN_CVAR(Bool, inter_subtitles)
 CVAR(Int, hud_scale, 0, CVAR_ARCHIVE);
 
 
@@ -123,6 +124,7 @@ CUSTOM_CVAR(Bool, hud_aspectscale, false, CVAR_ARCHIVE)
 	}
 }
 
+CVAR (Bool, crosshairon, true, CVAR_ARCHIVE);
 CVAR (Int, crosshair, 0, CVAR_ARCHIVE)
 CVAR (Bool, crosshairforce, false, CVAR_ARCHIVE)
 CVAR (Color, crosshaircolor, 0xff0000, CVAR_ARCHIVE);
@@ -800,7 +802,9 @@ void DBaseStatusBar::CallTick()
 void DBaseStatusBar::AttachMessage (DHUDMessageBase *msg, uint32_t id, int layer)
 {
 	DHUDMessageBase *old = NULL;
-	TObjPtr<DHUDMessageBase *>*prev;
+	DObject* pointing;
+	TObjPtr<DHUDMessageBase *>*prevp;
+	DHUDMessageBase* prev;
 
 	old = (id == 0 || id == 0xFFFFFFFF) ? NULL : DetachMessage (id);
 	if (old != NULL)
@@ -814,20 +818,25 @@ void DBaseStatusBar::AttachMessage (DHUDMessageBase *msg, uint32_t id, int layer
 		layer = HUDMSGLayer_Default;
 	}
 
-	prev = &Messages[layer];
+	pointing = this;
+	prevp = &Messages[layer];
+	prev = *prevp;
 
 	// The ID serves as a priority, where lower numbers appear in front of
 	// higher numbers. (i.e. The list is sorted in descending order, since
 	// it gets drawn back to front.)
-	while (*prev != NULL && (*prev)->SBarID > id)
+	while (prev != NULL && prev->SBarID > id)
 	{
-		prev = &(*prev)->Next;
+		pointing = prev;
+		prevp = &prev->Next;
+		prev = *prevp;
 	}
 
-	msg->Next = *prev;
+	msg->Next = prev;
 	msg->SBarID = id;
-	*prev = msg;
-	GC::WriteBarrier(msg);
+	*prevp = msg;
+	GC::WriteBarrier(msg, prev);
+	GC::WriteBarrier(pointing, msg);
 }
 
 //---------------------------------------------------------------------------
@@ -841,15 +850,18 @@ DHUDMessageBase *DBaseStatusBar::DetachMessage (DHUDMessageBase *msg)
 	for (size_t i = 0; i < countof(Messages); ++i)
 	{
 		DHUDMessageBase *probe = Messages[i];
+		DObject* pointing = this;
 		TObjPtr<DHUDMessageBase *>*prev = &Messages[i];
 
 		while (probe && probe != msg)
 		{
+			pointing = probe;
 			prev = &probe->Next;
 			probe = probe->Next;
 		}
 		if (probe != NULL)
 		{
+			GC::WriteBarrier(pointing, probe->Next);
 			*prev = probe->Next;
 			probe->Next = nullptr;
 			return probe;
@@ -862,16 +874,19 @@ DHUDMessageBase *DBaseStatusBar::DetachMessage (uint32_t id)
 {
 	for (size_t i = 0; i < countof(Messages); ++i)
 	{
+		DObject* pointing = this;
 		DHUDMessageBase *probe = Messages[i];
 		TObjPtr<DHUDMessageBase *>*prev = &Messages[i];
 
 		while (probe && probe->SBarID != id)
 		{
+			pointing = probe;
 			prev = &probe->Next;
 			probe = probe->Next;
 		}
 		if (probe != NULL)
 		{
+			GC::WriteBarrier(pointing, probe->Next);
 			*prev = probe->Next;
 			probe->Next = nullptr;
 			return probe;
@@ -1029,9 +1044,16 @@ void DBaseStatusBar::DrawCrosshair ()
 	double size;
 	int w, h;
 
+	if (!crosshairon)
+	{
+		return;
+	}
+
 	// Don't draw the crosshair in chasecam mode
 	if (players[consoleplayer].cheats & CF_CHASECAM)
+	{
 		return;
+	}
 
 	ST_LoadCrosshair();
 
@@ -1208,7 +1230,8 @@ void DBaseStatusBar::DrawLog ()
 		FFont *font = C_GetDefaultHUDFont();
 
 		int linelen = hudwidth<640? Scale(hudwidth,9,10)-40 : 560;
-		auto lines = V_BreakLines (font, linelen,  CPlayer->LogText[0] == '$'? GStrings(CPlayer->LogText.GetChars()+1) : CPlayer->LogText.GetChars());
+		const FString & text = (inter_subtitles && CPlayer->SubtitleCounter) ? CPlayer->SubtitleText : CPlayer->LogText;
+		auto lines = V_BreakLines (font, linelen, text[0] == '$'? GStrings(text.GetChars()+1) : text.GetChars());
 		int height = 20;
 
 		for (unsigned i = 0; i < lines.Size(); i++) height += font->GetHeight ();
@@ -1224,7 +1247,7 @@ void DBaseStatusBar::DrawLog ()
 		else
 		{
 			x=(hudwidth>>1)-300;
-			y=hudheight*3/10-(height>>1);
+			y=hudheight/8-(height>>1);
 			if (y<0) y=0;
 			w=600;
 		}
@@ -1234,7 +1257,7 @@ void DBaseStatusBar::DrawLog ()
 		y+=10;
 		for (const FBrokenLines &line : lines)
 		{
-			screen->DrawText (font, CR_UNTRANSLATED, x, y, line.Text,
+			screen->DrawText (font, CPlayer->SubtitleCounter? CR_CYAN : CR_UNTRANSLATED, x, y, line.Text,
 				DTA_KeepRatio, true,
 				DTA_VirtualWidth, hudwidth, DTA_VirtualHeight, hudheight, TAG_DONE);
 			y += font->GetHeight ();
@@ -1313,7 +1336,7 @@ void DBaseStatusBar::DrawTopStuff (EHudState state)
 
 	DrawConsistancy ();
 	DrawWaiting ();
-	if (ShowLog && MustDrawLog(state)) DrawLog ();
+	if ((ShowLog && MustDrawLog(state)) || (inter_subtitles && CPlayer->SubtitleCounter > 0)) DrawLog ();
 
 	if (noisedebug)
 	{
