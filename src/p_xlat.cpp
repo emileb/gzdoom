@@ -305,8 +305,7 @@ void P_TranslateTeleportThings ()
 	{
 		if (!tagManager.SectorHasTags(dest->Sector))
 		{
-			dest->tid = 1;
-			dest->AddToHash ();
+			dest->SetTID(1);
 			foundSomething = true;
 		}
 	}

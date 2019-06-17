@@ -646,6 +646,7 @@ CVAR (Flag, compat_pushwindow,			compatflags2, COMPATF2_PUSHWINDOW);
 CVAR (Flag, compat_checkswitchrange,	compatflags2, COMPATF2_CHECKSWITCHRANGE);
 CVAR (Flag, compat_explode1,			compatflags2, COMPATF2_EXPLODE1);
 CVAR (Flag, compat_explode2,			compatflags2, COMPATF2_EXPLODE2);
+CVAR (Flag, compat_railing,				compatflags2, COMPATF2_RAILING);
 
 CVAR(Bool, vid_activeinbackground, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 
@@ -857,7 +858,6 @@ void D_Display ()
 	{
 		FTexture *tex;
 		int x;
-		FString pstring = GStrings("TXT_BY");
 
 		tex = TexMan(gameinfo.PauseSign);
 		x = (SCREENWIDTH - tex->GetScaledWidth() * CleanXfac)/2 +
@@ -865,7 +865,8 @@ void D_Display ()
 		screen->DrawTexture (tex, x, 4, DTA_CleanNoMove, true, TAG_DONE);
 		if (paused && multiplayer)
 		{
-			pstring << ' ' << players[paused - 1].userinfo.GetName();
+			FString pstring = GStrings("TXT_BY");
+			pstring.Substitute("%s", players[paused - 1].userinfo.GetName());
 			screen->DrawText(SmallFont, CR_RED,
 				(screen->GetWidth() - SmallFont->StringWidth(pstring)*CleanXfac) / 2,
 				(tex->GetScaledHeight() * CleanYfac) + 4, pstring, DTA_CleanNoMove, true, TAG_DONE);
