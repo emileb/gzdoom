@@ -154,6 +154,7 @@ FASTMATH_SOURCES = \
 
 
 PCH_SOURCES = \
+    atterm.cpp \
 	actorptrselect.cpp \
 	utf8.cpp \
 	am_map.cpp \
