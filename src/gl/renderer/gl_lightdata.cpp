@@ -187,7 +187,7 @@ void gl_SetFog(int lightlevel, int rellight, bool fullbright, const FColormap *c
 	}
 	else
 	{
-		if ((level.lightmode == 2 || (level.lightmode >= 8 && cmap->BlendFactor > 0)) && fogcolor == 0)
+		if ((level.lightmode == ELightMode::Doom || (level.isSoftwareLighting() && cmap->BlendFactor > 0)) && fogcolor == 0)
 		{
 			float light = hw_CalcLightLevel(lightlevel, rellight, false, cmap->BlendFactor);
 			gl_SetShaderLight(light, lightlevel);
@@ -208,7 +208,7 @@ void gl_SetFog(int lightlevel, int rellight, bool fullbright, const FColormap *c
 		gl_RenderState.SetFog(fogcolor, fogdensity);
 
 		// Korshun: fullbright fog like in software renderer.
-		if (level.lightmode >= 8 && cmap->BlendFactor == 0 && level.brightfog && fogdensity != 0 && fogcolor != 0)
+		if (level.isSoftwareLighting() && cmap->BlendFactor == 0 && level.brightfog && fogdensity != 0 && fogcolor != 0)
 		{
 			gl_RenderState.SetSoftLightLevel(255);
 		}

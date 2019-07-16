@@ -208,13 +208,14 @@ void GLFlat::SetFrom3DFloor(F3DFloor *rover, bool top, bool underside)
 	{
 		Colormap.LightColor = light->extra_colormap.FadeColor;
 		FlatColor = 0xffffffff;
+		AddColor = 0;
 	}
 	else
 	{
 		Colormap.CopyFrom3DLight(light);
 		FlatColor = *plane.flatcolor;
+		// AddColor = sector->SpecialColors[sector_t::add];
 	}
-
 
 	alpha = rover->alpha/255.0f;
 	renderstyle = rover->flags&FF_ADDITIVETRANS? STYLE_Add : STYLE_Translucent;
@@ -272,6 +273,7 @@ void GLFlat::ProcessSector(HWDrawInfo *di, sector_t * frontsector)
 		lightlevel = hw_ClampLight(frontsector->GetFloorLight());
 		Colormap = frontsector->Colormap;
 		FlatColor = frontsector->SpecialColors[sector_t::floor];
+		AddColor = frontsector->AdditiveColors[sector_t::floor];
 		port = frontsector->ValidatePortal(sector_t::floor);
 		if ((stack = (port != NULL)))
 		{
@@ -332,6 +334,7 @@ void GLFlat::ProcessSector(HWDrawInfo *di, sector_t * frontsector)
 		lightlevel = hw_ClampLight(frontsector->GetCeilingLight());
 		Colormap = frontsector->Colormap;
 		FlatColor = frontsector->SpecialColors[sector_t::ceiling];
+		AddColor = frontsector->AdditiveColors[sector_t::ceiling];
 		port = frontsector->ValidatePortal(sector_t::ceiling);
 		if ((stack = (port != NULL)))
 		{

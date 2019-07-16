@@ -316,6 +316,7 @@ void FDrawInfo::DrawFlat(GLFlat *flat, int pass, bool trans)	// trans only has m
 	case GLPASS_ALL:	// Single-pass rendering
 		mDrawer->SetColor(flat->lightlevel, rel, flat->Colormap,1.0f);
 		mDrawer->SetFog(flat->lightlevel, rel, &flat->Colormap, false);
+		gl_RenderState.SetAddColor(flat->AddColor | 0xff000000);
 		if (!flat->gltexture->tex->isFullbright())
 			gl_RenderState.SetObjectColor(flat->FlatColor | 0xff000000);
 		if (flat->sector->special != GLSector_Skybox)
@@ -379,6 +380,7 @@ void FDrawInfo::DrawFlat(GLFlat *flat, int pass, bool trans)	// trans only has m
 		gl_RenderState.EnableTextureMatrix(false);
 		break;
 	}
+	gl_RenderState.SetAddColor(0);
 }
 
 //==========================================================================

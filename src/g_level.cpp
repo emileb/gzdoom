@@ -128,7 +128,7 @@ CUSTOM_CVAR(Int, gl_lightmode, 3, CVAR_ARCHIVE | CVAR_NOINITCALL)
 	else if (newself > 4) newself = 8;
 	else if (newself < 0) newself = 0;
 	if (self != newself) self = newself;
-	else if ((level.info == nullptr || level.info->lightmode == -1)) level.lightmode = self;
+	else if ((level.info == nullptr || level.info->lightmode == ELightMode::NotSet)) level.lightmode = (ELightMode)*self;
 }
 
 
@@ -720,10 +720,27 @@ void G_ExitLevel (int position, bool keepFacing)
 	G_ChangeLevel(G_GetExitMap(), position, keepFacing ? CHANGELEVEL_KEEPFACING : 0);
 }
 
+DEFINE_ACTION_FUNCTION_NATIVE(FLevelLocals, ExitLevel, G_ExitLevel)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(position);
+	PARAM_INT(keepFacing);
+	G_ExitLevel(position, keepFacing);
+	return 0;
+}
+
 void G_SecretExitLevel (int position) 
 {
 	level.flags3 |= LEVEL3_EXITSECRETUSED;
 	G_ChangeLevel(G_GetSecretExitMap(), position, 0);
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FLevelLocals, SecretExitLevel, G_SecretExitLevel)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(position);
+	G_SecretExitLevel(position);
+	return 0;
 }
 
 //==========================================================================
@@ -1172,7 +1189,7 @@ void G_WorldDone (void)
 				ext->mDefined & FExitText::DEF_LOOKUP,
 				true, endsequence);
 		}
-		else
+		else if (!(level.flags2 & LEVEL2_NOCLUSTERTEXT))
 		{
 			F_StartFinale(thiscluster->MessageMusic, thiscluster->musicorder,
 				thiscluster->cdtrack, thiscluster->cdid,
@@ -1183,7 +1200,7 @@ void G_WorldDone (void)
 				true, endsequence);
 		}
 	}
-	else
+	else if (!deathmatch)
 	{
 		FExitText *ext = nullptr;
 		
@@ -1210,7 +1227,7 @@ void G_WorldDone (void)
 
 		nextcluster = FindClusterInfo (FindLevelInfo (nextlevel)->cluster);
 
-		if (nextcluster->cluster != level.cluster && !deathmatch)
+		if (nextcluster->cluster != level.cluster && !(level.flags2 & LEVEL2_NOCLUSTERTEXT))
 		{
 			// Only start the finale if the next level's cluster is different
 			// than the current one and we're not in deathmatch.
@@ -1532,7 +1549,7 @@ void G_InitLevelLocals ()
 
 	level.DefaultEnvironment = info->DefaultEnvironment;
 
-	level.lightmode = info->lightmode < 0? gl_lightmode : info->lightmode;
+	level.lightmode = info->lightmode == ELightMode::NotSet? (ELightMode)*gl_lightmode : info->lightmode;
 	level.brightfog = info->brightfog < 0? gl_brightfog : !!info->brightfog;
 	level.lightadditivesurfaces = info->lightadditivesurfaces < 0 ? gl_lightadditivesurfaces : !!info->lightadditivesurfaces;
 	level.notexturefill = info->notexturefill < 0 ? gl_notexturefill : !!info->notexturefill;

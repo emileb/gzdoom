@@ -4268,11 +4268,12 @@ void AActor::SplashCheck()
 
 bool AActor::UpdateWaterLevel(bool dosplash)
 {
+	int oldlevel = waterlevel;
+
 	if (dosplash) SplashCheck();
 
 	double fh = -FLT_MAX;
 	bool reset = false;
-	int oldlevel = waterlevel;
 
 	waterlevel = 0;
 
@@ -7422,6 +7423,6 @@ void PrintMiscActorInfo(AActor *query)
 		Printf("Target: %s\n", query->target ? query->target->GetClass()->TypeName.GetChars() : "-");
 		Printf("Last enemy: %s\n", query->lastenemy ? query->lastenemy->GetClass()->TypeName.GetChars() : "-");
 		auto sn = FState::StaticGetStateName(query->state);
-		Printf("State:%s, Tics: %d", sn.GetChars(), query->tics);
+		Printf("State:%s, Tics: %d\n", sn.GetChars(), query->tics);
 	}
 }

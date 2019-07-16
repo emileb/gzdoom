@@ -45,6 +45,7 @@
 #include "gameconfigfile.h"
 #include "m_argv.h"
 #include "i_soundfont.h"
+#include "atterm.h"
 
 
 
@@ -131,6 +132,7 @@ DEFINE_ACTION_FUNCTION(FOptionValues, GetText)
 
 void DeinitMenus()
 {
+	M_ClearMenus();
 	{
 		FOptionMap::Iterator it(OptionValues);
 
@@ -144,7 +146,6 @@ void DeinitMenus()
 	}
 	MenuDescriptors.Clear();
 	OptionValues.Clear();
-	CurrentMenu = nullptr;
 	savegameManager.ClearSaveGames();
 }
 

@@ -16,6 +16,8 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 	}
 
+	explicit operator bool() const { return handle != 0; }
+
 private:
 	GLuint handle = 0;
 
@@ -29,6 +31,8 @@ public:
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, handle);
 	}
+
+	explicit operator bool() const { return handle != 0; }
 
 private:
 	GLuint handle = 0;
@@ -93,6 +97,8 @@ public:
 	void BlitToEyeTexture(int eye);
 	void BindEyeTexture(int eye, int texunit);
 	void BindEyeFB(int eye, bool readBuffer = false);
+
+	void BindDitherTexture(int texunit);
 
 	void BindShadowMapFB();
 	void BindShadowMapTexture(int index);
@@ -190,6 +196,8 @@ private:
 	PPTexture mShadowMapTexture;
 	PPFrameBuffer mShadowMapFB;
 	int mCurrentShadowMapSize = 0;
+
+	PPTexture mDitherTexture;
 
 	static bool FailedCreate;
 	static bool BuffersActive;

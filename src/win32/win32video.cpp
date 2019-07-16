@@ -41,6 +41,7 @@
 
 #include "c_cvars.h"
 #include "i_system.h"
+#include "atterm.h"
 
 // MACROS ------------------------------------------------------------------
 

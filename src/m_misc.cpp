@@ -65,6 +65,7 @@
 
 #include "gameconfigfile.h"
 #include "gstrings.h"
+#include "atterm.h"
 
 FGameConfigFile *GameConfig;
 

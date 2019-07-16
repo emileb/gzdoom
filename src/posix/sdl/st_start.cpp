@@ -42,6 +42,7 @@
 #include "doomdef.h"
 #include "i_system.h"
 #include "c_cvars.h"
+#include "atterm.h"
 
 #ifdef __ANDROID__
 #include "JNITouchControlsUtils.h"

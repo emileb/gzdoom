@@ -95,7 +95,7 @@ int hw_CalcLightLevel(int lightlevel, int rellight, bool weapon, int blendfactor
 
 	if (lightlevel <= 0) return 0;
 
-	bool darklightmode = (level.lightmode & 2) || (level.lightmode >= 8 && blendfactor > 0);
+	bool darklightmode = (level.isDarkLightMode()) || (level.isSoftwareLighting() && blendfactor > 0);
 
 	if (darklightmode && lightlevel < 192 && !weapon) 
 	{
@@ -138,7 +138,7 @@ PalEntry hw_CalcLightColor(int light, PalEntry pe, int blendfactor)
 
 	if (blendfactor == 0)
 	{
-		if (level.lightmode >= 8)
+		if (level.isSoftwareLighting())
 		{
 			return pe;
 		}
@@ -182,10 +182,10 @@ float hw_GetFogDensity(int lightlevel, PalEntry fogcolor, int sectorfogdensity, 
 {
 	float density;
 
-	int lightmode = level.lightmode;
-	if (lightmode >= 8 && blendfactor > 0) lightmode = 2;	// The blendfactor feature does not work with software-style lighting.
+	auto lightmode = level.lightmode;
+	if (level.isSoftwareLighting() && blendfactor > 0) lightmode = ELightMode::Doom;	// The blendfactor feature does not work with software-style lighting.
 
-	if (lightmode & 4)
+	if (lightmode == ELightMode::DoomLegacy)
 	{
 		// uses approximations of Legacy's default settings.
 		density = level.fogdensity ? (float)level.fogdensity : 18;
@@ -198,9 +198,9 @@ float hw_GetFogDensity(int lightlevel, PalEntry fogcolor, int sectorfogdensity, 
 	else if ((fogcolor.d & 0xffffff) == 0)
 	{
 		// case 2: black fog
-		if ((lightmode < 8 || blendfactor > 0) && !(level.flags3 & LEVEL3_NOLIGHTFADE))
+		if ((!level.isSoftwareLighting() || blendfactor > 0) && !(level.flags3 & LEVEL3_NOLIGHTFADE))
 		{
-			density = distfogtable[level.lightmode != 0][hw_ClampLight(lightlevel)];
+			density = distfogtable[level.lightmode != ELightMode::LinearStandard][hw_ClampLight(lightlevel)];
 		}
 		else
 		{
@@ -258,7 +258,7 @@ bool hw_CheckFog(sector_t *frontsector, sector_t *backsector)
 	else if (level.outsidefogdensity != 0 && APART(level.info->outsidefog) != 0xff && (fogcolor.d & 0xffffff) == (level.info->outsidefog & 0xffffff))
 	{
 	}
-	else  if (level.fogdensity!=0 || (level.lightmode & 4))
+	else  if (level.fogdensity!=0 || level.lightmode == ELightMode::DoomLegacy)
 	{
 		// case 3: level has fog density set
 	}
@@ -277,7 +277,7 @@ bool hw_CheckFog(sector_t *frontsector, sector_t *backsector)
 	{
 		return false;
 	}
-	else  if (level.fogdensity!=0 || (level.lightmode & 4))
+	else  if (level.fogdensity!=0 || level.lightmode == ELightMode::DoomLegacy)
 	{
 		// case 3: level has fog density set
 		return false;

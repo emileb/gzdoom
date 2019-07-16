@@ -276,10 +276,10 @@ void GLSkyPortal::DrawContents(FDrawInfo *di)
 	bool drawBoth = false;
 
 	// We have no use for Doom lighting special handling here, so disable it for this function.
-	int oldlightmode = ::level.lightmode;
-	if (::level.lightmode >= 8)
+	auto oldlightmode = ::level.lightmode;
+	if (::level.isSoftwareLighting())
 	{
-		::level.lightmode = 2;
+		::level.SetFallbackLightMode();
 		gl_RenderState.SetSoftLightLevel(-1);
 	}
 

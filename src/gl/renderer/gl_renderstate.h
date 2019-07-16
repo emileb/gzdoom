@@ -110,6 +110,7 @@ class FRenderState
 	FStateVec4 mGradientTopPlane, mGradientBottomPlane;
 	FStateVec4 mSplitTopPlane, mSplitBottomPlane;
 	FStateVec4 mClipLine;
+	PalEntry mAddColor;
 	PalEntry mFogColor;
 	PalEntry mObjectColor;
 	PalEntry mObjectColor2;
@@ -357,7 +358,7 @@ public:
 
 	void SetSoftLightLevel(int llevel, int blendfactor = 0)
 	{
-		if (level.lightmode >= 8 && blendfactor == 0) mLightParms[3] = llevel / 255.f;
+		if (level.isSoftwareLighting() && blendfactor == 0) mLightParms[3] = llevel / 255.f;
 		else mLightParms[3] = -1.f;
 	}
 
@@ -398,6 +399,11 @@ public:
 	void SetObjectColor2(PalEntry pe)
 	{
 		mObjectColor2 = pe;
+	}
+
+	void SetAddColor(PalEntry pe)
+	{
+		mAddColor = pe;
 	}
 
 	void SetSpecular(float glossiness, float specularLevel)

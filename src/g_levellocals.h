@@ -70,7 +70,7 @@ struct FLevelData
 	FDisplacementTable Displacements;
 	FPortalBlockmap PortalBlockmap;
 	TArray<FLinePortal*> linkedPortals;	// only the linked portals, this is used to speed up looking for them in P_CollectConnectedGroups.
-	TArray<FSectorPortalGroup *> portalGroups;	
+	TArray<FSectorPortalGroup *> portalGroups;
 	TArray<FLinePortalSpan> linePortalSpans;
 	// [ZZ] Destructible geometry information
 	TMap<int, FHealthGroup> healthGroups;
@@ -187,7 +187,7 @@ struct FLevelLocals : public FLevelData
 	float		MusicVolume;
 
 	// Hardware render stuff that can either be set via CVAR or MAPINFO
-	int			lightmode;
+	ELightMode	lightmode;
 	bool		brightfog;
 	bool		lightadditivesurfaces;
 	bool		notexturefill;
@@ -200,7 +200,7 @@ struct FLevelLocals : public FLevelData
 
 	node_t		*HeadNode() const
 	{
-		return nodes.Size() == 0? nullptr : &nodes[nodes.Size() - 1];
+		return nodes.Size() == 0 ? nullptr : &nodes[nodes.Size() - 1];
 	}
 	node_t		*HeadGamenode() const
 	{
@@ -210,13 +210,28 @@ struct FLevelLocals : public FLevelData
 	// Returns true if level is loaded from saved game or is being revisited as a part of a hub
 	bool		IsReentering() const
 	{
-		return savegamerestore 
+		return savegamerestore
 			|| (info != nullptr && info->Snapshot.mBuffer != nullptr && info->isValid());
 	}
 
 	int isFrozen()
 	{
 		return frozenstate;
+	}
+
+	bool isSoftwareLighting() const
+	{
+		return lightmode >= ELightMode::ZDoomSoftware;
+	}
+
+	bool isDarkLightMode() const
+	{
+		return !!((int)lightmode & (int)ELightMode::Doom);
+	}
+
+	void SetFallbackLightMode()
+	{
+		lightmode = ELightMode::Doom;
 	}
 };
 

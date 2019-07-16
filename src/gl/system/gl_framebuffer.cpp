@@ -52,6 +52,8 @@ FGLRenderer *GLRenderer;
 void gl_LoadExtensions();
 void gl_PrintStartupLog();
 
+extern bool vid_hdr_active;
+
 CUSTOM_CVAR(Int, vid_hwgamma, 2, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
 {
 	if (self < 0 || self > 2) self = 2;
@@ -506,6 +508,8 @@ TArray<uint8_t> OpenGLFrameBuffer::GetScreenshotBuffer(int &pitch, ESSType &colo
 	// Screenshot should not use gamma correction if it was already applied to rendered image
 	EXTERN_CVAR(Bool, fullscreen);
 	gamma = 1 == vid_hwgamma || (2 == vid_hwgamma && !fullscreen) ? 1.0f : Gamma;
+	if (vid_hdr_active && fullscreen)
+		gamma *= 2.2f;
 	return ScreenshotBuffer;
 }
 

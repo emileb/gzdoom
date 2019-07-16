@@ -47,6 +47,7 @@
 #include "v_text.h"
 #include "version.h"
 #include "videomodes.h"
+#include "atterm.h"
 
 #include "gl/renderer/gl_renderer.h"
 #include "gl/system/gl_framebuffer.h"

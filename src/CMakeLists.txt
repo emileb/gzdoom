@@ -1270,6 +1270,7 @@ set (PCH_SOURCES
 	sound/wildmidi/wildmidi_lib.cpp
 	sound/wildmidi/wm_error.cpp
 	events.cpp
+	atterm.cpp
 )
 
 if( ${HAVE_VM_JIT} )

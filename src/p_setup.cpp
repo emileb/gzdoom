@@ -102,6 +102,7 @@
 #include "types.h"
 #include "i_time.h"
 #include "scripting/vm/vm.h"
+#include "atterm.h"
 
 #include "fragglescript/t_fs.h"
 
@@ -1063,6 +1064,7 @@ void MapLoader::LoadSectors (MapData *map, FMissingTextureTracker &missingtex)
 		ss->nextsec = -1;	//jff 2/26/98 add fields to support locking out
 		ss->prevsec = -1;	// stair retriggering until build completes
 		memset(ss->SpecialColors, -1, sizeof(ss->SpecialColors));
+		memset(ss->AdditiveColors, 0, sizeof(ss->AdditiveColors));
 
 		ss->SetAlpha(sector_t::floor, 1.);
 		ss->SetAlpha(sector_t::ceiling, 1.);

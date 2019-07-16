@@ -82,6 +82,7 @@
 #include "g_level.h"
 #include "doomstat.h"
 #include "textures/bitmap.h"
+#include "atterm.h"
 
 #include "optwin32.h"
 
