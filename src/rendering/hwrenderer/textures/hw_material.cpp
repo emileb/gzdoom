@@ -31,6 +31,10 @@
 
 EXTERN_CVAR(Bool, gl_texture_usehires)
 
+#ifdef __MOBILE__
+EXTERN_CVAR(Bool, gl_customshader)
+#endif
+
 //===========================================================================
 // 
 //	Quick'n dirty image rescaling.
@@ -185,7 +189,10 @@ FMaterial::FMaterial(FTexture * tx, bool expanded)
 			else
 				mShaderIndex = SHADER_Brightmap;
 		}
-#ifndef __MOBILE__
+
+#ifdef __MOBILE__
+        if( gl_customshader )
+#endif
 		if (tx->shaderindex >= FIRST_USER_SHADER)
 		{
 			const UserShaderDesc &usershader = usershaders[tx->shaderindex - FIRST_USER_SHADER];
@@ -199,7 +206,6 @@ FMaterial::FMaterial(FTexture * tx, bool expanded)
 				mShaderIndex = tx->shaderindex;
 			}
 		}
-#endif
 	}
 	mWidth = tx->GetWidth();
 	mHeight = tx->GetHeight();
