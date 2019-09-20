@@ -135,6 +135,23 @@ void GLBuffer::Unlock()
 	InvalidateBufferState();
 }
 
+#ifdef USE_GL_HW_BUFFERS
+void GLBuffer::GPUDropSync()
+{
+	mGLSync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);
+}
+
+void GLBuffer::GPUWaitSync()
+{
+	GLenum status = glClientWaitSync(mGLSync, GL_SYNC_FLUSH_COMMANDS_BIT, 1000 * 1000 * 50); // Wait for a max of 50ms...
+	if (status != GL_ALREADY_SIGNALED && status != GL_CONDITION_SATISFIED)
+	{
+		//Printf("Error on glClientWaitSync: %d\n", status);
+	}
+	glDeleteSync(mGLSync);// Is this needed?
+}
+#endif
+
 void GLBuffer::Resize(size_t newsize)
 {
 	assert(!nomap);	// only mappable buffers can be resized. 

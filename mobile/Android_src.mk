@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g4
 
-LOCAL_CFLAGS   :=  -frtti -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   :=  -frtti -D__MOBILE__  -DUSE_GL_HW_BUFFERS -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 #-DNO_PIX_BUFF
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char

@@ -29,6 +29,13 @@ protected:
 	void Resize(size_t newsize) override;
 	void *Lock(unsigned int size) override;
 	void Unlock() override;
+
+#ifdef USE_GL_HW_BUFFERS
+	GLsync mGLSync = 0;
+    void GPUDropSync();
+    void GPUWaitSync();
+#endif
+
 public:
 	void Bind();
 };

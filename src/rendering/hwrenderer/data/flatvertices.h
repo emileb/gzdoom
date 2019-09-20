@@ -116,13 +116,25 @@ public:
 	{
 		mVertexBuffer->Unmap();
 	}
+#ifdef USE_GL_HW_BUFFERS
+	void DropSync()
+	{
+		mVertexBuffer->GPUDropSync();
+	}
 
+	void WaitSync()
+	{
+		mVertexBuffer->GPUWaitSync();
+	}
+#endif
 private:
 	int CreateIndexedSectionVertices(subsector_t *sub, const secplane_t &plane, int floor, VertexContainer &cont);
 	int CreateIndexedSectorVertices(sector_t *sec, const secplane_t &plane, int floor, VertexContainer &cont);
 	int CreateIndexedVertices(int h, sector_t *sec, const secplane_t &plane, int floor, VertexContainers &cont);
 	void CreateIndexedFlatVertices(TArray<sector_t> &sectors);
-
+#ifdef USE_GL_HW_BUFFERS
+public:
+#endif
 	void UpdatePlaneVertices(sector_t *sec, int plane);
 protected:
 	void CreateVertices(TArray<sector_t> &sectors);

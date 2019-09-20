@@ -190,7 +190,12 @@ int FFlatVertexBuffer::CreateIndexedVertices(int h, sector_t *sec, const secplan
 {
 	sec->vboindex[h] = vbo_shadowdata.Size();
 	// First calculate the vertices for the sector itself
+#ifdef USE_GL_HW_BUFFERS
+	for (int n = 0; n < screen->nbrHwBuffers; n++)
+		sec->vboheight[n][h] = sec->GetPlaneTexZ(h);
+#else
 	sec->vboheight[h] = sec->GetPlaneTexZ(h);
+#endif
     sec->ibocount = verts[sec->Index()].indices.Size();
 	sec->iboindex[h] = CreateIndexedSectorVertices(sec, plane, floor, verts[sec->Index()]);
 
@@ -325,6 +330,18 @@ void FFlatVertexBuffer::CreateVertices(TArray<sector_t> &sectors)
 
 void FFlatVertexBuffer::CheckPlanes(sector_t *sector)
 {
+#ifdef USE_GL_HW_BUFFERS
+	if (sector->GetPlaneTexZ(sector_t::ceiling) != sector->vboheight[screen->VtxBuff][sector_t::ceiling])
+	{
+		UpdatePlaneVertices(sector, sector_t::ceiling);
+		sector->vboheight[screen->VtxBuff][sector_t::ceiling] = sector->GetPlaneTexZ(sector_t::ceiling);
+	}
+	if (sector->GetPlaneTexZ(sector_t::floor) != sector->vboheight[screen->VtxBuff][sector_t::floor])
+	{
+		UpdatePlaneVertices(sector, sector_t::floor);
+		sector->vboheight[screen->VtxBuff][sector_t::floor] = sector->GetPlaneTexZ(sector_t::floor);
+	}
+#else
 	if (sector->GetPlaneTexZ(sector_t::ceiling) != sector->vboheight[sector_t::ceiling])
 	{
 		UpdatePlaneVertices(sector, sector_t::ceiling);
@@ -335,6 +352,7 @@ void FFlatVertexBuffer::CheckPlanes(sector_t *sector)
 		UpdatePlaneVertices(sector, sector_t::floor);
 		sector->vboheight[sector_t::floor] = sector->GetPlaneTexZ(sector_t::floor);
 	}
+#endif
 }
 
 //==========================================================================

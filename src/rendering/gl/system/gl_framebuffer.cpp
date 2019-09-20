@@ -152,10 +152,24 @@ void OpenGLFrameBuffer::InitializeState()
 
 	SetViewportRects(nullptr);
 
+#ifdef USE_GL_HW_BUFFERS
+	for (int n = 0; n < nbrHwBuffers; n++)
+	{
+		mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+		mSkyDataBuf[n] = new FSkyVertexBuffer;
+		mViewpointsBuf[n] = new HWViewpointBuffer;
+		mLightsBuf[n] = new FLightBuffer();
+	}
+	NextVtxBuffer();
+	NextSkyBuffer();
+	NextViewBuffer();
+	NextLightBuffer();
+#else
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
 	mSkyData = new FSkyVertexBuffer;
 	mViewpoints = new HWViewpointBuffer;
 	mLights = new FLightBuffer();
+#endif
 
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
@@ -255,10 +269,20 @@ void OpenGLFrameBuffer::Swap()
 	bool swapbefore = gl_finishbeforeswap && camtexcount == 0;
 	Finish.Reset();
 	Finish.Clock();
+
+#ifdef __MOBILE__
+    GLRenderer->mShaderManager->SetActiveShader(0);
+#endif
+#ifdef USE_GL_HW_BUFFERS
+	screen->mVertexData->DropSync();
+	FPSLimit();
+	SwapBuffers();
+#else
 	if (swapbefore) glFinish();
 	FPSLimit();
 	SwapBuffers();
 	if (!swapbefore) glFinish();
+#endif
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
@@ -385,6 +409,14 @@ void OpenGLFrameBuffer::UpdatePalette()
 
 void OpenGLFrameBuffer::BeginFrame()
 {
+#ifdef USE_GL_HW_BUFFERS
+	screen->NextVtxBuffer();
+	screen->NextLightBuffer();
+	screen->NextSkyBuffer();
+	screen->NextViewBuffer();
+
+	screen->mVertexData->WaitSync();
+#endif
 	SetViewportRects(nullptr);
 	if (GLRenderer != nullptr)
 		GLRenderer->BeginFrame();
@@ -395,7 +427,21 @@ void OpenGLFrameBuffer::BeginFrame()
 //	Takes a screenshot
 //
 //===========================================================================
+#ifdef __MOBILE__
+uint8_t * gles_convertRGB(uint8_t * data, int width, int height)
+{
+	uint8_t *src = data;
+	uint8_t *dst = data;
 
+	for (int i=0; i<width*height; i++) {
+		for (int j=0; j<3; j++)
+			*(dst++) = *(src++);
+		src++;
+	}
+
+	return dst;
+}
+#endif
 TArray<uint8_t> OpenGLFrameBuffer::GetScreenshotBuffer(int &pitch, ESSType &color_type, float &gamma)
 {
 	const auto &viewport = mOutputLetterbox;
@@ -403,10 +449,18 @@ TArray<uint8_t> OpenGLFrameBuffer::GetScreenshotBuffer(int &pitch, ESSType &colo
 	// Grab what is in the back buffer.
 	// We cannot rely on SCREENWIDTH/HEIGHT here because the output may have been scaled.
 	TArray<uint8_t> pixels;
-	pixels.Resize(viewport.width * viewport.height * 3);
+#ifdef __MOBILE__
+    pixels.Resize(viewport.width * viewport.height * 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(viewport.left, viewport.top, viewport.width, viewport.height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+	gles_convertRGB(&pixels[0],viewport.width,viewport.height);
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+#else
+    pixels.Resize(viewport.width * viewport.height * 3);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(viewport.left, viewport.top, viewport.width, viewport.height, GL_RGB, GL_UNSIGNED_BYTE, &pixels[0]);
 	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+#endif
 
 	// Copy to screenshot buffer:
 	int w = SCREENWIDTH;

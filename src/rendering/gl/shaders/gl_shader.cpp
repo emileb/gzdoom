@@ -47,6 +47,10 @@
 #include <map>
 #include <memory>
 
+#ifdef __MOBILE__
+CVAR(Bool, gl_customshader, true, 0)
+#endif
+
 namespace OpenGLRenderer
 {
 
@@ -338,7 +342,11 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	unsigned int lightbuffersize = screen->mLights->GetBlockSize();
 	if (!lightbuffertype)
 	{
+#ifdef __MOBILE__
+		vp_comb.Format("#version 310 es\n#define NO_CLIPDISTANCE_SUPPORT\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+#else
 		vp_comb.Format("#version 330 core\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+#endif
 	}
 	else
 	{
@@ -722,7 +730,9 @@ void FShaderCollection::CompileShaders(EPassType passType)
 			mMaterialShadersNAT.Push(shc);
 		}
 	}
-
+#ifdef __MOBILE__
+    if( gl_customshader )
+#endif
 	for(unsigned i = 0; i < usershaders.Size(); i++)
 	{
 		FString name = ExtractFileBase(usershaders[i].shader);

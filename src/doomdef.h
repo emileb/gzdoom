@@ -90,7 +90,7 @@ enum ESkillLevels
 };
 */
 
-
+#define MAX_HW_BUFFERS 8
 
 #define TELEFOGHEIGHT			(gameinfo.telefogheight)
 

@@ -152,7 +152,11 @@ static int DoomSpecificInfo (char *buffer, char *end)
 void I_StartupJoysticks();
 void I_ShutdownJoysticks();
 
+#ifdef __ANDROID__
+int main_android (int argc, char **argv)
+#else
 int main (int argc, char **argv)
+#endif
 {
 #if !defined (__APPLE__)
 	{
@@ -230,6 +234,11 @@ int main (int argc, char **argv)
 		I_ShutdownJoysticks();
 
 		const char *const message = error.what();
+
+#ifdef __ANDROID__
+        LOGI("FATAL ERROR: %s", message);
+        LogWritter_Write(message);
+#endif
 
 		if (strcmp(message, "NoRunExit"))
 		{

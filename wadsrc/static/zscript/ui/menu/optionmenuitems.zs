@@ -524,6 +524,9 @@ class OptionMenuItemControlBase : OptionMenuItem
 		if (mkey == Menu.MKEY_Input)
 		{
 			mWaiting = false;
+            // __MOBILE__
+            g_bindingbutton = false;
+            //
 			mBindings.SetBind(mInput, mAction);
 			return true;
 		}
@@ -535,6 +538,9 @@ class OptionMenuItemControlBase : OptionMenuItem
 		else if (mkey == Menu.MKEY_Abort)
 		{
 			mWaiting = false;
+            // __MOBILE__
+            g_bindingbutton = false;
+            //
 			return true;
 		}
 		return false;
@@ -549,6 +555,10 @@ class OptionMenuItemControlBase : OptionMenuItem
 	{
 		Menu.MenuSound("menu/choose");
 		mWaiting = true;
+        // __MOBILE__
+        mBindings.UnbindACommand(mAction); //Only allow one button to be bound to avoid confusion
+        g_bindingbutton = true;
+        //
 		let input = new("EnterKey");
 		input.Init(Menu.GetCurrentMenu(), self);
 		input.ActivateMenu();

@@ -56,7 +56,8 @@ struct _ native	// These are the global variables, the struct is only here to av
 	native readonly bool playeringame[MAXPLAYERS];
 	native readonly int consoleplayer;
 	native play LevelLocals Level;
-
+	// __MOBILE__
+	native bool g_bindingbutton;
 }
 
 struct MusPlayingInfo native

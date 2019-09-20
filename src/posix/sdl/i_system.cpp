@@ -178,7 +178,11 @@ void I_FatalError (const char *error, va_list ap)
 #ifdef __linux__
 		Linux_I_FatalError(errortext);
 #endif
-		
+
+#ifdef __ANDROID__
+        LOGI("FATAL ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
 		// Record error to log (if logging)
 		if (Logfile)
 		{
@@ -215,6 +219,12 @@ void I_Error (const char *error, ...)
 
 	myvsnprintf (errortext, MAX_ERRORTEXT, error, argptr);
 	va_end (argptr);
+
+#ifdef __ANDROID__
+        LOGI("ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
+
 	throw CRecoverableError(errortext);
 }
 

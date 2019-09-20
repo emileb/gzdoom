@@ -887,6 +887,10 @@ void WriteLineToLog(FILE *LogFile, const char *outline)
 
 int PrintString (int iprintlevel, const char *outline)
 {
+#ifdef __ANDROID__
+	LOGI("PrintString: %s",outline);
+	LogWritter_Write(outline);
+#endif
 	int printlevel = iprintlevel & PRINT_TYPES;
 	if (printlevel < msglevel || *outline == '\0')
 	{

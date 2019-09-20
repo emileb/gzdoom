@@ -29,6 +29,12 @@
 #include "name.h"
 #include "zstring.h"
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#include "LogWritter.h"
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#endif
+
 class PClassActor;
 typedef TMap<int, PClassActor *> FClassMap;
 

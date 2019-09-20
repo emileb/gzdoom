@@ -684,6 +684,11 @@ void G_BuildTiccmd (ticcmd_t *cmd)
 		forward += (int)((float)mousey * m_forward);
 	}
 
+#ifdef __MOBILE__
+    extern void Mobile_IN_Move(ticcmd_t* cmd );
+    Mobile_IN_Move(cmd);
+#endif
+
 	cmd->ucmd.pitch = LocalViewPitch >> 16;
 
 	if (SendLand)

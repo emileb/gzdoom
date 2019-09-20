@@ -300,8 +300,9 @@ public:
 
 	FShader *BindEffect(int effect, EPassType passType);
 	FShader *Get(unsigned int eff, bool alphateston, EPassType passType);
-
+#ifndef __MOBILE__ // Make public
 private:
+#endif
 	void SetActiveShader(FShader *sh);
 
 	FShader *mActiveShader = nullptr;

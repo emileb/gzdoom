@@ -172,8 +172,11 @@ const char *BaseFileSearch(const char *file, const char *ext, bool lookfirstinpr
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 CVAR(String, fluid_lib, "", CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
-
+#ifdef __ANDROID__
+CUSTOM_CVAR(String, fluid_patchset, "./audiopack/snd_fluidsynth/fluidsynth.sf2",0)
+#else
 CUSTOM_CVAR(String, fluid_patchset, "gzdoom", CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+#endif
 {
 	if (currSong != nullptr && currSong->GetDeviceType() == MDEV_FLUIDSYNTH)
 	{

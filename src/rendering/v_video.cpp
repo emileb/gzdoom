@@ -602,7 +602,18 @@ void V_CalcCleanFacs (int designwidth, int designheight, int realwidth, int real
 bool IVideo::SetResolution ()
 {
 	DFrameBuffer *buff = CreateFrameBuffer();
-
+#ifdef USE_GL_HW_BUFFERS
+	const char *hwBuffers = Args->CheckValue("-hwbuffers");
+	if (hwBuffers)
+	{
+		buff->nbrHwBuffers = atoi(hwBuffers);
+	}
+	else
+	{
+		buff->nbrHwBuffers = 1;
+	}
+	Printf("HW buffers = %d\n", buff->nbrHwBuffers);
+#endif
 	if (buff == NULL)	// this cannot really happen
 	{
 		return false;
