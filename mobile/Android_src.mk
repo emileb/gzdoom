@@ -7,8 +7,10 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g4
 
-LOCAL_CFLAGS   :=  -frtti -D__MOBILE__  -DUSE_GL_HW_BUFFERS -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   :=  -frtti -DUSE_GL_HW_BUFFERS -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 #-DNO_PIX_BUFF
+#-DUSE_GL_HW_BUFFERS
+#-DHAVE_VULKAN
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -98,6 +100,25 @@ PLAT_SDL_SOURCES = \
     	posix/sdl/i_system.cpp \
     	posix/sdl/sdlglvideo.cpp \
     	posix/sdl/st_start.cpp
+
+VULKAN_SOURCES = \
+	rendering/vulkan/system/vk_device.cpp \
+	rendering/vulkan/system/vk_swapchain.cpp \
+	rendering/vulkan/system/vk_builders.cpp \
+	rendering/vulkan/system/vk_framebuffer.cpp \
+	rendering/vulkan/system/vk_buffers.cpp \
+	rendering/vulkan/renderer/vk_renderstate.cpp \
+	rendering/vulkan/renderer/vk_renderpass.cpp \
+	rendering/vulkan/renderer/vk_streambuffer.cpp \
+	rendering/vulkan/renderer/vk_postprocess.cpp \
+	rendering/vulkan/renderer/vk_renderbuffers.cpp \
+	rendering/vulkan/shaders/vk_shader.cpp \
+	rendering/vulkan/textures/vk_samplers.cpp \
+	rendering/vulkan/textures/vk_hwtexture.cpp \
+	rendering/vulkan/textures/vk_imagetransition.cpp \
+	rendering/vulkan/thirdparty/volk/volk.c \
+	rendering/vulkan/thirdparty/vk_mem_alloc/vk_mem_alloc.cpp \
+
 
 
 SWRENDER_SOURCES = \
@@ -669,7 +690,7 @@ LOCAL_LDLIBS +=  -lEGL
 # This is stop a linker warning for mp123 lib failing build
 #LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 #asmjit_gl3
-LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3 dumb_gl3 gme_gl3 bzip2_gl3  logwritter
+LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3 dumb_gl3 gme_gl3 bzip2_gl3 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared
 
 LOCAL_STATIC_LIBRARIES +=

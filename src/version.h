@@ -97,7 +97,12 @@ const char *GetVersionString();
 #else
 #define BASEWAD "gzdoom.pk3"
 #endif
+
+#ifdef __MOBILE__
+#define OPTIONALWAD "./res/game_support.pk3"
+#else
 #define OPTIONALWAD "game_support.pk3"
+#endif
 
 // More stuff that needs to be different for derivatives.
 #define GAMENAME "GZDoom"
