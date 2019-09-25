@@ -66,6 +66,9 @@ static std::map<FString, std::unique_ptr<ProgramBinary>> ShaderCache; // Not a T
 
 bool IsShaderCacheActive()
 {
+#ifdef __MOBILE__
+    return true;
+#endif
 	static bool active = true;
 	static bool firstcall = true;
 
