@@ -140,7 +140,7 @@ void gl_LoadExtensions()
 
 #ifdef __MOBILE__
 
-    if(CheckExtension("GL_OES_texture_npot") || CheckExtension("GL_APPLE_texture_2D_limited_npot"))
+    if(CheckExtension("GL_OES_texture_npot") || CheckExtension("GL_ARB_texture_non_power_of_two"))
     {
         Printf("NPOT allowed");
         gl.flags |= RFL_NPOT;
