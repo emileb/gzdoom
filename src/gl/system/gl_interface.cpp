@@ -200,7 +200,7 @@ void gl_LoadExtensions()
         gl.lightmethod = LM_LEGACY;
         gl.buffermethod = BM_LEGACY;
 
-        if(CheckExtension("GL_OES_texture_npot") || CheckExtension("GL_APPLE_texture_2D_limited_npot"))
+        if(CheckExtension("GL_OES_texture_npot") || CheckExtension("GL_ARB_texture_non_power_of_two"))
         {
             Printf("NPOT allowed");
             gl.flags |= RFL_NPOT;
