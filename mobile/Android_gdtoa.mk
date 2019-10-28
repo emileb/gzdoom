@@ -56,9 +56,6 @@ LOCAL_SRC_FILES =  	\
 	sum.c \
 	ulp.c \
 
-#strtof.c \
-
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

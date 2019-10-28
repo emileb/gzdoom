@@ -42,9 +42,6 @@ LOCAL_C_INCLUDES := \
 	$(GZDOOM_TOP_PATH)/src/sound \
 	$(GZDOOM_TOP_PATH)/src/sound/music \
 	$(GZDOOM_TOP_PATH)/src/sound/backend \
-	$(GZDOOM_TOP_PATH)/src/sound/oplsynth \
-	$(GZDOOM_TOP_PATH)/src/sound/timidity \
-	$(GZDOOM_TOP_PATH)/src/sound/wildmidi \
 	$(GZDOOM_TOP_PATH)/src/xlat \
 	$(GZDOOM_TOP_PATH)/src/utility \
 	$(GZDOOM_TOP_PATH)/src/utility/nodebuilder \
@@ -59,12 +56,11 @@ LOCAL_C_INCLUDES := \
 	$(GZDOOM_TOP_PATH)/src/../libraries/glslang/glslang/Public \
 	$(GZDOOM_TOP_PATH)/src/../libraries/glslang/spirv \
 	$(GZDOOM_TOP_PATH)/src/../libraries/lzma/C \
+	$(GZDOOM_TOP_PATH)/src/../libraries/zmusic \
 	$(GZDOOM_TOP_PATH)/src/posix \
 	$(GZDOOM_TOP_PATH)/src/posix/sdl \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
- $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
- $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
  $(TOP_DIR)/jpeg8d \
  $(TOP_DIR)/Clibs_OpenTouch \
  $(TOP_DIR)/jwzgles \
@@ -87,7 +83,6 @@ ANDROID_SRC_FILES = \
     #../mobile/src/extrafiles/etc1.cpp
 
 PLAT_POSIX_SOURCES = \
-	posix/i_cd.cpp \
 	posix/i_steam.cpp
 
 PLAT_SDL_SOURCES = \
@@ -121,51 +116,6 @@ VULKAN_SOURCES = \
 
 
 
-SWRENDER_SOURCES = \
-	rendering/swrenderer/r_swcolormapscpp \
-	rendering/swrenderer/r_swrenderercpp \
-	rendering/swrenderer/r_memorycpp \
-	rendering/swrenderer/r_renderthreadcpp \
-	rendering/swrenderer/drawers/r_drawcpp \
-	rendering/swrenderer/drawers/r_draw_palcpp \
-	rendering/swrenderer/drawers/r_draw_rgbacpp \
-	rendering/swrenderer/drawers/r_threadcpp \
-	rendering/swrenderer/scene/r_3dfloorscpp \
-	rendering/swrenderer/scene/r_lightcpp \
-	rendering/swrenderer/scene/r_opaque_passcpp \
-	rendering/swrenderer/scene/r_portalcpp \
-	rendering/swrenderer/scene/r_scenecpp \
-	rendering/swrenderer/scene/r_translucent_passcpp \
-	rendering/swrenderer/viewport/r_drawerargscpp \
-	rendering/swrenderer/viewport/r_skydrawercpp \
-	rendering/swrenderer/viewport/r_spandrawercpp \
-	rendering/swrenderer/viewport/r_spritedrawercpp \
-	rendering/swrenderer/viewport/r_viewportcpp \
-	rendering/swrenderer/viewport/r_walldrawercpp \
-	rendering/swrenderer/line/r_linecpp \
-	rendering/swrenderer/line/r_farclip_linecpp \
-	rendering/swrenderer/line/r_walldrawcpp \
-	rendering/swrenderer/line/r_wallsetupcpp \
-	rendering/swrenderer/line/r_fogboundarycpp \
-	rendering/swrenderer/line/r_renderdrawsegmentcpp \
-	rendering/swrenderer/segments/r_clipsegmentcpp \
-	rendering/swrenderer/segments/r_drawsegmentcpp \
-	rendering/swrenderer/segments/r_portalsegmentcpp \
-	rendering/swrenderer/things/r_visiblespritecpp \
-	rendering/swrenderer/things/r_visiblespritelistcpp \
-	rendering/swrenderer/things/r_voxelcpp \
-	rendering/swrenderer/things/r_particlecpp \
-	rendering/swrenderer/things/r_playerspritecpp \
-	rendering/swrenderer/things/r_spritecpp \
-	rendering/swrenderer/things/r_wallspritecpp \
-	rendering/swrenderer/things/r_decalcpp \
-	rendering/swrenderer/things/r_modelcpp \
-	rendering/swrenderer/plane/r_visibleplanecpp \
-	rendering/swrenderer/plane/r_visibleplanelistcpp \
-	rendering/swrenderer/plane/r_skyplanecpp \
-	rendering/swrenderer/plane/r_planerenderercpp \
-	rendering/swrenderer/plane/r_flatplanecpp \
-	rendering/swrenderer/plane/r_slopeplanecpp \
 
 
 
@@ -196,13 +146,8 @@ POLYRENDER_SOURCES = \
 	rendering/swrenderer/r_all.cpp \
 	rendering/swrenderer/r_swscene.cpp \
 	rendering/polyrenderer/poly_all.cpp \
-	sound/oplsynth/opl_mus_player.cpp \
-	sound/backend/mpg123_decoder.cpp \
 	sound/music/music_midi_base.cpp \
 	sound/backend/oalsound.cpp \
-	sound/backend/sndfile_decoder.cpp \
-	sound/timiditypp/fft4g.cpp \
-	sound/timiditypp/reverb.cpp \
 	gamedata/textures/hires/hqnx/init.cpp \
 	gamedata/textures/hires/hqnx/hq2x.cpp \
 	gamedata/textures/hires/hqnx/hq3x.cpp \
@@ -210,8 +155,6 @@ POLYRENDER_SOURCES = \
 	gamedata/textures/hires/xbr/xbrz.cpp \
 	gamedata/textures/hires/xbr/xbrz_old.cpp \
 	rendering/gl_load/gl_load.c \
-	rendering/hwrenderer/postprocessing/hw_postprocess_cvars.cpp \
-	rendering/hwrenderer/postprocessing/hw_postprocessshader.cpp \
 	rendering/hwrenderer/dynlights/hw_dynlightdata.cpp \
 	rendering/hwrenderer/scene/hw_bsp.cpp \
 	rendering/hwrenderer/scene/hw_fakeflat.cpp \
@@ -231,31 +174,6 @@ POLYRENDER_SOURCES = \
 	rendering/hwrenderer/scene/hw_weapon.cpp \
 	r_data/models/models.cpp \
 	utility/matrix.cpp \
-	sound/adlmidi/adldata.cpp \
-	sound/adlmidi/adlmidi.cpp \
-	sound/adlmidi/adlmidi_load.cpp \
-	sound/adlmidi/adlmidi_midiplay.cpp \
-	sound/adlmidi/adlmidi_opl3.cpp \
-	sound/adlmidi/adlmidi_private.cpp \
-	sound/adlmidi/chips/dosbox/dbopl.cpp \
-	sound/adlmidi/chips/dosbox_opl3.cpp \
-	sound/adlmidi/chips/nuked/nukedopl3_174.c \
-	sound/adlmidi/chips/nuked/nukedopl3.c \
-	sound/adlmidi/chips/nuked_opl3.cpp \
-	sound/adlmidi/chips/nuked_opl3_v174.cpp \
-	sound/adlmidi/wopl/wopl_file.c \
-	sound/opnmidi/chips/gens_opn2.cpp \
-	sound/opnmidi/chips/gens/Ym2612_Emu.cpp \
-	sound/opnmidi/chips/mame/mame_ym2612fm.c \
-	sound/opnmidi/chips/mame_opn2.cpp \
-	sound/opnmidi/chips/nuked_opn2.cpp \
-	sound/opnmidi/chips/nuked/ym3438.c \
-	sound/opnmidi/opnmidi.cpp \
-	sound/opnmidi/opnmidi_load.cpp \
-	sound/opnmidi/opnmidi_midiplay.cpp \
-	sound/opnmidi/opnmidi_opn2.cpp \
-	sound/opnmidi/opnmidi_private.cpp \
-	sound/opnmidi/wopn/wopn_file.c
 
 
 
@@ -419,6 +337,8 @@ PCH_SOURCES = \
 	rendering/hwrenderer/scene/hw_drawlistadd.cpp \
 	rendering/hwrenderer/scene/hw_renderstate.cpp \
 	rendering/hwrenderer/postprocessing/hw_postprocess.cpp \
+	rendering/hwrenderer/postprocessing/hw_postprocess_cvars.cpp \
+	rendering/hwrenderer/postprocessing/hw_postprocessshader.cpp \
 	rendering/hwrenderer/textures/hw_material.cpp \
 	rendering/hwrenderer/textures/hw_precache.cpp \
 	rendering/hwrenderer/utility/hw_clock.cpp \
@@ -483,6 +403,7 @@ PCH_SOURCES = \
 	gamedata/textures/formats/emptytexture.cpp \
 	gamedata/textures/formats/shadertexture.cpp \
 	gamedata/textures/formats/tgatexture.cpp \
+	gamedata/textures/formats/stbtexture.cpp \
 	gamedata/textures/hires/hqresize.cpp \
 	gamedata/textures/hires/hirestex.cpp \
 	gamedata/fonts/singlelumpfont.cpp \
@@ -550,67 +471,7 @@ PCH_SOURCES = \
 	sound/music/i_music.cpp \
 	sound/music/i_soundfont.cpp \
 	sound/backend/i_sound.cpp \
-	sound/mididevices/music_adlmidi_mididevice.cpp \
-	sound/mididevices/music_opldumper_mididevice.cpp \
-	sound/mididevices/music_opl_mididevice.cpp \
-	sound/mididevices/music_opnmidi_mididevice.cpp \
-	sound/mididevices/music_timiditypp_mididevice.cpp \
-	sound/mididevices/music_fluidsynth_mididevice.cpp \
-	sound/mididevices/music_softsynth_mididevice.cpp \
-	sound/mididevices/music_timidity_mididevice.cpp \
-	sound/mididevices/music_wildmidi_mididevice.cpp \
-	sound/mididevices/music_wavewriter_mididevice.cpp \
-	sound/midisources/midisource.cpp \
-	sound/midisources/midisource_mus.cpp \
-	sound/midisources/midisource_smf.cpp \
-	sound/midisources/midisource_hmi.cpp \
-	sound/midisources/midisource_xmi.cpp \
-	sound/musicformats/music_cd.cpp \
-	sound/musicformats/music_dumb.cpp \
-	sound/musicformats/music_gme.cpp \
-	sound/musicformats/music_libsndfile.cpp \
-	sound/musicformats/music_midistream.cpp \
-	sound/musicformats/music_opl.cpp \
-	sound/musicformats/music_stream.cpp \
-	sound/oplsynth/fmopl.cpp \
-	sound/oplsynth/musicblock.cpp \
-	sound/oplsynth/oplio.cpp \
-	sound/oplsynth/dosbox/opl.cpp \
-	sound/oplsynth/OPL3.cpp \
-	sound/oplsynth/nukedopl3.cpp \
-	sound/timidity/common.cpp \
-	sound/timidity/instrum.cpp \
-	sound/timidity/instrum_dls.cpp \
-	sound/timidity/instrum_font.cpp \
-	sound/timidity/instrum_sf2.cpp \
-	sound/timidity/mix.cpp \
-	sound/timidity/playmidi.cpp \
-	sound/timidity/resample.cpp \
-	sound/timidity/timidity.cpp \
-	sound/timiditypp/common.cpp \
-	sound/timiditypp/configfile.cpp \
-	sound/timiditypp/effect.cpp \
-	sound/timiditypp/filter.cpp \
-	sound/timiditypp/freq.cpp \
-	sound/timiditypp/instrum.cpp \
-	sound/timiditypp/mblock.cpp \
-	sound/timiditypp/mix.cpp \
-	sound/timiditypp/playmidi.cpp \
-	sound/timiditypp/quantity.cpp \
-	sound/timiditypp/readmidic.cpp \
-	sound/timiditypp/recache.cpp \
-	sound/timiditypp/resample.cpp \
-	sound/timiditypp/sbkconv.cpp \
-	sound/timiditypp/sffile.cpp \
-	sound/timiditypp/sfitem.cpp \
-	sound/timiditypp/smplfile.cpp \
-	sound/timiditypp/sndfont.cpp \
-	sound/timiditypp/tables.cpp \
-	sound/wildmidi/file_io.cpp \
-	sound/wildmidi/gus_pat.cpp \
-	sound/wildmidi/reverb.cpp \
-	sound/wildmidi/wildmidi_lib.cpp \
-	sound/wildmidi/wm_error.cpp \
+	sound/music/music_config.cpp \
 	rendering/swrenderer/textures/r_swtexture.cpp \
 	rendering/swrenderer/textures/warptexture.cpp \
 	rendering/swrenderer/textures/swcanvastexture.cpp \
@@ -630,10 +491,8 @@ PCH_SOURCES = \
 	utility/nodebuilder/nodebuild_utility.cpp \
 	utility/sc_man.cpp \
 	utility/stats.cpp \
-	utility/atterm.cpp \
 	utility/cmdlib.cpp \
 	utility/configfile.cpp \
-	utility/i_module.cpp \
 	utility/i_time.cpp \
 	utility/m_alloc.cpp \
 	utility/m_argv.cpp \
@@ -643,7 +502,6 @@ PCH_SOURCES = \
 	utility/v_collection.cpp \
 	utility/utf8.cpp \
 	utility/zstrformat.cpp \
-
 
 
 SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES}
@@ -690,7 +548,7 @@ LOCAL_LDLIBS +=  -lEGL
 # This is stop a linker warning for mp123 lib failing build
 #LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 #asmjit_gl3
-LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3 dumb_gl3 gme_gl3 bzip2_gl3 logwritter
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3 dumb_gl3 gme_gl3 bzip2_gl3 zmusic_gl3 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared
 
 LOCAL_STATIC_LIBRARIES +=

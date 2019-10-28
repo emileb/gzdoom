@@ -69,7 +69,6 @@
 #include "p_effect.h"
 #include "r_utility.h"
 #include "a_morph.h"
-#include "i_music.h"
 #include "thingdef.h"
 #include "g_levellocals.h"
 #include "actorinlines.h"
@@ -6691,7 +6690,7 @@ doplaysound:			if (funcIndex == ACSF_PlayActorSound)
 			int lineno = it.Next();
 			if (lineno < 0) return 0;
 			DVector2 delta = Level->lines[lineno].Delta();
-			double result = delta[funcIndex - ACSF_GetLineX] * ACSToDouble(args[1]);
+			double result = Level->lines[lineno].v1->fPos()[funcIndex - ACSF_GetLineX] + delta[funcIndex - ACSF_GetLineX] * ACSToDouble(args[1]);
 			if (args[2])
 			{
 				DVector2 normal = DVector2(delta.Y, -delta.X).Unit();

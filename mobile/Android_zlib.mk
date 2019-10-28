@@ -28,7 +28,6 @@ LOCAL_SRC_FILES =  \
     uncompr.c \
     zutil.c \
 
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

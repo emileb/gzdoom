@@ -32,9 +32,8 @@ LOCAL_SRC_FILES =  \
 	C/LzFind.c \
 	C/Lzma2Dec.c \
 	C/LzmaDec.c \
-	C/LzmaEnc.c \ 
+	C/LzmaEnc.c \
 
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

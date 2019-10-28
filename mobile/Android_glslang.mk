@@ -59,7 +59,6 @@ LOCAL_SRC_FILES += \
     ../spirv/SpvTools.cpp \
     ../spirv/disassemble.cpp
 
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

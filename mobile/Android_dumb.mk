@@ -92,7 +92,6 @@ LOCAL_SRC_FILES =  	\
     src/it/readxm2.c \
     src/it/xmeffect.c \
 
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 
