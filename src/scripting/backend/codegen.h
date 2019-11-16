@@ -302,6 +302,7 @@ enum EFxType
 	EFX_GetDefaultByType,
 	EFX_FontCast,
 	EFX_LocalArrayDeclaration,
+	EFX_OutVarDereference,
 	EFX_COUNT
 };
 
@@ -2126,6 +2127,7 @@ class FxLocalVariableDeclaration : public FxExpression
 	friend class FxLocalVariable;
 	friend class FxStaticArrayVariable;
 	friend class FxLocalArrayDeclaration;
+	friend class FxStructMember;
 
 	FName Name;
 	FxExpression *Init;
@@ -2205,6 +2207,29 @@ public:
 
 	FxLocalArrayDeclaration(PType *type, FName name, FArgumentList &args, int varflags, const FScriptPosition &pos);
 	FxExpression *Resolve(FCompileContext&);
+	ExpEmit Emit(VMFunctionBuilder *build);
+};
+
+//==========================================================================
+//
+//
+//
+//==========================================================================
+
+class FxOutVarDereference : public FxExpression
+{
+	FxExpression *Self;
+	PType *SelfType;
+	bool AddressWritable;
+
+public:
+	FxOutVarDereference(FxExpression *self, const FScriptPosition &p)
+		: FxExpression(EFX_OutVarDereference, p), Self (self)
+	{
+	}
+	~FxOutVarDereference();
+	FxExpression *Resolve(FCompileContext &);
+	bool RequestAddress(FCompileContext &ctx, bool *writable);
 	ExpEmit Emit(VMFunctionBuilder *build);
 };
 
