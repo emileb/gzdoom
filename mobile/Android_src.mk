@@ -141,6 +141,13 @@ POLYRENDER_SOURCES = \
 	rendering/polyrenderer/drawers/screen_triangle.cpp \
 	rendering/polyrenderer/math/gpu_types.cpp \
 
+POLYBACKEND_SOURCES = \
+	rendering/polyrenderer/backend/poly_framebuffer.cpp \
+	rendering/polyrenderer/backend/poly_buffers.cpp \
+	rendering/polyrenderer/backend/poly_hwtexture.cpp \
+	rendering/polyrenderer/backend/poly_renderstate.cpp \
+
+
 
  FASTMATH_SOURCES = \
 	rendering/swrenderer/r_all.cpp \
@@ -241,7 +248,9 @@ PCH_SOURCES = \
 	rendering/r_videoscale.cpp \
 	sound/s_advsound.cpp \
 	sound/s_environment.cpp \
+	sound/s_reverbedit.cpp \
 	sound/s_sndseq.cpp \
+	sound/s_doomsound.cpp \
 	sound/s_sound.cpp \
 	sound/s_music.cpp \
 	serializer.cpp \
@@ -358,6 +367,7 @@ PCH_SOURCES = \
 	maploader/polyobjects.cpp \
 	maploader/renderinfo.cpp \
 	maploader/compatibility.cpp \
+	maploader/postprocessor.cpp \
 	menu/joystickmenu.cpp \
 	menu/loadsavemenu.cpp \
 	menu/menu.cpp \
@@ -513,10 +523,12 @@ LOCAL_SRC_FILES = \
 	$(ANDROID_SRC_FILES) \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
+	$(POLYBACKEND_SOURCES) \
 	${PCH_SOURCES} \
 	utility/x86.cpp \
 	utility/strnatcmp.c \
 	utility/zstring.cpp \
+	utility/dictionary.cpp \
 	utility/math/asin.c \
 	utility/math/atan.c \
 	utility/math/const.c \
