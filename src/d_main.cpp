@@ -106,6 +106,7 @@
 
 EXTERN_CVAR(Bool, hud_althud)
 EXTERN_CVAR(Int, vr_mode)
+EXTERN_CVAR(Bool, cl_customizeinvulmap)
 void DrawHUD();
 void D_DoAnonStats();
 void I_DetectOS();
@@ -143,6 +144,8 @@ void ParseGLDefs();
 void DrawFullscreenSubtitle(const char *text);
 void D_Cleanup();
 void FreeSBarInfoScript();
+void I_UpdateWindowTitle();
+void C_GrabCVarDefaults ();
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
@@ -160,7 +163,8 @@ EXTERN_CVAR (Bool, lookstrafe)
 EXTERN_CVAR (Int, screenblocks)
 EXTERN_CVAR (Bool, sv_cheats)
 EXTERN_CVAR (Bool, sv_unlimited_pickup)
-EXTERN_CVAR (Bool, I_FriendlyWindowTitle)
+EXTERN_CVAR (Bool, r_drawplayersprites)
+EXTERN_CVAR (Bool, show_messages)
 
 extern bool setmodeneeded;
 extern bool gameisdead;
@@ -218,6 +222,7 @@ CVAR (Bool, autoloadbrightmaps, false, CVAR_ARCHIVE | CVAR_NOINITCALL | CVAR_GLO
 CVAR (Bool, autoloadlights, false, CVAR_ARCHIVE | CVAR_NOINITCALL | CVAR_GLOBALCONFIG)
 CVAR (Bool, r_debug_disable_vis_filter, false, 0)
 
+bool hud_toggled = false;
 bool wantToRestart;
 bool DrawFSHUD;				// [RH] Draw fullscreen HUD?
 TArray<FString> allwads;
@@ -258,6 +263,42 @@ static int demosequence;
 static int pagetic;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+// D_ToggleHud
+//
+// Turns off 2D drawing temporarily.
+//
+//==========================================================================
+
+void D_ToggleHud()
+{
+	static int saved_screenblocks;
+	static bool saved_drawplayersprite, saved_showmessages;
+
+	if ((hud_toggled = !hud_toggled))
+	{
+		saved_screenblocks = screenblocks;
+		saved_drawplayersprite = r_drawplayersprites;
+		saved_showmessages = show_messages;
+		screenblocks = 12;
+		r_drawplayersprites = false;
+		show_messages = false;
+		C_HideConsole();
+		M_ClearMenus();
+	}
+	else
+	{
+		screenblocks = saved_screenblocks;
+		r_drawplayersprites = saved_drawplayersprite;
+		show_messages = saved_showmessages;
+	}
+}
+CCMD(togglehud)
+{
+	D_ToggleHud();
+}
 
 //==========================================================================
 //
@@ -793,46 +834,49 @@ void D_Display ()
 		}, true);
 
 		screen->Begin2D();
-		screen->DrawBlend(viewsec);
-		if (automapactive)
+		if (!hud_toggled)
 		{
-			primaryLevel->automap->Drawer ((hud_althud && viewheight == SCREENHEIGHT) ? viewheight : StatusBar->GetTopOfStatusbar());
-		}
-		
-		// for timing the statusbar code.
-		//cycle_t stb;
-		//stb.Reset();
-		//stb.Clock();
-		if (!automapactive || viewactive)
-		{
-			StatusBar->RefreshViewBorder ();
-		}
-		if (hud_althud && viewheight == SCREENHEIGHT && screenblocks > 10)
-		{
-			StatusBar->DrawBottomStuff (HUD_AltHud);
-			if (DrawFSHUD || automapactive) StatusBar->DrawAltHUD();
-			if (players[consoleplayer].camera && players[consoleplayer].camera->player && !automapactive)
+			screen->DrawBlend(viewsec);
+			if (automapactive)
 			{
-				StatusBar->DrawCrosshair();
+				primaryLevel->automap->Drawer ((hud_althud && viewheight == SCREENHEIGHT) ? viewheight : StatusBar->GetTopOfStatusbar());
 			}
-			StatusBar->CallDraw (HUD_AltHud, vp.TicFrac);
-			StatusBar->DrawTopStuff (HUD_AltHud);
+		
+			// for timing the statusbar code.
+			//cycle_t stb;
+			//stb.Reset();
+			//stb.Clock();
+			if (!automapactive || viewactive)
+			{
+				StatusBar->RefreshViewBorder ();
+			}
+			if (hud_althud && viewheight == SCREENHEIGHT && screenblocks > 10)
+			{
+				StatusBar->DrawBottomStuff (HUD_AltHud);
+				if (DrawFSHUD || automapactive) StatusBar->DrawAltHUD();
+				if (players[consoleplayer].camera && players[consoleplayer].camera->player && !automapactive)
+				{
+					StatusBar->DrawCrosshair();
+				}
+				StatusBar->CallDraw (HUD_AltHud, vp.TicFrac);
+				StatusBar->DrawTopStuff (HUD_AltHud);
+			}
+			else if (viewheight == SCREENHEIGHT && viewactive && screenblocks > 10)
+			{
+				EHudState state = DrawFSHUD ? HUD_Fullscreen : HUD_None;
+				StatusBar->DrawBottomStuff (state);
+				StatusBar->CallDraw (state, vp.TicFrac);
+				StatusBar->DrawTopStuff (state);
+			}
+			else
+			{
+				StatusBar->DrawBottomStuff (HUD_StatusBar);
+				StatusBar->CallDraw (HUD_StatusBar, vp.TicFrac);
+				StatusBar->DrawTopStuff (HUD_StatusBar);
+			}
+			//stb.Unclock();
+			//Printf("Stbar = %f\n", stb.TimeMS());
 		}
-		else if (viewheight == SCREENHEIGHT && viewactive && screenblocks > 10)
-		{
-			EHudState state = DrawFSHUD ? HUD_Fullscreen : HUD_None;
-			StatusBar->DrawBottomStuff (state);
-			StatusBar->CallDraw (state, vp.TicFrac);
-			StatusBar->DrawTopStuff (state);
-		}
-		else
-		{
-			StatusBar->DrawBottomStuff (HUD_StatusBar);
-			StatusBar->CallDraw (HUD_StatusBar, vp.TicFrac);
-			StatusBar->DrawTopStuff (HUD_StatusBar);
-		}
-		//stb.Unclock();
-		//Printf("Stbar = %f\n", stb.TimeMS());
 	}
 	else
 	{
@@ -862,50 +906,53 @@ void D_Display ()
 				break;
 		}
 	}
-	CT_Drawer ();
-
-	// draw pause pic
-	if ((paused || pauseext) && menuactive == MENU_Off)
+	if (!hud_toggled)
 	{
-		FTexture *tex;
-		int x;
+		CT_Drawer ();
 
-		tex = TexMan.GetTextureByName(gameinfo.PauseSign, true);
-		x = (SCREENWIDTH - tex->GetDisplayWidth() * CleanXfac)/2 +
-			tex->GetDisplayLeftOffset() * CleanXfac;
-		screen->DrawTexture (tex, x, 4, DTA_CleanNoMove, true, TAG_DONE);
-		if (paused && multiplayer)
+		// draw pause pic
+		if ((paused || pauseext) && menuactive == MENU_Off)
 		{
-			FFont *font = generic_ui? NewSmallFont : SmallFont;
-			FString pstring = GStrings("TXT_BY");
-			pstring.Substitute("%s", players[paused - 1].userinfo.GetName());
-			screen->DrawText(font, CR_RED,
-				(screen->GetWidth() - font->StringWidth(pstring)*CleanXfac) / 2,
-				(tex->GetDisplayHeight() * CleanYfac) + 4, pstring, DTA_CleanNoMove, true, TAG_DONE);
+			FTexture *tex;
+			int x;
+
+			tex = TexMan.GetTextureByName(gameinfo.PauseSign, true);
+			x = (SCREENWIDTH - tex->GetDisplayWidth() * CleanXfac)/2 +
+				tex->GetDisplayLeftOffset() * CleanXfac;
+			screen->DrawTexture (tex, x, 4, DTA_CleanNoMove, true, TAG_DONE);
+			if (paused && multiplayer)
+			{
+				FFont *font = generic_ui? NewSmallFont : SmallFont;
+				FString pstring = GStrings("TXT_BY");
+				pstring.Substitute("%s", players[paused - 1].userinfo.GetName());
+				screen->DrawText(font, CR_RED,
+					(screen->GetWidth() - font->StringWidth(pstring)*CleanXfac) / 2,
+					(tex->GetDisplayHeight() * CleanYfac) + 4, pstring, DTA_CleanNoMove, true, TAG_DONE);
+			}
+		}
+
+		// [RH] Draw icon, if any
+		if (D_DrawIcon)
+		{
+			FTextureID picnum = TexMan.CheckForTexture (D_DrawIcon, ETextureType::MiscPatch);
+
+			D_DrawIcon = NULL;
+			if (picnum.isValid())
+			{
+				FTexture *tex = TexMan.GetTexture(picnum);
+				screen->DrawTexture (tex, 160 - tex->GetDisplayWidth()/2, 100 - tex->GetDisplayHeight()/2,
+					DTA_320x200, true, TAG_DONE);
+			}
+			NoWipe = 10;
+		}
+
+		if (snd_drawoutput)
+		{
+			GSnd->DrawWaveDebug(snd_drawoutput);
 		}
 	}
 
-	// [RH] Draw icon, if any
-	if (D_DrawIcon)
-	{
-		FTextureID picnum = TexMan.CheckForTexture (D_DrawIcon, ETextureType::MiscPatch);
-
-		D_DrawIcon = NULL;
-		if (picnum.isValid())
-		{
-			FTexture *tex = TexMan.GetTexture(picnum);
-			screen->DrawTexture (tex, 160 - tex->GetDisplayWidth()/2, 100 - tex->GetDisplayHeight()/2,
-				DTA_320x200, true, TAG_DONE);
-		}
-		NoWipe = 10;
-	}
-
-	if (snd_drawoutput)
-	{
-		GSnd->DrawWaveDebug(snd_drawoutput);
-	}
-
-	if (!wipe || NoWipe < 0 || wipe_type == wipe_None)
+	if (!wipe || NoWipe < 0 || wipe_type == wipe_None || hud_toggled)
 	{
 		if (wipe != nullptr) delete wipe;
 		wipe = nullptr;
@@ -914,7 +961,8 @@ void D_Display ()
 		// draw ZScript UI stuff
 		C_DrawConsole ();	// draw console
 		M_Drawer ();			// menu is drawn even on top of everything
-		FStat::PrintStat ();
+		if (!hud_toggled)
+			FStat::PrintStat ();
 		screen->End2DAndUpdate ();
 	}
 	else
@@ -1167,7 +1215,7 @@ void D_DoStrifeAdvanceDemo ()
 		pagetic = 10 * TICRATE/35;
 		pagename = "";	// PANEL0, but strife0.wad doesn't have it, so don't use it.
 		PageBlank = true;
-		S_Sound (CHAN_VOICE | CHAN_UI, "bishop/active", 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, "bishop/active", 1, ATTN_NORM);
 		break;
 
 	case 2:
@@ -1179,7 +1227,7 @@ void D_DoStrifeAdvanceDemo ()
 		pagetic = 7 * TICRATE;
 		pagename = "PANEL1";
 		subtitle = "TXT_SUB_INTRO1";
-		S_Sound (CHAN_VOICE | CHAN_UI, voices[0], 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, voices[0], 1, ATTN_NORM);
 		// The new Strife teaser has D_FMINTR.
 		// The full retail Strife has D_INTRO.
 		// And the old Strife teaser has both. (I do not know which one it actually uses, nor do I care.)
@@ -1190,35 +1238,35 @@ void D_DoStrifeAdvanceDemo ()
 		pagetic = 9 * TICRATE;
 		pagename = "PANEL2";
 		subtitle = "TXT_SUB_INTRO2";
-		S_Sound (CHAN_VOICE | CHAN_UI, voices[1], 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, voices[1], 1, ATTN_NORM);
 		break;
 
 	case 5:
 		pagetic = 12 * TICRATE;
 		pagename = "PANEL3";
 		subtitle = "TXT_SUB_INTRO3";
-		S_Sound (CHAN_VOICE | CHAN_UI, voices[2], 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, voices[2], 1, ATTN_NORM);
 		break;
 
 	case 6:
 		pagetic = 11 * TICRATE;
 		pagename = "PANEL4";
 		subtitle = "TXT_SUB_INTRO4";
-		S_Sound (CHAN_VOICE | CHAN_UI, voices[3], 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, voices[3], 1, ATTN_NORM);
 		break;
 
 	case 7:
 		pagetic = 10 * TICRATE;
 		pagename = "PANEL5";
 		subtitle = "TXT_SUB_INTRO5";
-		S_Sound (CHAN_VOICE | CHAN_UI, voices[4], 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, voices[4], 1, ATTN_NORM);
 		break;
 
 	case 8:
 		pagetic = 16 * TICRATE;
 		pagename = "PANEL6";
 		subtitle = "TXT_SUB_INTRO6";
-		S_Sound (CHAN_VOICE | CHAN_UI, voices[5], 1, ATTN_NORM);
+		S_Sound (CHAN_VOICE, CHANF_UI, voices[5], 1, ATTN_NORM);
 		break;
 
 	case 9:
@@ -1428,6 +1476,10 @@ void ParseCVarInfo()
 				else if (stricmp(sc.String, "latch") == 0)
 				{
 					cvarflags |= CVAR_LATCH;
+				}
+				else if (stricmp(sc.String, "nosave") == 0)
+				{
+					cvarflags |= CVAR_NOSAVEGAME;
 				}
 				else
 				{
@@ -2434,6 +2486,7 @@ static int D_DoomMain_Internal (void)
 		if (!iwad_info) return 0;	// user exited the selection popup via cancel button.
 		gameinfo.gametype = iwad_info->gametype;
 		gameinfo.flags = iwad_info->flags;
+		gameinfo.nokeyboardcheats = iwad_info->nokeyboardcheats;
 		gameinfo.ConfigName = iwad_info->Configname;
 		lastIWAD = iwad;
 
@@ -2482,6 +2535,8 @@ static int D_DoomMain_Internal (void)
 		allwads.Clear();
 		allwads.ShrinkToFit();
 		SetMapxxFlag();
+
+		C_GrabCVarDefaults(); //parse DEFCVARS
 
 		GameConfig->DoKeySetup(gameinfo.ConfigName);
 
@@ -2705,6 +2760,10 @@ static int D_DoomMain_Internal (void)
 		C_RunDelayedCommands();
 		gamestate = GS_STARTUP;
 
+		// enable custom invulnerability map here
+		if (cl_customizeinvulmap)
+			R_InitColormaps(true);
+
 		if (!restart)
 		{
 			// start the apropriate game based on parms
@@ -2718,7 +2777,7 @@ static int D_DoomMain_Internal (void)
 
 			delete StartScreen;
 			StartScreen = NULL;
-			S_Sound (CHAN_BODY, "misc/startupdone", 1, ATTN_NONE);
+			S_Sound (CHAN_BODY, 0, "misc/startupdone", 1, ATTN_NONE);
 
 			if (Args->CheckParm("-norun") || batchrun)
 			{
@@ -2796,8 +2855,7 @@ static int D_DoomMain_Internal (void)
 
 		D_DoAnonStats();
 
-		if (I_FriendlyWindowTitle)
-			I_SetWindowTitle(DoomStartupInfo.Name.GetChars());
+		I_UpdateWindowTitle();
 
 		D_DoomLoop ();		// this only returns if a 'restart' CCMD is given.
 		// 
@@ -2862,7 +2920,6 @@ void D_Cleanup()
 
 	// Music and sound should be stopped first
 	S_StopMusic(true);
-	S_StopAllChannels ();
 	S_ClearSoundData();
 	S_UnloadReverbDef();
 	G_ClearMapinfo();
@@ -3035,11 +3092,27 @@ DEFINE_FIELD_X(InputEventData, event_t, data3)
 DEFINE_FIELD_X(InputEventData, event_t, x)
 DEFINE_FIELD_X(InputEventData, event_t, y)
 
-
-CUSTOM_CVAR(Bool, I_FriendlyWindowTitle, true, CVAR_GLOBALCONFIG|CVAR_ARCHIVE|CVAR_NOINITCALL)
+CUSTOM_CVAR(Int, I_FriendlyWindowTitle, 1, CVAR_GLOBALCONFIG|CVAR_ARCHIVE|CVAR_NOINITCALL)
 {
-	if (self)
+	I_UpdateWindowTitle();
+}
+
+void I_UpdateWindowTitle()
+{
+	switch (I_FriendlyWindowTitle)
+	{
+	case 1:
+		if (level.LevelName && level.LevelName.GetChars()[0])
+		{
+			FString titlestr;
+			titlestr.Format("%s - %s", level.LevelName.GetChars(), DoomStartupInfo.Name.GetChars());
+			I_SetWindowTitle(titlestr.GetChars());
+			break;
+		}
+	case 2:
 		I_SetWindowTitle(DoomStartupInfo.Name.GetChars());
-	else
+		break;
+	default:
 		I_SetWindowTitle(NULL);
+	}
 }

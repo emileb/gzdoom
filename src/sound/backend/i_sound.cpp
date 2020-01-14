@@ -35,13 +35,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "doomtype.h"
-
 #include "oalsound.h"
 
 #include "i_module.h"
 #include "cmdlib.h"
-#include "zmusic/sounddecoder.h"
 
 #include "c_dispatch.h"
 #include "i_music.h"
@@ -49,8 +46,8 @@
 #include "v_text.h"
 #include "c_cvars.h"
 #include "stats.h"
-#include "s_music.h"
 #include "zmusic/zmusic.h"
+
 
 EXTERN_CVAR (Float, snd_sfxvolume)
 EXTERN_CVAR (Float, snd_musicvolume)
@@ -87,14 +84,14 @@ void I_CloseSound ();
 // Maximum volume of all audio
 //==========================================================================
 
-CUSTOM_CVAR(Float, snd_mastervolume, 1.f, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
+CUSTOM_CVAR(Float, snd_mastervolume, 1.f, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 {
 	if (self < 0.f)
 		self = 0.f;
 	else if (self > 1.f)
 		self = 1.f;
 
-	ChangeMusicSetting(ZMusic::snd_mastervolume, nullptr, self);
+	ChangeMusicSetting(zmusic_snd_mastervolume, nullptr, self);
 	snd_sfxvolume.Callback();
 	snd_musicvolume.Callback();
 }
@@ -260,20 +257,12 @@ void I_InitSound ()
 		return;
 	}
 
-#ifndef NO_OPENAL
-	// Simplify transition to OpenAL backend
-	if (stricmp(snd_backend, "fmod") == 0)
-	{
-		Printf (TEXTCOLOR_ORANGE "FMOD Ex sound system was removed, switching to OpenAL\n");
-		snd_backend = "openal";
-	}
-#endif // NO_OPENAL
-
+	// Keep it simple: let everything except "null" init the sound.
 	if (stricmp(snd_backend, "null") == 0)
 	{
 		GSnd = new NullSoundRenderer;
 	}
-	else if(stricmp(snd_backend, "openal") == 0)
+	else
 	{
 		#ifndef NO_OPENAL
 			if (IsOpenALPresent())
@@ -281,11 +270,6 @@ void I_InitSound ()
 				GSnd = new OpenALSoundRenderer;
 			}
 		#endif
-	}
-	else
-	{
-		Printf (TEXTCOLOR_RED"%s: Unknown sound system specified\n", *snd_backend);
-		snd_backend = "null";
 	}
 	if (!GSnd || !GSnd->IsValid ())
 	{
@@ -300,8 +284,8 @@ void I_InitSound ()
 
 void I_CloseSound ()
 {
-	// Free all loaded samples
-	S_UnloadAllSounds();
+	// Free all loaded samples. Beware that the sound engine may already have been deleted.
+	if (soundEngine) soundEngine->UnloadAllSounds();
 
 	delete GSnd;
 	GSnd = NULL;
@@ -338,36 +322,6 @@ SoundRenderer::~SoundRenderer ()
 FString SoundRenderer::GatherStats ()
 {
 	return "No stats for this sound renderer.";
-}
-
-short *SoundRenderer::DecodeSample(int outlen, const void *coded, int sizebytes, ECodecType ctype)
-{
-    short *samples = (short*)calloc(1, outlen);
-    ChannelConfig chans;
-    SampleType type;
-    int srate;
-
-	// The decoder will take ownership of the reader if it succeeds so this may not be a local variable.
-	MusicIO::MemoryReader *reader = new MusicIO::MemoryReader((const uint8_t*)coded, sizebytes);
-
-    SoundDecoder *decoder = SoundDecoder::CreateDecoder(reader);
-	if (!decoder)
-	{
-		reader->close();
-		return samples;
-	}
-
-    decoder->getInfo(&srate, &chans, &type);
-    if(chans != ChannelConfig_Mono || type != SampleType_Int16)
-    {
-        DPrintf(DMSG_WARNING, "Sample is not 16-bit mono\n");
-        delete decoder;
-        return samples;
-    }
-
-    decoder->read((char*)samples, outlen);
-    delete decoder;
-    return samples;
 }
 
 void SoundRenderer::DrawWaveDebug(int mode)
@@ -424,7 +378,7 @@ std::pair<SoundHandle,bool> SoundRenderer::LoadSoundVoc(uint8_t *sfxdata, int le
 					if (codec == 0)
 						bits = 8;
 					else if (codec == 4)
-						bits = -16;
+						bits = 16;
 					else okay = false;
 					len += blocksize - 2;
 				}
@@ -475,7 +429,7 @@ std::pair<SoundHandle,bool> SoundRenderer::LoadSoundVoc(uint8_t *sfxdata, int le
 					if (codec == 0)
 						bits = 8;
 					else if (codec == 4)
-						bits = -16;
+						bits = 16;
 					else okay = false;
 					len += blocksize - 12;
 				} else okay = false;

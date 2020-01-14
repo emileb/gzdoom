@@ -371,6 +371,12 @@ int FWadCollection::GetNumLumps () const
 	return NumLumps;
 }
 
+DEFINE_ACTION_FUNCTION(_Wads, GetNumLumps)
+{
+	PARAM_PROLOGUE;
+	ACTION_RETURN_INT(Wads.GetNumLumps());
+}
+
 //==========================================================================
 //
 // GetNumFiles
@@ -879,9 +885,12 @@ void FWadCollection::RenameSprites (const TArray<FString> &deletelumps)
 			{
 				if (LumpInfo[i].lump->dwName == MAKE_ID('M', 'N', 'T', 'R'))
 				{
-					if (LumpInfo[i].lump->Name[4] >= 'F' && LumpInfo[i].lump->Name[4] <= 'K')
+					for (size_t fi : {4, 6})
 					{
-						LumpInfo[i].lump->Name[4] += 'U' - 'F';
+						if (LumpInfo[i].lump->Name[fi] >= 'F' && LumpInfo[i].lump->Name[fi] <= 'K')
+						{
+							LumpInfo[i].lump->Name[fi] += 'U' - 'F';
+						}
 					}
 				}
 			}
@@ -1220,6 +1229,15 @@ void FWadCollection::GetLumpName(FString &to, int lump) const
 	}
 }
 
+DEFINE_ACTION_FUNCTION(_Wads, GetLumpName)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(lump);
+	FString lumpname;
+	Wads.GetLumpName(lumpname, lump);
+	ACTION_RETURN_STRING(lumpname);
+}
+
 //==========================================================================
 //
 // FWadCollection :: GetLumpFullName
@@ -1236,6 +1254,13 @@ const char *FWadCollection::GetLumpFullName (int lump) const
 		return LumpInfo[lump].lump->FullName;
 	else
 		return LumpInfo[lump].lump->Name;
+}
+
+DEFINE_ACTION_FUNCTION(_Wads, GetLumpFullName)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(lump);
+	ACTION_RETURN_STRING(Wads.GetLumpFullName(lump));
 }
 
 //==========================================================================
@@ -1269,6 +1294,13 @@ int FWadCollection::GetLumpNamespace (int lump) const
 		return ns_global;
 	else
 		return LumpInfo[lump].lump->Namespace;
+}
+
+DEFINE_ACTION_FUNCTION(_Wads, GetLumpNamespace)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(lump);
+	ACTION_RETURN_INT(Wads.GetLumpNamespace(lump));
 }
 
 //==========================================================================

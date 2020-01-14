@@ -117,7 +117,7 @@ void Linux_I_FatalError(const char* errortext)
 	if((str=getenv("KDE_FULL_SESSION")) && strcmp(str, "true") == 0)
 	{
 		FString cmd;
-		cmd << "kdialog --title \"" GAMESIG " " << GetVersionString()
+		cmd << "kdialog --title \"" GAMENAME " " << GetVersionString()
 			<< "\" --msgbox \"" << errortext << "\"";
 		popen(cmd, "r");
 	}
@@ -130,7 +130,7 @@ void Linux_I_FatalError(const char* errortext)
 	else
 	{
 		FString title;
-		title << GAMESIG " " << GetVersionString();
+		title << GAMENAME " " << GetVersionString();
 
 #ifdef __ANDROID__
         LOGI("FATAL ERROR: %s", errortext);
@@ -213,7 +213,7 @@ int I_PickIWad (WadStuff *wads, int numwads, bool showwin, int defaultiwad)
 	const char *str;
 	if((str=getenv("KDE_FULL_SESSION")) && strcmp(str, "true") == 0)
 	{
-		FString cmd("kdialog --title \"" GAMESIG " ");
+		FString cmd("kdialog --title \"" GAMENAME " ");
 		cmd << GetVersionString() << ": Select an IWAD to use\""
 					" --menu \"" GAMENAME " found more than one IWAD\n"
 					"Select from the list below to determine which one to use:\"";
@@ -273,6 +273,11 @@ int I_PickIWad (WadStuff *wads, int numwads, bool showwin, int defaultiwad)
 	return I_PickIWad_Cocoa (wads, numwads, showwin, defaultiwad);
 #endif
 	
+	if (!isatty(fileno(stdin)))
+	{
+		return defaultiwad;
+	}
+
 	printf ("Please select a game wad (or 0 to exit):\n");
 	for (i = 0; i < numwads; ++i)
 	{
@@ -360,14 +365,7 @@ int I_FindClose (void *handle)
 int I_FindAttr(findstate_t* const fileinfo)
 {
 	dirent* const ent = fileinfo->namelist[fileinfo->current];
-	bool isdir;
-
-	if (DirEntryExists(ent->d_name, &isdir))
-	{
-		return isdir ? FA_DIREC : 0;
-	}
-
-	return 0;
+	return (ent->d_type & DT_DIR) ? FA_DIREC : 0;
 }
 
 void I_PutInClipboard (const char *str)

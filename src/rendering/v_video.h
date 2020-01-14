@@ -46,8 +46,11 @@
 #include "v_2ddrawer.h"
 #include "hwrenderer/dynlights/hw_shadowmap.h"
 
-static const int VID_MIN_WIDTH = 640;
-static const int VID_MIN_HEIGHT = 400;
+static const int VID_MIN_WIDTH = 320;
+static const int VID_MIN_HEIGHT = 200;
+
+static const int VID_MIN_UI_WIDTH = 640;
+static const int VID_MIN_UI_HEIGHT = 400;
 
 struct sector_t;
 class FTexture;
@@ -326,7 +329,7 @@ class DCanvas
 public:
 	DCanvas (int width, int height, bool bgra);
 	~DCanvas ();
-	void Resize(int width, int height);
+	void Resize(int width, int height, bool optimizepitch = true);
 
 	// Member variable access
 	inline uint8_t *GetPixels () const { return Pixels.Data(); }
@@ -434,6 +437,9 @@ public:
 	virtual ~DFrameBuffer();
 	virtual void InitializeState() = 0;	// For stuff that needs 'screen' set.
 	virtual bool IsVulkan() { return false; }
+	virtual bool IsPoly() { return false; }
+
+	virtual DCanvas* GetCanvas() { return nullptr; }
 
 	void SetSize(int width, int height);
 	void SetVirtualSize(int width, int height)

@@ -462,7 +462,8 @@ set( PLAT_WIN32_SOURCES
 	win32/gl_sysfb.cpp
 	win32/base_sysfb.cpp
 	win32/win32basevideo.cpp
-	win32/win32glvideo.cpp)
+	win32/win32glvideo.cpp
+	win32/win32polyvideo.cpp)
 	
 if (HAVE_VULKAN)
 	set (PLAT_WIN32_SOURCES ${PLAT_WIN32_SOURCES} win32/win32vulkanvideo.cpp )
@@ -634,7 +635,7 @@ file( GLOB HEADER_FILES
 	rendering/polyrenderer/*.h
 	rendering/polyrenderer/math/*.h
 	rendering/polyrenderer/drawers/*.h
-	rendering/polyrenderer/scene/*.h
+	rendering/polyrenderer/backend/*.h
 	rendering/hwrenderer/data/*.h
 	rendering/hwrenderer/dynlights/*.h
 	rendering/hwrenderer/models/*.h
@@ -706,25 +707,12 @@ set ( SWRENDER_SOURCES
 )
 
 set( POLYRENDER_SOURCES
-	rendering/polyrenderer/poly_renderer.cpp
-	rendering/polyrenderer/poly_renderthread.cpp
-	rendering/polyrenderer/scene/poly_scene.cpp
-	rendering/polyrenderer/scene/poly_portal.cpp
-	rendering/polyrenderer/scene/poly_cull.cpp
-	rendering/polyrenderer/scene/poly_decal.cpp
-	rendering/polyrenderer/scene/poly_particle.cpp
-	rendering/polyrenderer/scene/poly_plane.cpp
-	rendering/polyrenderer/scene/poly_playersprite.cpp
-	rendering/polyrenderer/scene/poly_wall.cpp
-	rendering/polyrenderer/scene/poly_wallsprite.cpp
-	rendering/polyrenderer/scene/poly_sprite.cpp
-	rendering/polyrenderer/scene/poly_model.cpp
-	rendering/polyrenderer/scene/poly_sky.cpp
-	rendering/polyrenderer/scene/poly_light.cpp
-	rendering/polyrenderer/drawers/poly_buffer.cpp
 	rendering/polyrenderer/drawers/poly_triangle.cpp
-	rendering/polyrenderer/drawers/poly_draw_args.cpp
+	rendering/polyrenderer/drawers/poly_thread.cpp
 	rendering/polyrenderer/drawers/screen_triangle.cpp
+	rendering/polyrenderer/drawers/screen_scanline_setup.cpp
+	rendering/polyrenderer/drawers/screen_shader.cpp
+	rendering/polyrenderer/drawers/screen_blend.cpp
 	rendering/polyrenderer/math/gpu_types.cpp
 )
 
@@ -822,6 +810,14 @@ if (HAVE_VULKAN)
 	set (FASTMATH_SOURCES ${FASTMATH_SOURCES} ${VULKAN_SOURCES})
 endif()
 
+set (POLYBACKEND_SOURCES
+	rendering/polyrenderer/backend/poly_framebuffer.cpp
+	rendering/polyrenderer/backend/poly_buffers.cpp
+	rendering/polyrenderer/backend/poly_hwtexture.cpp
+	rendering/polyrenderer/backend/poly_renderstate.cpp
+)
+set (FASTMATH_SOURCES ${FASTMATH_SOURCES} ${POLYBACKEND_SOURCES})
+
 set (PCH_SOURCES
 	am_map.cpp
 	playsim/bots/b_bot.cpp
@@ -886,7 +882,9 @@ set (PCH_SOURCES
 	rendering/r_videoscale.cpp
 	sound/s_advsound.cpp
 	sound/s_environment.cpp
+	sound/s_reverbedit.cpp
 	sound/s_sndseq.cpp
+	sound/s_doomsound.cpp
 	sound/s_sound.cpp
 	sound/s_music.cpp
 	serializer.cpp
@@ -1003,6 +1001,7 @@ set (PCH_SOURCES
 	maploader/polyobjects.cpp
 	maploader/renderinfo.cpp
 	maploader/compatibility.cpp
+	maploader/postprocessor.cpp
 	menu/joystickmenu.cpp
 	menu/loadsavemenu.cpp
 	menu/menu.cpp
@@ -1172,6 +1171,7 @@ add_executable( zdoom WIN32 MACOSX_BUNDLE
 	utility/x86.cpp
 	utility/strnatcmp.c
 	utility/zstring.cpp
+	utility/dictionary.cpp
 	utility/math/asin.c
 	utility/math/atan.c
 	utility/math/const.c
@@ -1396,7 +1396,7 @@ source_group("Rendering\\Software Renderer\\Viewport" REGULAR_EXPRESSION "^${CMA
 source_group("Rendering\\Poly Renderer" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/rendering/polyrenderer/.+")
 source_group("Rendering\\Poly Renderer\\Math" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/rendering/polyrenderer/math/.+")
 source_group("Rendering\\Poly Renderer\\Drawers" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/rendering/polyrenderer/drawers/.+")
-source_group("Rendering\\Poly Renderer\\Scene" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/rendering/polyrenderer/scene/.+")
+source_group("Rendering\\Poly Renderer\\Backend" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/rendering/polyrenderer/backend/.+")
 source_group("Render Data" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/r_data/.+")
 source_group("Render Data\\Models" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/r_data/models/.+")
 source_group("Render Interface" FILES r_defs.h r_renderer.h r_sky.cpp r_sky.h r_state.h r_utility.cpp r_utility.h)

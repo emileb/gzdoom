@@ -132,6 +132,8 @@ void ZCCCompiler::ProcessClass(ZCC_Class *cnode, PSymbolTreeNode *treenode)
 	}
 
 	auto node = cnode->Body;
+	auto origNextNode = cnode->Body;
+	ZCC_MixinDef *mixinDef = nullptr;
 	PSymbolTreeNode *childnode;
 	ZCC_Enum *enumType = nullptr;
 
@@ -140,6 +142,39 @@ void ZCCCompiler::ProcessClass(ZCC_Class *cnode, PSymbolTreeNode *treenode)
 	{
 		switch (node->NodeType)
 		{
+		case AST_MixinStmt:
+		{
+			auto mixinStmt = static_cast<ZCC_MixinStmt *>(node);
+			for (auto mx : Mixins)
+			{
+				if (mx->mixin->NodeName == mixinStmt->MixinName)
+				{
+					if (mx->mixin->MixinType != ZCC_Mixin_Class)
+					{
+						Error(node, "Mixin %s is not a class mixin.", FName(mixinStmt->MixinName).GetChars());
+					}
+
+					mixinDef = mx->mixin;
+					break;
+				}
+			}
+
+			if (mixinDef == nullptr)
+			{
+				Error(node, "Mixin %s does not exist.", FName(mixinStmt->MixinName).GetChars());
+				break;
+			}
+
+			if (mixinDef->Body != nullptr)
+			{
+				origNextNode = node->SiblingNext;
+				node = mixinDef->Body;
+
+				continue;
+			}
+		}
+		break;
+
 		case AST_Struct:
 		case AST_ConstantDef:
 		case AST_Enum:
@@ -211,9 +246,63 @@ void ZCCCompiler::ProcessClass(ZCC_Class *cnode, PSymbolTreeNode *treenode)
 			assert(0 && "Unhandled AST node type");
 			break;
 		}
+
 		node = node->SiblingNext;
+
+		if (mixinDef != nullptr && node == mixinDef->Body)
+		{
+			node = origNextNode;
+			mixinDef = nullptr;
+		}
 	}
 	while (node != cnode->Body);
+}
+
+//==========================================================================
+//
+// ZCCCompiler :: ProcessMixin
+//
+//==========================================================================
+
+void ZCCCompiler::ProcessMixin(ZCC_MixinDef *cnode, PSymbolTreeNode *treenode)
+{
+	ZCC_MixinWork *cls = new ZCC_MixinWork(cnode, treenode);
+
+	auto node = cnode->Body;
+
+	// Need to check if the mixin actually has a body.
+	if (node != nullptr) do
+	{
+		if (cnode->MixinType == ZCC_Mixin_Class)
+		{
+			switch (node->NodeType)
+			{
+			case AST_Struct:
+			case AST_ConstantDef:
+			case AST_Enum:
+			case AST_Property:
+			case AST_FlagDef:
+			case AST_VarDeclarator:
+			case AST_EnumTerminator:
+			case AST_States:
+			case AST_FuncDeclarator:
+			case AST_StaticArrayStatement:
+				break;
+
+			case AST_Default:
+				Error(node, "Default blocks currently disabled in mixins");
+				return;
+
+			default:
+				assert(0 && "Unhandled AST node type");
+				break;
+			}
+		}
+
+		node = node->SiblingNext;
+	} while (node != cnode->Body);
+
+	Mixins.Push(cls);
 }
 
 //==========================================================================
@@ -301,6 +390,28 @@ ZCCCompiler::ZCCCompiler(ZCC_AST &ast, DObject *_outer, PSymbolTable &_symbols, 
 	{
 		ZCC_TreeNode *node = ast.TopNode;
 		PSymbolTreeNode *tnode;
+
+		// [pbeta] Anything that must be processed before classes, structs, etc. should go here.
+		do
+		{
+			switch (node->NodeType)
+			{
+			// [pbeta] Mixins must be processed before everything else.
+			case AST_MixinDef:
+				if ((tnode = AddTreeNode(static_cast<ZCC_NamedNode *>(node)->NodeName, node, GlobalTreeNodes)))
+				{
+					ProcessMixin(static_cast<ZCC_MixinDef *>(node), tnode);
+					break;
+				}
+				break;
+
+			default:
+				break; // Shut GCC up.
+			}
+			node = node->SiblingNext;
+		} while (node != ast.TopNode);
+
+		node = ast.TopNode;
 		PType *enumType = nullptr;
 		ZCC_Enum *zenumType = nullptr;
 
@@ -308,6 +419,10 @@ ZCCCompiler::ZCCCompiler(ZCC_AST &ast, DObject *_outer, PSymbolTable &_symbols, 
 		{
 			switch (node->NodeType)
 			{
+			case AST_MixinDef:
+				// [pbeta] We already processed mixins, ignore them here.
+				break;
+
 			case AST_Class:
 				// a class extension should not check the tree node symbols.
 				if (static_cast<ZCC_Class *>(node)->Flags == ZCC_Extension)
