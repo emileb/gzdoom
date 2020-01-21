@@ -153,17 +153,27 @@ void OpenGLFrameBuffer::InitializeState()
 	SetViewportRects(nullptr);
 
 #ifdef USE_GL_HW_BUFFERS
-	for (int n = 0; n < nbrHwBuffers; n++)
+	if (screen->nbrHwBuffers > 1)
 	{
-		mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
-		mSkyDataBuf[n] = new FSkyVertexBuffer;
-		mViewpointsBuf[n] = new HWViewpointBuffer;
-		mLightsBuf[n] = new FLightBuffer();
+		for (int n = 0; n < nbrHwBuffers; n++)
+		{
+			mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+			mSkyDataBuf[n] = new FSkyVertexBuffer;
+			mViewpointsBuf[n] = new HWViewpointBuffer;
+			mLightsBuf[n] = new FLightBuffer();
+		}
+		NextVtxBuffer();
+		NextSkyBuffer();
+		NextViewBuffer();
+		NextLightBuffer();
 	}
-	NextVtxBuffer();
-	NextSkyBuffer();
-	NextViewBuffer();
-	NextLightBuffer();
+	else
+	{
+		mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+    	mSkyData = new FSkyVertexBuffer;
+    	mViewpoints = new HWViewpointBuffer;
+    	mLights = new FLightBuffer();
+	}
 #else
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
 	mSkyData = new FSkyVertexBuffer;
@@ -276,7 +286,8 @@ void OpenGLFrameBuffer::Swap()
     GLRenderer->mShaderManager->SetActiveShader(0);
 #endif
 #ifdef USE_GL_HW_BUFFERS
-	screen->mVertexData->DropSync();
+	if (screen->nbrHwBuffers > 1)
+		screen->mVertexData->DropSync();
 	FPSLimit();
 	SwapBuffers();
 #else
@@ -412,12 +423,15 @@ void OpenGLFrameBuffer::UpdatePalette()
 void OpenGLFrameBuffer::BeginFrame()
 {
 #ifdef USE_GL_HW_BUFFERS
-	screen->NextVtxBuffer();
-	screen->NextLightBuffer();
-	screen->NextSkyBuffer();
-	screen->NextViewBuffer();
+	if (screen->nbrHwBuffers > 1)
+	{
+		screen->NextVtxBuffer();
+		screen->NextLightBuffer();
+		screen->NextSkyBuffer();
+		screen->NextViewBuffer();
 
-	screen->mVertexData->WaitSync();
+		screen->mVertexData->WaitSync();
+	}
 #endif
 	SetViewportRects(nullptr);
 	if (GLRenderer != nullptr)
