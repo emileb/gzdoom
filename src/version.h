@@ -41,21 +41,25 @@ const char *GetVersionString();
 
 /** Lots of different version numbers **/
 
-#define VERSIONSTR "4.3.2"
+
+#define VERSIONSTR "4.4pre"
 
 // The version as seen in the Windows resource
-#define RC_FILEVERSION 4,3,2,0
-#define RC_PRODUCTVERSION 4,3,2,0
+#define RC_FILEVERSION 4,3,3,0
+#define RC_PRODUCTVERSION 4,3,3,0
+
 #define RC_PRODUCTVERSION2 VERSIONSTR
 // These are for content versioning.
 #define VER_MAJOR 4
 #define VER_MINOR 3
-#define VER_REVISION 2
+#define VER_REVISION 3
+
 
 // This should always refer to the GZDoom version a derived port is based on and not reflect the derived port's version number!
 #define ENG_MAJOR 4
 #define ENG_MINOR 3
-#define ENG_REVISION 2
+#define ENG_REVISION 3
+
 
 // Version identifier for network games.
 // Bump it every time you do a release unless you're certain you
