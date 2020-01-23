@@ -401,10 +401,12 @@ void I_PolyPresentUnlock(int x, int y, int width, int height)
 		SDL_RenderFillRects(polyrendertarget, clearrects, count);
 
 	SDL_Rect dstrect;
-	dstrect.x = x;
-	dstrect.y = y;
-	dstrect.w = width;
-	dstrect.h = height;
+#ifdef __MOBILE__ // Make it fit the screen properly
+	dstrect.x = 0;
+	dstrect.y = 0;
+	dstrect.w = ClientWidth;
+	dstrect.h = ClientHeight;
+#endif
 	SDL_RenderCopy(polyrendertarget, polytexture, nullptr, &dstrect);
 
 	SDL_RenderPresent(polyrendertarget);
@@ -442,6 +444,14 @@ SDLVideo::SDLVideo ()
 		Priv::library.Load({ "libSDL2-2.0.so.0", "libSDL2-2.0.so", "libSDL2.so" });
 	}
 #endif // !SDL2_STATIC_LIBRARY
+
+#ifdef __MOBILE__
+	Priv::softpolyEnabled = vid_preferbackend == 2;
+	if (Priv::softpolyEnabled)
+	{
+		Priv::CreateWindow(SDL_WINDOW_HIDDEN);
+	}
+#endif
 
 #ifdef HAVE_VULKAN
 	Priv::vulkanEnabled = vid_preferbackend == 1
@@ -531,6 +541,9 @@ SystemBaseFrameBuffer::SystemBaseFrameBuffer (void *, bool fullscreen)
 
 int SystemBaseFrameBuffer::GetClientWidth()
 {
+#ifdef __MOBILE__
+	return polytexturew;
+#endif
 	int width = 0;
 
 	if (Priv::softpolyEnabled)
@@ -552,6 +565,9 @@ int SystemBaseFrameBuffer::GetClientWidth()
 
 int SystemBaseFrameBuffer::GetClientHeight()
 {
+#ifdef __MOBILE__
+	return polytextureh;
+#endif
 	int height = 0;
 	
 	if (Priv::softpolyEnabled)

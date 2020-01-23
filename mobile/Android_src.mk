@@ -7,10 +7,11 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g4
 
-LOCAL_CFLAGS   :=  -fvisibility=hidden -frtti -DUSE_GL_HW_BUFFERS -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   := -DUSE_GL_HW_BUFFERS -fvisibility=hidden -frtti  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 #-DNO_PIX_BUFF
 #-DUSE_GL_HW_BUFFERS
 #-DHAVE_VULKAN
+#-DUSE_GL_HW_BUFFERS
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -555,7 +556,7 @@ LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 #LOCAL_LDLIBS +=-lGLESv1_CM
 #LOCAL_LDLIBS += -lGLESv3
 
-LOCAL_LDLIBS +=  -lEGL
+LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
 # This is stop a linker warning for mp123 lib failing build
 #LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
