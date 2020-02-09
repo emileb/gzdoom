@@ -125,7 +125,7 @@ void gl_LoadExtensions()
 	InitContext();
 	CollectExtensions();
 
-Printf("gl_LoadExtensions");
+	Printf("gl_LoadExtensions");
 	// This loads any function pointers and flags that require a vaild render context to
 	// initialize properly
 
