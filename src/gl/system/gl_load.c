@@ -27,24 +27,40 @@ static void CATCH(int a, int b, int c, int d, int e)
 	LOGI("CAUGHT BAD");
 }
 
+int glesLoad = 1; // TODO fix this!
+
 static void* PosixGetProcAddressMobile (const GLubyte* name)
 {
   static void* h = NULL;
   static void* gpa = NULL;
 
-  if (h == NULL)
-  {
-    if ((h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL)) == NULL)
+    if (h == NULL)
     {
-        LOGI("ERROR loading libjwzgles_shared");
-        return NULL;
+        if( glesLoad == 1 )
+        {
+            h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL);
+        }
+        else if( glesLoad == 2 )
+        {
+            h = dlopen("libGL4ES.so", RTLD_LAZY | RTLD_LOCAL);
+            void (*initialize_gl4es)( void )  = dlsym(h, "initialize_gl4es");
+            initialize_gl4es();
+        }
+
+        if (h == NULL)
+        {
+            LOGI("ERROR loading GL SHIM");
+            return NULL;
+        }
     }
-    //gpa = dlsym(h, "glXGetProcAddress");
-  }
 
   char newName[64];
   memset(newName,0,64);
-  sprintf(newName,"jwzgles_%s",name);
+
+    if( glesLoad == 1 )
+        sprintf(newName,"jwzgles_%s",name);
+    else if( glesLoad == 2 )
+        sprintf(newName,"%s",name);
 
   void * ret = 0;
   if (gpa != NULL)
@@ -54,12 +70,12 @@ static void* PosixGetProcAddressMobile (const GLubyte* name)
 
   if( !ret )
   {
-    LOGI("Loading.. %s    FAIL", newName);
+    //LOGI("Loading.. %s    FAIL", newName);
     ret = CATCH;
   }
   else
   {
-    LOGI("Loading.. %s    OK (%p)", newName, ret);
+    //LOGI("Loading.. %s    OK", newName);
   }
   return ret;
 }

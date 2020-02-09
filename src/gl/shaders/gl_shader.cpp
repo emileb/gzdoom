@@ -62,7 +62,9 @@
 CVAR(Bool, gl_warp_shader, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
 CVAR(Bool, gl_fog_shader, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
 CVAR(Bool, gl_colormap_shader, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
-CVAR(Bool, gl_brightmap_shader, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
+#ifdef __MOBILE__
+CVAR(Bool, gl_brightmap_shader, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
+#endif
 CVAR(Bool, gl_glow_shader, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
 
 
@@ -98,6 +100,10 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 			vp_comb << "#define NO_SM4\n";
 		}
 
+#ifdef __MOBILE__
+        //vp_comb << "#define NO_TEXTUREMODE\n"; // Needed to fix brightmaps..TODO
+       //vp_comb << "#define  NO_DESATURATE\n";
+#endif
 		fp_comb = vp_comb;
 		// This uses GetChars on the strings to get rid of terminating 0 characters.
 		vp_comb << vp_data.GetString().GetChars() << "\n";
@@ -162,8 +168,15 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		{
 			error << "Linking:\n" << buffer << "\n";
 		}
+#ifdef __ANDROID__
+		int linked = 1;
+        int linkStatus[1];
+        glGetProgramiv(hShader, GL_LINK_STATUS, linkStatus);
+        linked = (linkStatus[0] == GL_TRUE) ;
+#else
 		int linked;
 		glGetProgramiv(hShader, GL_LINK_STATUS, &linked);
+#endif
 		if (linked == 0)
 		{
 			// only print message if there's an error.
@@ -190,7 +203,11 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		glUseProgram(hShader);
 
 		int texture_index = glGetUniformLocation(hShader, "texture2");
+#ifdef __MOBILE__ //Actually 0 can be valid on some mobile chips..
+		if (texture_index >= 0) glUniform1i(texture_index, 1);
+#else
 		if (texture_index > 0) glUniform1i(texture_index, 1);
+#endif
 
 		glUseProgram(0);
 		return !!linked;
@@ -329,6 +346,7 @@ FShaderContainer::FShaderContainer(const char *ShaderName, const char *ShaderPat
 					str = "#version 120\n#extension GL_EXT_gpu_shader4 : enable\n";
 					if (gl.MaxLights() == 128) str += "#define MAXLIGHTS128\n";
 				}
+#ifndef __MOBILE__ // Why is this here?? Need to remove so shaders 0 to 7 are loaded with shader mode 3...
 				if ((i&8) == 0)
 				{
 					if (gl.shadermodel != 4)
@@ -337,6 +355,8 @@ FShaderContainer::FShaderContainer(const char *ShaderName, const char *ShaderPat
 						continue;
 					}
 				}
+#endif
+
 				str += shaderdefines[i];
 				shader[i] = new FShader;
 				if (!shader[i]->Load(name, "shaders/glsl/main.vp", "shaders/glsl/main.fp", ShaderPath, str.GetChars()))
@@ -350,6 +370,12 @@ FShaderContainer::FShaderContainer(const char *ShaderName, const char *ShaderPat
 				shader[i] = NULL;
 				I_Error("Unable to load shader %s:\n%s\n", name.GetChars(), err.GetMessage());
 			}
+#ifdef __MOBILE__
+			if( shader[i] )
+			    Printf("Shader %d LOADED",i);
+            else
+                Printf("Shader %d NOT LOADED",i);
+#endif
 		}
 	}
 	else memset(shader, 0, sizeof(shader));

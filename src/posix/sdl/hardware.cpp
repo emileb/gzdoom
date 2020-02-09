@@ -192,6 +192,9 @@ bool I_CheckResolution (int width, int height, int bits)
 
 void I_ClosestResolution (int *width, int *height, int bits)
 {
+#ifdef __ANDROID__ // Always allow the specified resolution
+	return;
+#endif
 	int twidth, theight;
 	int cwidth = 0, cheight = 0;
 	int iteration;
@@ -325,7 +328,9 @@ CUSTOM_CVAR (Bool, fullscreen, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 	NewWidth = screen->GetWidth();
 	NewHeight = screen->GetHeight();
 	NewBits = DisplayBits;
+#ifndef __MOBILE__ // If set this reloads the gl context and messes up the state
 	setmodeneeded = true;
+#endif
 }
 
 CUSTOM_CVAR (Float, vid_winscale, 1.f, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)

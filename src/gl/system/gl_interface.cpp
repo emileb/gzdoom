@@ -111,6 +111,9 @@ static void InitContext()
 	gl.flags=0;
 }
 
+#ifdef __MOBILE__
+extern int glesLoad;
+#endif
 //==========================================================================
 //
 // 
@@ -122,21 +125,46 @@ void gl_LoadExtensions()
 	InitContext();
 	CollectExtensions();
 
-	const char *version = (const char*)glGetString(GL_VERSION);
-
-	// Don't even start if it's lower than 1.3
-	if (strcmp(version, "2.0") < 0) 
-	{
-		//I_FatalError("Unsupported OpenGL version.\nAt least GL 2.0 is required to run " GAMENAME ".\n");
-	}
-
+Printf("gl_LoadExtensions");
 	// This loads any function pointers and flags that require a vaild render context to
 	// initialize properly
 
 	gl.shadermodel = 0;	// assume no shader support
 	gl.vendorstring=(char*)glGetString(GL_VENDOR);
+#ifdef __MOBILE__
 
-#ifndef __MOBILE__
+	gl.flags = 0;
+
+    if( glesLoad == 1)
+    {
+	    gl.shadermodel = 0;	// assume no shader support
+	    gl.vendorstring =(char*)glGetString(GL_VENDOR);
+
+        if (CheckExtension("GL_OES_texture_npot")) gl.npot = true;
+    }
+    else if( glesLoad == 2)
+    {
+
+        gl.shadermodel = 2;
+        if( Args->CheckParm("-sm3") )
+        {
+            Printf("Enableing shaders for GLES2");
+            gl.shadermodel = 3; // UNCOMMENT THIS TO ENABLE SHADERS
+        }
+        gl.flags|=RFL_GL_20;
+        gl.flags|=RFL_GL_21;
+
+        //gl.flags |= RFL_VBO;
+        gl.flags |= RFL_MAP_BUFFER_RANGE;
+        gl.flags |= RFL_FRAMEBUFFER;
+    }
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE,&gl.max_texturesize);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    //This is needed to the fix the brutal doom white lines?!
+    glDisable(GL_CLIP_PLANE0);
+    glEnable(GL_CLIP_PLANE0);
+#else
 	if (CheckExtension("GL_ARB_texture_compression")) gl.flags|=RFL_TEXTURE_COMPRESSION;
 	if (CheckExtension("GL_EXT_texture_compression_s3tc")) gl.flags|=RFL_TEXTURE_COMPRESSION_S3TC;
 	if (strstr(gl.vendorstring, "NVIDIA")) gl.flags|=RFL_NVIDIA;
@@ -177,14 +205,6 @@ void gl_LoadExtensions()
 	{
 		gl.flags|=RFL_FRAMEBUFFER;
 	}
-#else
-    gl.flags = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE,&gl.max_texturesize);
-    gl.npot = false;
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    //This is needed to the fix the brutal doom white lines?!
-    glDisable(GL_CLIP_PLANE0);
-    glEnable(GL_CLIP_PLANE0);
 #endif
 }
 

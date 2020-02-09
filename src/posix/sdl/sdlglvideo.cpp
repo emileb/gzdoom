@@ -25,6 +25,9 @@
 #include "gl/textures/gl_material.h"
 #include "gl/system/gl_cvars.h"
 
+#ifdef __ANDROID__
+#include "m_argv.h"
+#endif
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -275,7 +278,9 @@ bool SDLGLVideo::SetResolution (int width, int height, int bits)
 // 
 //
 //==========================================================================
-
+#ifdef __ANDROID__
+extern int glesLoad;
+#endif
 bool SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample)
 {
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE,  8 );
@@ -292,6 +297,21 @@ bool SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample)
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1 );
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, multisample );
 	}
+
+#ifdef __ANDROID__
+    const char *version = Args->CheckValue("-glversion");
+    if( !strcmp(version, "gles1") )
+    {
+        glesLoad = 1;
+    }
+    else if ( !strcmp(version, "gles2") )
+    {
+        glesLoad = 2;
+    }
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glesLoad);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#endif
 	return true;
 }
 
