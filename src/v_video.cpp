@@ -1702,6 +1702,12 @@ int CheckRatio (int width, int height, int *trueratio)
 	{
 		ratio = 4;
 	}
+#ifdef __MOBILE__
+	else if (((float)width / (float)height) > 1.77 ) // Mobiles can be super widescreen..
+    {
+        ratio = 2; // 16:9
+    }
+#endif
 	// Assume anything else is 4:3. (Which is probably wrong these days...)
 	else
 	{
