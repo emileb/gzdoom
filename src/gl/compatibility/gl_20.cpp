@@ -86,8 +86,10 @@ void gl_PatchMenu()
 	}
 
 	// disable features that don't work without shaders.
+#ifndef __MOBILE__ // This code is correct, however people keep complaining about how it reverts, so don't revert
 	if (gl_lightmode == (int)ELightMode::Doom || gl_lightmode == (int)ELightMode::ZDoomSoftware || gl_lightmode == (int)ELightMode::DoomSoftware)
 		gl_lightmode = (int)ELightMode::DoomDark;
+#endif
 	if (gl_fogmode == 2) gl_fogmode = 1;
 
 	// remove more unsupported stuff like postprocessing options.
