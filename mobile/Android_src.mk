@@ -7,7 +7,7 @@ LOCAL_MODULE    := gzdoom_3.2
 
 
 # NOTE 3/11/19, optimise with O1 - O2 (defualt) breaks it on armv7. To test:  create a quicksave slot, press the quickload button and when it asks if you want to quickload the game, choose "no"
-LOCAL_CFLAGS   :=  -O1  -DNO_VBO -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_3.2\"
+LOCAL_CFLAGS   :=   -DNO_CLOCK_GETTIME  -DNO_VBO -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_3.2\"
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES  -Wno-incompatible-pointer-types -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
 
