@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := gzdoom_1.9
 
 #-DNO_FMOD
-LOCAL_CFLAGS   := -D__MOBILE__ -DGZDOOM1_9 -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_1.9\"
+LOCAL_CFLAGS   :=  -DNO_CLOCK_GETTIME -D__MOBILE__ -DGZDOOM1_9 -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_1.9\"
 LOCAL_CPPFLAGS := -DNOASM -DFMOD_STUDIO -DDISABLE_SSE -DHAVE_FLUIDSYNTH  -DHAVE_MPG123 -DHAVE_SNDFILE -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES  -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
 

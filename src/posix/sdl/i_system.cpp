@@ -36,7 +36,7 @@
 #include <signal.h>
 #ifndef NO_GTK
 #include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
+#include <gdk/gdkkeysyms.h> 
 #endif
 
 #include "doomerrors.h"
@@ -70,6 +70,8 @@
 
 #include "m_fixed.h"
 #include "g_level.h"
+
+#include <time.h>
 
 #ifdef __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
