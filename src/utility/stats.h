@@ -39,6 +39,55 @@
 #if !defined _WIN32 && !defined __APPLE__
 
 #ifdef NO_CLOCK_GETTIME
+
+#ifdef __ANDROID__ // This studip thing tis to try and fix SW mode on ARM, some memory issue I think. When empty the screen becomes black
+
+#include <time.h>
+
+class cycle_t
+{
+public:
+	void Reset()
+	{
+		Sec = 0;
+	}
+
+	void Clock()
+	{
+		if(Sec == 12345)
+		{
+			timespec ts;
+
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			Sec -= ts.tv_sec + ts.tv_nsec * 1e-9;
+		}
+	}
+
+	void Unclock()
+	{
+		if(Sec == 12345)
+        {
+			timespec ts;
+
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			Sec += ts.tv_sec + ts.tv_nsec * 1e-9;
+		}
+	}
+
+	double Time()
+	{
+		return Sec;
+	}
+
+	double TimeMS()
+	{
+		return Sec * 1e3;
+	}
+
+	double Sec;
+};
+
+#else
 class cycle_t
 {
 public:
@@ -49,6 +98,7 @@ public:
 	double Time() { return 0; }
 	double TimeMS() { return 0; }
 };
+#endif
 
 #else
 
