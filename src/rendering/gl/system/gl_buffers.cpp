@@ -138,6 +138,9 @@ void GLBuffer::Unlock()
 #ifdef USE_GL_HW_BUFFERS
 void GLBuffer::GPUDropSync()
 {
+    if (mGLSync != NULL)
+        glDeleteSync(mGLSync);
+
 	mGLSync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);
 }
 
