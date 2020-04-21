@@ -562,7 +562,7 @@ LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 #LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 #asmjit_gl3
 LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3 dumb_gl3 gme_gl3 bzip2_gl3 zmusic_gl3 logwritter
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared
+LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal
 
 LOCAL_STATIC_LIBRARIES +=
 
