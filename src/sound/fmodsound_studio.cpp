@@ -1003,7 +1003,7 @@ bool FMODSoundRenderer::Init()
 #endif
 	if (snd_buffersize != 0 || snd_buffercount != 0)
 	{
-		int buffersize = snd_buffersize ? snd_buffersize : 1024;
+		int buffersize = snd_buffersize ? snd_buffersize : 512;
 		int buffercount = snd_buffercount ? snd_buffercount : 4;
 		result = Sys->setDSPBufferSize(buffersize, buffercount);
 	}
@@ -2788,12 +2788,13 @@ SoundHandle FMODSoundRenderer::LoadSoundRaw(BYTE *sfxdata, int length, int frequ
 	switch (bits)
 	{
 	case 8:
+/*
 		// Need to convert sample data from unsigned to signed.
 		for (int i = 0; i < length; ++i)
 		{
 			sfxdata[i] = sfxdata[i] - 128;
 		}
-
+*/
 	case -8:
 		exinfo.format = FMOD_SOUND_FORMAT_PCM8;
 		numsamples = length;
