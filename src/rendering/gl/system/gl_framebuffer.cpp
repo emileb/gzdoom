@@ -275,6 +275,7 @@ const char* OpenGLFrameBuffer::DeviceName() const
 //==========================================================================
 
 CVAR(Bool, gl_finishbeforeswap, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG);
+CVAR(Bool, gl_finish_force, false, 0);
 
 void OpenGLFrameBuffer::Swap()
 {
@@ -285,7 +286,11 @@ void OpenGLFrameBuffer::Swap()
 #ifdef __MOBILE__
     GLRenderer->mShaderManager->SetActiveShader(0);
 #endif
+
 #ifdef USE_GL_HW_BUFFERS
+
+	if( gl_finish_force )
+		 glFinish();
 
 	if (screen->nbrHwBuffers > 1)
 		screen->mVertexData->DropSync();
