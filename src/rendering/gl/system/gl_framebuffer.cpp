@@ -286,10 +286,23 @@ void OpenGLFrameBuffer::Swap()
     GLRenderer->mShaderManager->SetActiveShader(0);
 #endif
 #ifdef USE_GL_HW_BUFFERS
+
 	if (screen->nbrHwBuffers > 1)
 		screen->mVertexData->DropSync();
+
 	FPSLimit();
 	SwapBuffers();
+
+	if (screen->nbrHwBuffers > 1)
+	{
+		screen->NextVtxBuffer();
+		screen->NextLightBuffer();
+		screen->NextSkyBuffer();
+		screen->NextViewBuffer();
+
+		screen->mVertexData->WaitSync();
+	}
+
 #else
 	if (swapbefore) glFinish();
 	FPSLimit();
@@ -422,17 +435,6 @@ void OpenGLFrameBuffer::UpdatePalette()
 
 void OpenGLFrameBuffer::BeginFrame()
 {
-#ifdef USE_GL_HW_BUFFERS
-	if (screen->nbrHwBuffers > 1)
-	{
-		screen->NextVtxBuffer();
-		screen->NextLightBuffer();
-		screen->NextSkyBuffer();
-		screen->NextViewBuffer();
-
-		screen->mVertexData->WaitSync();
-	}
-#endif
 	SetViewportRects(nullptr);
 	if (GLRenderer != nullptr)
 		GLRenderer->BeginFrame();
