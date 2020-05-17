@@ -44,7 +44,7 @@ FTempFileName::FTempFileName (const char *prefix)
 // file name so that it can be used as input to Timidity.
 #ifdef __ANDROID__
 	Name = (char*)malloc(256);
-	sprintf(Name,"./gzdoom_dev/%s",prefix);
+	sprintf(Name,"./user_files/gzdoom_dev/%s",prefix);
 #else
 	Name = tempnam (NULL, prefix);
 #endif
