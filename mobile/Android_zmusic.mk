@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := zmusic_gl3
 
-LOCAL_CPPFLAGS := -frtti -DHAVE_SNDFILE -DHAVE_FLUIDSYNTH  -fexceptions -std=c++11 -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp  -fsigned-char
+LOCAL_CPPFLAGS := -frtti -DHAVE_SNDFILE -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -fexceptions -std=c++11 -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp  -fsigned-char
 
 LOCAL_C_INCLUDES :=  \
 $(LOCAL_PATH)/../adlmidi \
