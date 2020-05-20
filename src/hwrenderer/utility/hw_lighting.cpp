@@ -82,7 +82,9 @@ CUSTOM_CVAR(Int,gl_fogmode,1,CVAR_ARCHIVE|CVAR_NOINITCALL)
 	if (self<0) self=0;
 }
 
-
+#ifdef __MOBILE__
+EXTERN_CVAR(Float, vid_brightness)
+#endif
 //==========================================================================
 //
 // Get current light level
@@ -121,7 +123,14 @@ int hw_CalcLightLevel(int lightlevel, int rellight, bool weapon, int blendfactor
 	{
 		light=lightlevel+rellight;
 	}
-
+#ifdef __MOBILE__ // Hook in brightness slider to this also, taken from old renderer
+    int brightness = vid_brightness * 255;
+    if (light<brightness)		// ambient clipping only if not using software lighting model.
+    {
+        light = brightness;
+        if (rellight<0) rellight>>=1;
+    }
+#endif
 	// Fake contrast should never turn a positive value into 0.
 	return clamp(light, 1, 255);
 }
