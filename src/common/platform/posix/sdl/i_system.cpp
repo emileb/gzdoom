@@ -110,7 +110,10 @@ void Unix_I_FatalError(const char* errortext)
 	{
 		FString title;
 		title << GAMENAME " " << GetVersionString();
-
+#ifdef __ANDROID__
+        LOGI("FATAL ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
 		if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, errortext, NULL) < 0)
 		{
 			printf("\n%s\n", errortext);
@@ -122,6 +125,11 @@ void Unix_I_FatalError(const char* errortext)
 
 void I_ShowFatalError(const char *message)
 {
+#ifdef __ANDROID__
+        LOGI("ERROR: %s", message);
+        LogWritter_Write(message);
+#endif
+
 #ifdef __APPLE__
 	Mac_I_FatalError(message);
 #elif defined __unix__
@@ -173,6 +181,10 @@ void RedrawProgressBar(int CurPos, int MaxPos)
 
 void I_PrintStr(const char *cp)
 {
+#ifdef __ANDROID__
+        LOGI("GZDOOM: %s", cp);
+        LogWritter_Write(cp);
+#endif
 	const char * srcp = cp;
 	FString printData = "";
 	bool terminal = isatty(STDOUT_FILENO);

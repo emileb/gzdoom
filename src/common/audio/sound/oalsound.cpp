@@ -1537,6 +1537,9 @@ void OpenALSoundRenderer::SetSfxPaused(bool paused, int slot)
 	}
 }
 
+#ifdef __ANDROID__
+extern "C" void OpenSL_android_set_pause( ALCdevice_struct *Device, int pause );
+#endif
 void OpenALSoundRenderer::SetInactive(SoundRenderer::EInactiveState state)
 {
 	switch(state)
@@ -1548,6 +1551,9 @@ void OpenALSoundRenderer::SetInactive(SoundRenderer::EInactiveState state)
 				alcDeviceResumeSOFT(Device);
 				getALCError(Device);
 			}
+#ifdef __ANDROID__
+			OpenSL_android_set_pause( Device, 0 );
+#endif
 			break;
 
 		case SoundRenderer::INACTIVE_Complete:
@@ -1559,6 +1565,9 @@ void OpenALSoundRenderer::SetInactive(SoundRenderer::EInactiveState state)
 			/* fall-through */
 		case SoundRenderer::INACTIVE_Mute:
 			alListenerf(AL_GAIN, 0.0f);
+#ifdef __ANDROID__
+			OpenSL_android_set_pause( Device, 1 );
+#endif
 			break;
 	}
 }

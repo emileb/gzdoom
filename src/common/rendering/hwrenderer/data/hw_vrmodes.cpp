@@ -36,7 +36,11 @@
 CVAR(Int, vr_mode, 0, CVAR_GLOBALCONFIG)
 
 // switch left and right eye views
-CVAR(Bool, vr_swap_eyes, false, CVAR_GLOBALCONFIG)
+#ifdef __MOBILE__
+CVAR(Bool, vr_swap_eyes, true, CVAR_GLOBALCONFIG | CVAR_ARCHIVE)
+#else
+CVAR(Bool, vr_swap_eyes, false, CVAR_GLOBALCONFIG | CVAR_ARCHIVE)
+#endif
 
 // intraocular distance in meters
 CVAR(Float, vr_ipd, 0.062f, CVAR_ARCHIVE|CVAR_GLOBALCONFIG) // METERS

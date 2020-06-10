@@ -1432,6 +1432,10 @@ static int Load_Version_4_5(void)
 	if(!_ptrc_glDepthMask) numFailed++;
 	_ptrc_glDepthRange = (void (CODEGEN_FUNCPTR *)(GLdouble, GLdouble))IntGetProcAddress("glDepthRange");
 	if(!_ptrc_glDepthRange) numFailed++;
+#ifdef __MOBILE__
+	_ptrc_glDepthRangef = (void (CODEGEN_FUNCPTR *)(GLfloat, GLfloat))IntGetProcAddress("glDepthRangef");
+	if(!_ptrc_glDepthRangef) numFailed++;
+#endif
 	_ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glDisable");
 	if(!_ptrc_glDisable) numFailed++;
 	_ptrc_glDrawBuffer = (void (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glDrawBuffer");
