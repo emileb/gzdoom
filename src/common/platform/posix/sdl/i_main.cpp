@@ -153,5 +153,10 @@ int main (int argc, char **argv)
 
 	SDL_Quit();
 
+#ifdef __ANDROID__
+	usleep(500* 1000);
+	exit(0);
+#endif
+
 	return result;
 }

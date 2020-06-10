@@ -180,6 +180,8 @@ struct _ native	// These are the global variables, the struct is only here to av
 	native MenuDelegateBase menuDelegate;
 	native readonly int consoleplayer;
 	native readonly double NotifyFontScale;
+	// __MOBILE__
+	native bool g_bindingbutton;
 }
 
 struct MusPlayingInfo native

@@ -264,12 +264,25 @@ FString FShaderProgram::PatchShader(ShaderType type, const FString &code, const 
 	// If we have 4.2, always use it because it adds important new syntax.
 	if (maxGlslVersion < 420 && gl.glslversion >= 4.2f) maxGlslVersion = 420;
 	int shaderVersion = std::min((int)round(gl.glslversion * 10) * 10, maxGlslVersion);
+
+#ifdef __MOBILE__
+	patchedCode.AppendFormat("#version 310 es\n#define NO_CLIPDISTANCE_SUPPORT\n");
+#else
 	patchedCode.AppendFormat("#version %d\n", shaderVersion);
+#endif
 
 	// TODO: Find some way to add extension requirements to the patching
 	//
 	// #extension GL_ARB_uniform_buffer_object : require
 	// #extension GL_ARB_shader_storage_buffer_object : require
+
+#ifdef __MOBILE__ // Actually this is needed before the defines
+	patchedCode << "precision highp int;\n";
+	patchedCode << "precision highp float;\n";
+	patchedCode << "precision highp sampler2D;\n";
+	patchedCode << "precision highp samplerCube;\n";
+	patchedCode << "precision highp sampler2DMS;\n";
+#endif
 
 	if (defines)
 		patchedCode << defines;
