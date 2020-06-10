@@ -680,7 +680,7 @@ vec3 AmbientOcclusionColor()
 void main()
 {
 #ifdef NO_CLIPDISTANCE_SUPPORT
-	if (ClipDistanceA.x < 0 || ClipDistanceA.y < 0 || ClipDistanceA.z < 0 || ClipDistanceA.w < 0 || ClipDistanceB.x < 0) discard;
+	if (ClipDistanceA.x < 0.0 || ClipDistanceA.y < 0.0 || ClipDistanceA.z < 0.0 || ClipDistanceA.w < 0.0 || ClipDistanceB.x < 0.0) discard;
 #endif
 
 #ifndef LEGACY_USER_SHADER
@@ -749,7 +749,7 @@ void main()
 		if ((uTextureMode & 0xffff) == 7)
 		{
 			float gray = grayscale(frag);
-			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2;
+			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2.0;
 			frag = vec4(clamp(cm.rgb, 0.0, 1.0), frag.a);
 		}
 			frag = frag * ProcessLight(material, vColor);

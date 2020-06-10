@@ -897,6 +897,11 @@ extern bool gameisdead;
 
 int PrintString (int iprintlevel, const char *outline)
 {
+#ifdef __ANDROID__
+	LOGI("PrintString: %s",outline);
+	LogWritter_Write(outline);
+#endif
+
 	if (gameisdead)
 		return 0;
 

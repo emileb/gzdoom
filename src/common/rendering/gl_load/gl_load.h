@@ -2203,7 +2203,11 @@ extern void (CODEGEN_FUNCPTR *_ptrc_glClearAccum)(GLfloat red, GLfloat green, GL
 extern void (CODEGEN_FUNCPTR *_ptrc_glClearColor)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 #define glClearColor _ptrc_glClearColor
 extern void (CODEGEN_FUNCPTR *_ptrc_glClearDepth)(GLdouble depth);
+#ifdef __MOBILE__
+#define glClearDepth _ptrc_glClearDepthf
+#else
 #define glClearDepth _ptrc_glClearDepth
+#endif
 extern void (CODEGEN_FUNCPTR *_ptrc_glClearIndex)(GLfloat c);
 #define glClearIndex _ptrc_glClearIndex
 extern void (CODEGEN_FUNCPTR *_ptrc_glClearStencil)(GLint s);
@@ -2288,8 +2292,14 @@ extern void (CODEGEN_FUNCPTR *_ptrc_glDepthFunc)(GLenum func);
 #define glDepthFunc _ptrc_glDepthFunc
 extern void (CODEGEN_FUNCPTR *_ptrc_glDepthMask)(GLboolean flag);
 #define glDepthMask _ptrc_glDepthMask
+#ifdef __MOBILE__
+extern void (CODEGEN_FUNCPTR *_ptrc_glDepthRangef)(GLfloat ren_near, GLfloat ren_far);
+#define glDepthRangef _ptrc_glDepthRangef
+#define glDepthRange _ptrc_glDepthRangef
+#else
 extern void (CODEGEN_FUNCPTR *_ptrc_glDepthRange)(GLdouble ren_near, GLdouble ren_far);
 #define glDepthRange _ptrc_glDepthRange
+#endif
 extern void (CODEGEN_FUNCPTR *_ptrc_glDisable)(GLenum cap);
 #define glDisable _ptrc_glDisable
 extern void (CODEGEN_FUNCPTR *_ptrc_glDrawBuffer)(GLenum buf);
