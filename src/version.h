@@ -94,8 +94,19 @@ const char *GetVersionString();
 
 // This is so that derivates can use the same savegame versions without worrying about engine compatibility
 #define GAMESIG "GZDOOM"
+
+#ifdef __MOBILE__
+#define BASEWAD "./res/gzdoom_dev_gl3.pk3"
+#else
 #define BASEWAD "gzdoom.pk3"
+#endif
+
+#ifdef __MOBILE__
+#define OPTIONALWAD "./res/game_support.pk3"
+#else
 #define OPTIONALWAD "game_support.pk3"
+#endif
+
 #define GZDOOM 1
 #define VR3D_ENABLED
 

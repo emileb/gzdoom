@@ -49,6 +49,10 @@
 #include <map>
 #include <memory>
 
+#ifdef __MOBILE__
+CVAR(Bool, gl_customshader, true, 0)
+#endif
+
 namespace OpenGLRenderer
 {
 
@@ -64,6 +68,9 @@ static std::map<FString, std::unique_ptr<ProgramBinary>> ShaderCache; // Not a T
 
 bool IsShaderCacheActive()
 {
+#ifdef __MOBILE__
+	return true;
+#endif
 	static bool active = true;
 	static bool firstcall = true;
 
@@ -372,7 +379,11 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	unsigned int lightbuffersize = screen->mLights->GetBlockSize();
 	if (!lightbuffertype)
 	{
+#ifdef __MOBILE__
+		vp_comb.Format("#version 310 es\n#define NO_CLIPDISTANCE_SUPPORT\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+#else
 		vp_comb.Format("#version 330 core\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+#endif
 	}
 	else
 	{
@@ -619,11 +630,19 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		char stringbuf[20];
 		mysnprintf(stringbuf, 20, "texture%d", i);
 		int tempindex = glGetUniformLocation(hShader, stringbuf);
+#ifdef __ANDROID__
+		if (tempindex >= 0) glUniform1i(tempindex, i - 1);
+#else
 		if (tempindex > 0) glUniform1i(tempindex, i - 1);
+#endif
 	}
 
 	int shadowmapindex = glGetUniformLocation(hShader, "ShadowMap");
+#ifdef __ANDROID__
+	if (shadowmapindex >= 0) glUniform1i(shadowmapindex, 16);
+#else
 	if (shadowmapindex > 0) glUniform1i(shadowmapindex, 16);
+#endif
 
 	glUseProgram(0);
 	return linked;
@@ -783,6 +802,9 @@ void FShaderCollection::CompileShaders(EPassType passType)
 		}
 	}
 
+#ifdef __MOBILE__
+	if( gl_customshader )
+#endif
 	for(unsigned i = 0; i < usershaders.Size(); i++)
 	{
 		FString name = ExtractFileBase(usershaders[i].shader);
