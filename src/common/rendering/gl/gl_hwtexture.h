@@ -45,6 +45,9 @@ private:
 	unsigned int glBufferID = 0;
 	int glTextureBytes;
 	bool mipmapped = false;
+#ifdef __MOBILE__
+    int size;
+#endif
 
 	int GetDepthBuffer(int w, int h);
 
