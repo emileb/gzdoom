@@ -211,6 +211,8 @@ struct _ native	// These are the global variables, the struct is only here to av
 	native readonly int consoleplayer;
 	native readonly double NotifyFontScale;
 	native readonly int paused;
+	// __MOBILE__
+	native bool g_bindingbutton;
 }
 
 struct System native

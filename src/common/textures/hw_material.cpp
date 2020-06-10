@@ -41,6 +41,10 @@ void FMaterial::SetLayerCallback(IHardwareTexture* (*cb)(int layer, int translat
 	layercallback = cb;
 }
 
+#ifdef __MOBILE__
+EXTERN_CVAR(Bool, gl_customshader)
+#endif
+
 //===========================================================================
 //
 // Constructor
@@ -128,6 +132,7 @@ FMaterial::FMaterial(FGameTexture * tx, int scaleflags)
 		}
 
 		auto index = tx->GetShaderIndex();
+
 		if (gl_customshader)
 		{
 			if (index >= FIRST_USER_SHADER)
