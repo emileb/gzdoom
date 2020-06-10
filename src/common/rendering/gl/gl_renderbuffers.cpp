@@ -311,6 +311,15 @@ PPGLTexture FGLRenderBuffers::Create2DTexture(const char *name, GLuint format, i
 	default: I_FatalError("Unknown format passed to FGLRenderBuffers.Create2DTexture");
 	}
 
+#ifdef __MOBILE__ // FIXME
+	if( format == GL_RGBA16F )
+	{
+		format = GL_RGBA;
+		dataformat = GL_RGBA;
+		datatype = GL_UNSIGNED_BYTE;
+	}
+#endif
+
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, dataformat, datatype, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -480,7 +489,13 @@ void FGLRenderBuffers::ClearFrameBuffer(bool stencil, bool depth)
 	GLdouble depthValue;
 	glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled);
 	glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &stencilValue);
+#ifdef __MOBILE__
+	GLfloat t;
+	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &t);
+	depthValue = t;
+#else
 	glGetDoublev(GL_DEPTH_CLEAR_VALUE, &depthValue);
+#endif
 	glDisable(GL_SCISSOR_TEST);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClearDepth(0.0);
