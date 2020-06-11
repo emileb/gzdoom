@@ -195,7 +195,7 @@ PCH_SOURCES = \
 	hu_scores.cpp \
 	i_net.cpp \
 	m_cheat.cpp \
-	m_joy.cpp \
+	common/engine/m_joy.cpp \
 	m_misc.cpp \
 	playsim/p_acs.cpp \
 	playsim/p_actionfunctions.cpp \
