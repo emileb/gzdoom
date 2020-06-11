@@ -54,7 +54,11 @@
 #endif
 
 #ifndef _DEBUG
+<<<<<<< HEAD
 #if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+=======
+#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__ANDROID__)
+>>>>>>> Fix 32 arm 32bit builds for real
 void *M_Malloc(size_t size)
 {
 	void *block = malloc(size);
@@ -192,7 +196,8 @@ void *M_Realloc_Dbg(void *memblock, size_t size, const char *file, int lineno)
 #endif
 #endif
 
-#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+
+#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__DragonFly__)  && !defined(__ANDROID__)
 void M_Free (void *block)
 {
 	if (block != NULL)
