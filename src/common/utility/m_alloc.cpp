@@ -124,7 +124,7 @@ void *M_Realloc(void *memblock, size_t size)
 #include <crtdbg.h>
 #endif
 
-#if !defined(__solaris__) && !defined(__OpenBSD__)
+#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__ANDROID__)
 void *M_Malloc_Dbg(size_t size, const char *file, int lineno)
 {
 	void *block = _malloc_dbg(size, _NORMAL_BLOCK, file, lineno);
