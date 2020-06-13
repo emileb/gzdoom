@@ -3232,7 +3232,19 @@ void MapLoader::LoadLevel(MapData *map, const char *lumpname, int position)
 
 	InitRenderInfo();				// create hardware independent renderer resources for the level. This must be done BEFORE the PolyObj Spawn!!!
 	Level->ClearDynamic3DFloorData();	// CreateVBO must be run on the plain 3D floor data.
+#ifdef USE_GL_HW_BUFFERS
+	if (screen->nbrHwBuffers > 1)
+	{
+		for (int n = 0; n < screen->nbrHwBuffers; n++)
+		{
+			CreateVBO(screen->mVertexDataBuf[n], Level->sectors);
+		}
+	}
+	else
+		CreateVBO(screen->mVertexData, Level->sectors);
+#else
 	CreateVBO(screen->mVertexData, Level->sectors);
+#endif
 
 	for (auto &sec : Level->sectors)
 	{

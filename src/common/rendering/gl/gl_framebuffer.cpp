@@ -66,6 +66,10 @@ EXTERN_CVAR(Bool, r_drawvoxels)
 EXTERN_CVAR(Int, gl_tonemap)
 EXTERN_CVAR(Bool, cl_capfps)
 
+#ifdef USE_GL_HW_BUFFERS
+CVAR(Bool, gl_finish_force, false, 0);
+#endif
+
 void gl_LoadExtensions();
 void gl_PrintStartupLog();
 void Draw2D(F2DDrawer *drawer, FRenderState &state);
@@ -163,11 +167,34 @@ void OpenGLFrameBuffer::InitializeState()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	SetViewportRects(nullptr);
-
+#ifdef USE_GL_HW_BUFFERS
+	if (screen->nbrHwBuffers > 1)
+	{
+		for (int n = 0; n < nbrHwBuffers; n++)
+		{
+			mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+			mSkyDataBuf[n] = new FSkyVertexBuffer;
+			mViewpointsBuf[n] = new HWViewpointBuffer;
+			mLightsBuf[n] = new FLightBuffer();
+		}
+		NextVtxBuffer();
+		NextSkyBuffer();
+		NextViewBuffer();
+		NextLightBuffer();
+	}
+	else
+	{
+		mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+    	mSkyData = new FSkyVertexBuffer;
+    	mViewpoints = new HWViewpointBuffer;
+    	mLights = new FLightBuffer();
+	}
+#else
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
 	mSkyData = new FSkyVertexBuffer;
 	mViewpoints = new HWViewpointBuffer;
 	mLights = new FLightBuffer();
+#endif
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
 
@@ -282,10 +309,34 @@ void OpenGLFrameBuffer::Swap()
 	GLRenderer->mShaderManager->SetActiveShader(0);
 #endif
 
+#ifdef USE_GL_HW_BUFFERS
+
+	if( gl_finish_force )
+		 glFinish();
+
+	if (screen->nbrHwBuffers > 1)
+		screen->mVertexData->DropSync();
+
+	FPSLimit();
+	SwapBuffers();
+
+	if (screen->nbrHwBuffers > 1)
+	{
+		screen->NextVtxBuffer();
+		screen->NextLightBuffer();
+		screen->NextSkyBuffer();
+		screen->NextViewBuffer();
+
+		screen->mVertexData->WaitSync();
+	}
+
+#else
 	if (swapbefore) glFinish();
 	FPSLimit();
 	SwapBuffers();
 	if (!swapbefore) glFinish();
+#endif
+
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();

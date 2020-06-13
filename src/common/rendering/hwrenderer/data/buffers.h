@@ -57,6 +57,11 @@ public:
 	virtual void Map() {}		// Only needed by old OpenGL but this needs to be in the interface.
 	virtual void Unmap() {}
 	void *Memory() { return map; }
+#ifdef USE_GL_HW_BUFFERS
+	virtual void GPUDropSync() {}
+	virtual void GPUWaitSync() {}
+#endif
+
 	size_t Size() { return buffersize; }
 };
 
