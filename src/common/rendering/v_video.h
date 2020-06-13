@@ -44,6 +44,7 @@
 #include "intrect.h"
 #include "hw_shadowmap.h"
 
+#include "doomdef.h"
 
 struct sector_t;
 struct FPortalSceneState;
@@ -148,6 +149,48 @@ public:
 	IntRect mSceneViewport;
 	IntRect mOutputLetterbox;
 	float mSceneClearColor[4];
+
+#ifdef USE_GL_HW_BUFFERS
+	int LightBuff = 0;
+	int SkyBuff = 0;
+	int ViewBuff = 0;
+	int VtxBuff = 0;
+
+	int nbrHwBuffers = 1;
+    FFlatVertexBuffer *mVertexDataBuf[MAX_HW_BUFFERS];
+    FLightBuffer *mLightsBuf[MAX_HW_BUFFERS];
+    FSkyVertexBuffer *mSkyDataBuf[MAX_HW_BUFFERS];
+    HWViewpointBuffer *mViewpointsBuf[MAX_HW_BUFFERS];
+
+
+	void NextVtxBuffer()
+	{
+		mVertexData = mVertexDataBuf[VtxBuff];
+		VtxBuff++;
+		VtxBuff %= nbrHwBuffers;
+	}
+
+	void NextLightBuffer()
+	{
+		mLights = mLightsBuf[LightBuff];
+		LightBuff++;
+		LightBuff %= nbrHwBuffers;
+	}
+
+	void NextSkyBuffer()
+	{
+		mSkyData = mSkyDataBuf[SkyBuff];
+		SkyBuff++;
+		SkyBuff %= nbrHwBuffers;
+	}
+
+	void NextViewBuffer()
+	{
+		mViewpoints = mViewpointsBuf[ViewBuff];
+		ViewBuff++;
+		ViewBuff %= nbrHwBuffers;
+	}
+#endif
 
 public:
 	DFrameBuffer (int width=1, int height=1);
