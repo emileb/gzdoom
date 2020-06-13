@@ -107,7 +107,17 @@ public:
 	{
 		mVertexBuffer->Unmap();
 	}
+#ifdef USE_GL_HW_BUFFERS
+	void DropSync()
+	{
+		mVertexBuffer->GPUDropSync();
+	}
 
+	void WaitSync()
+	{
+		mVertexBuffer->GPUWaitSync();
+	}
+#endif
 };
 
 #endif
