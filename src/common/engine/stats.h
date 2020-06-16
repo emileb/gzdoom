@@ -39,7 +39,7 @@
 #if !defined _WIN32 && !defined __APPLE__
 
 #ifdef NO_CLOCK_GETTIME
-#ifdef __ANDROID__ // This stupid thing is to try and fix SW mode on 32bit ARM, some memory issue I think. When empty the screen becomes black
+#if defined(__ANDROID__) && defined(__arm__) // This stupid thing is to try and fix SW mode on 32bit ARM, some memory issue I think. When empty the screen becomes black
 
 #include <time.h>
 
