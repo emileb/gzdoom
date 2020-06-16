@@ -1072,7 +1072,7 @@ SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length)
 	SoundDecoder_GetInfo(decoder, &srate, &chans, &type);
 	int samplesize = 1;
 #ifdef __MOBILE__
-	if (chans == ChannelConfig_Mono|| monoize)
+	if (chans == ChannelConfig_Mono || monoize)
 #else
 	if (chans == ChannelConfig_Mono)
 #endif
