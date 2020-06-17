@@ -74,6 +74,7 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/sound/backend \
     	$(GZDOOM_TOP_PATH)/src/xlat \
     	$(GZDOOM_TOP_PATH)/src/utility \
+    	$(GZDOOM_TOP_PATH)/src/menu \
     	$(GZDOOM_TOP_PATH)/src/utility/nodebuilder \
     	$(GZDOOM_TOP_PATH)/src/scripting \
     	$(GZDOOM_TOP_PATH)/src/scripting/zscript \
@@ -195,7 +196,6 @@ PCH_SOURCES = \
 	hu_scores.cpp \
 	i_net.cpp \
 	m_cheat.cpp \
-	m_joy.cpp \
 	m_misc.cpp \
 	playsim/p_acs.cpp \
 	playsim/p_actionfunctions.cpp \
@@ -220,7 +220,7 @@ PCH_SOURCES = \
 	rendering/r_utility.cpp \
 	rendering/r_sky.cpp \
 	sound/s_advsound.cpp \
-	sound/s_reverbedit.cpp \
+	common/audio/sound/s_reverbedit.cpp \
 	sound/s_sndseq.cpp \
 	sound/s_doomsound.cpp \
 	serializer_doom.cpp \
@@ -312,6 +312,7 @@ PCH_SOURCES = \
 	menu/optionmenu.cpp \
 	menu/playermenu.cpp \
 	menu/resolutionmenu.cpp \
+	menu/doommenu.cpp \
 	gamedata/textures/animations.cpp \
 	gamedata/textures/anim_switches.cpp \
 	gamedata/textures/buildloader.cpp \
@@ -352,11 +353,13 @@ PCH_SOURCES = \
 	scripting/decorate/thingdef_exp.cpp \
 	scripting/decorate/thingdef_parse.cpp \
 	scripting/decorate/thingdef_states.cpp \
+	common/scripting/interface/vmnatives.cpp \
 	scripting/zscript/zcc_compile_doom.cpp \
 	rendering/swrenderer/textures/r_swtexture.cpp \
 	rendering/swrenderer/textures/warptexture.cpp \
 	rendering/swrenderer/textures/swcanvastexture.cpp \
 	events.cpp \
+	common/engine/d_event.cpp \
 	common/audio/sound/i_sound.cpp \
 	common/audio/sound/oalsound.cpp \
 	common/audio/sound/s_environment.cpp \
@@ -464,6 +467,7 @@ PCH_SOURCES = \
 	common/engine/v_colortables.cpp \
 	common/engine/serializer.cpp \
 	common/engine/m_random.cpp \
+	common/engine/m_joy.cpp \
 	common/objects/dobject.cpp \
 	common/objects/dobjgc.cpp \
 	common/objects/dobjtype.cpp \
