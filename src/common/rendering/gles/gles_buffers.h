@@ -8,10 +8,10 @@
 #pragma warning(disable:4250) 
 #endif
 
-namespace OpenGLRenderer
+namespace OpenGLESRenderer
 {
 
-class GLBuffer : virtual public IBuffer
+class GLESBuffer : virtual public IBuffer
 {
 protected:
 	const int mUseType;
@@ -20,9 +20,10 @@ protected:
 	bool mPersistent = false;
 	bool nomap = true;
 
+	char *memory = 0;
 
-	GLBuffer(int usetype);
-	~GLBuffer();
+	GLESBuffer(int usetype);
+	~GLESBuffer();
 	void SetData(size_t size, const void *data, bool staticdata) override;
 	void SetSubData(size_t offset, size_t size, const void *data) override;
 	void Map() override;
@@ -31,18 +32,12 @@ protected:
 	void *Lock(unsigned int size) override;
 	void Unlock() override;
 
-#ifdef USE_GL_HW_BUFFERS
-	GLsync mGLSync = 0;
-    void GPUDropSync();
-    void GPUWaitSync();
-#endif
-
 public:
 	void Bind();
 };
 
 
-class GLVertexBuffer : public IVertexBuffer, public GLBuffer
+class GLESVertexBuffer : public IVertexBuffer, public GLESBuffer
 {
 	// If this could use the modern (since GL 4.3) binding system, things would be simpler... :(
 	struct GLVertexBufferAttribute
@@ -58,22 +53,22 @@ class GLVertexBuffer : public IVertexBuffer, public GLBuffer
 	size_t mStride = 0;
 
 public:
-	GLVertexBuffer();
+	GLESVertexBuffer();
 	void SetFormat(int numBindingPoints, int numAttributes, size_t stride, const FVertexBufferAttribute *attrs) override;
 	void Bind(int *offsets);
 };
 
-class GLIndexBuffer : public IIndexBuffer, public GLBuffer
+class GLESIndexBuffer : public IIndexBuffer, public GLESBuffer
 {
 public:
-	GLIndexBuffer();
+	GLESIndexBuffer();
 };
 
-class GLDataBuffer : public IDataBuffer, public GLBuffer
+class GLESDataBuffer : public IDataBuffer, public GLESBuffer
 {
 	int mBindingPoint;
 public:
-	GLDataBuffer(int bindingpoint, bool is_ssbo);
+	GLESDataBuffer(int bindingpoint, bool is_ssbo);
 	void BindRange(FRenderState* state, size_t start, size_t length);
 	void BindBase();
 };

@@ -51,6 +51,8 @@
 #include "gl_renderer.h"
 #include "gl_framebuffer.h"
 
+#include "gles_framebuffer.h"
+
 #ifdef HAVE_VULKAN
 #include "vulkan/system/vk_framebuffer.h"
 #endif
@@ -523,6 +525,9 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer ()
 		fb = new PolyFrameBuffer(nullptr, vid_fullscreen);
 	}
 #endif
+
+//	fb = new OpenGLESRenderer::OpenGLESFrameBuffer(0, vid_fullscreen);
+
 	if (fb == nullptr)
 	{
 		fb = new OpenGLRenderer::OpenGLFrameBuffer(0, vid_fullscreen);

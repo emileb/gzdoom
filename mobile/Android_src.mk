@@ -49,6 +49,7 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/hwrenderer/data \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl_load \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl \
+    	$(GZDOOM_TOP_PATH)/src/common/rendering/gles \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/vulkan/thirdparty \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/polyrenderer/backend \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/polyrenderer/drawers \
@@ -532,6 +533,9 @@ SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES}
 
 LOCAL_SRC_FILES = \
 	__autostart.cpp \
+	common/rendering/gles/gles_framebuffer.cpp \
+	common/rendering/gles/gles_buffers.cpp \
+	common/rendering/gles/gles_renderstate.cpp \
     $(ANDROID_SRC_FILES) \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
@@ -564,7 +568,7 @@ LOCAL_SRC_FILES = \
 
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
-LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
+LOCAL_LDLIBS +=  -lEGL -lGLESv2
 
 LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
