@@ -581,6 +581,17 @@ FString M_GetAutoexecPath()
 
 FString M_GetCajunPath(const char *botfilename)
 {
+#ifdef __ANDROID__
+	FString path = NicePath("./user_files/bots/");
+
+	path << botfilename;
+	if (!FileExists(path))
+	{
+		path = "";
+	}
+
+	return path;
+#else
 	FString path;
 
 	// Check first in ~/.config/zdoom/botfilename.
@@ -596,6 +607,7 @@ FString M_GetCajunPath(const char *botfilename)
 		}
 	}
 	return path;
+#endif
 }
 
 //===========================================================================
