@@ -1545,7 +1545,7 @@ void DAutomap::Ticker ()
 		return;
 
 	amclock++;
-	
+
 #ifdef __MOBILE__
 	extern void Mobile_AM_controls(double *zoom, double *pan_x, double *pan_y );
 	double zoom = am_zoomdir;

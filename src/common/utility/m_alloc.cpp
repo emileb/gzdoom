@@ -54,11 +54,9 @@
 #endif
 
 #ifndef _DEBUG
-<<<<<<< HEAD
-#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
-=======
-#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__ANDROID__)
->>>>>>> Fix 32 arm 32bit builds for real
+
+#if !defined(__solaris__) && !defined(__OpenBSD__) && !defined(__DragonFly__) && !defined(__ANDROID__)
+
 void *M_Malloc(size_t size)
 {
 	void *block = malloc(size);
