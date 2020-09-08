@@ -174,8 +174,11 @@ void OpenGLFrameBuffer::InitializeState()
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
 
-#ifndef __ANDROID__ // This break Ardeno 530 GPUs for some reason..
 	static_cast<GLDataBuffer*>(mLights->GetBuffer())->BindBase();
+
+#ifdef __ANDROID__ 	// This is needed to stop Ardeno 530 from crashing on the first drawer
+	static_cast<GLDataBuffer*>(mLights->GetBuffer())->Map();
+	static_cast<GLDataBuffer*>(mLights->GetBuffer())->Unmap();
 #endif
 
 	mDebug = std::make_shared<FGLDebug>();
