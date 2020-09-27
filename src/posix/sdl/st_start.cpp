@@ -389,5 +389,9 @@ bool FTTYStartupScreen::NetLoop(bool (*timer_callback)(void *), void *userdata)
 void ST_Endoom()
 {
 	I_ShutdownJoysticks();
+#ifdef __ANDROID__
+	void STACK_ARGS call_terms ();
+	call_terms();
+#endif
 	exit(0);
 }
