@@ -194,7 +194,6 @@ PCH_SOURCES = \
 	gameconfigfile.cpp \
 	gitinfo.cpp \
 	hu_scores.cpp \
-	i_net.cpp \
 	m_cheat.cpp \
 	m_misc.cpp \
 	playsim/p_acs.cpp \
@@ -220,7 +219,6 @@ PCH_SOURCES = \
 	rendering/r_utility.cpp \
 	rendering/r_sky.cpp \
 	sound/s_advsound.cpp \
-	common/audio/sound/s_reverbedit.cpp \
 	sound/s_sndseq.cpp \
 	sound/s_doomsound.cpp \
 	serializer_doom.cpp \
@@ -304,15 +302,9 @@ PCH_SOURCES = \
 	maploader/renderinfo.cpp \
 	maploader/compatibility.cpp \
 	maploader/postprocessor.cpp \
-	menu/joystickmenu.cpp \
-	menu/loadsavemenu.cpp \
-	menu/menu.cpp \
-	menu/menudef.cpp \
-	menu/messagebox.cpp \
-	menu/optionmenu.cpp \
-	menu/playermenu.cpp \
-	menu/resolutionmenu.cpp \
 	menu/doommenu.cpp \
+	menu/loadsavemenu.cpp \
+	menu/playermenu.cpp \
 	gamedata/textures/animations.cpp \
 	gamedata/textures/anim_switches.cpp \
 	gamedata/textures/buildloader.cpp \
@@ -353,17 +345,16 @@ PCH_SOURCES = \
 	scripting/decorate/thingdef_exp.cpp \
 	scripting/decorate/thingdef_parse.cpp \
 	scripting/decorate/thingdef_states.cpp \
-	common/scripting/interface/vmnatives.cpp \
 	scripting/zscript/zcc_compile_doom.cpp \
 	rendering/swrenderer/textures/r_swtexture.cpp \
 	rendering/swrenderer/textures/warptexture.cpp \
 	rendering/swrenderer/textures/swcanvastexture.cpp \
 	events.cpp \
-	common/engine/d_event.cpp \
 	common/audio/sound/i_sound.cpp \
 	common/audio/sound/oalsound.cpp \
 	common/audio/sound/s_environment.cpp \
 	common/audio/sound/s_sound.cpp \
+	common/audio/sound/s_reverbedit.cpp \
 	common/audio/music/music_midi_base.cpp \
 	common/audio/music/music.cpp \
 	common/audio/music/i_music.cpp \
@@ -393,6 +384,7 @@ PCH_SOURCES = \
 	common/textures/skyboxtexture.cpp \
 	common/textures/animtexture.cpp \
 	common/textures/v_collection.cpp \
+	common/textures/animlib.cpp \
 	common/textures/formats/automaptexture.cpp \
 	common/textures/formats/brightmaptexture.cpp \
 	common/textures/formats/buildtexture.cpp \
@@ -411,6 +403,7 @@ PCH_SOURCES = \
 	common/textures/formats/shadertexture.cpp \
 	common/textures/formats/tgatexture.cpp \
 	common/textures/formats/stbtexture.cpp \
+	common/textures/formats/anmtexture.cpp \
 	common/textures/hires/hqresize.cpp \
 	common/models/models_md3.cpp \
 	common/models/models_md2.cpp \
@@ -426,6 +419,8 @@ PCH_SOURCES = \
 	common/console/c_consolebuffer.cpp \
 	common/console/c_cvars.cpp \
 	common/console/c_dispatch.cpp \
+	common/console/c_commandbuffer.cpp \
+	common/console/c_tabcomplete.cpp \
 	common/console/c_expr.cpp \
 	common/utility/engineerrors.cpp \
 	common/utility/i_module.cpp \
@@ -443,6 +438,7 @@ PCH_SOURCES = \
 	common/utility/zstrformat.cpp \
 	common/utility/name.cpp \
 	common/utility/r_memory.cpp \
+	common/thirdparty/base64.cpp \
 	common/thirdparty/md5.cpp \
  	common/thirdparty/superfasthash.cpp \
 	common/filesystem/filesystem.cpp \
@@ -455,22 +451,33 @@ PCH_SOURCES = \
 	common/filesystem/file_zip.cpp \
 	common/filesystem/file_pak.cpp \
 	common/filesystem/file_whres.cpp \
+	common/filesystem/file_ssi.cpp \
 	common/filesystem/file_directory.cpp \
 	common/filesystem/resourcefile.cpp \
 	common/engine/cycler.cpp \
+	common/engine/d_event.cpp \
+	common/engine/date.cpp \
 	common/engine/stats.cpp \
 	common/engine/sc_man.cpp \
 	common/engine/palettecontainer.cpp \
 	common/engine/stringtable.cpp \
+	common/engine/i_net.cpp \
 	common/engine/i_interface.cpp \
 	common/engine/renderstyle.cpp \
 	common/engine/v_colortables.cpp \
 	common/engine/serializer.cpp \
-	common/engine/m_random.cpp \
 	common/engine/m_joy.cpp \
+	common/engine/m_random.cpp \
 	common/objects/dobject.cpp \
 	common/objects/dobjgc.cpp \
 	common/objects/dobjtype.cpp \
+	common/menu/joystickmenu.cpp \
+	common/menu/menu.cpp \
+	common/menu/messagebox.cpp \
+	common/menu/optionmenu.cpp \
+	common/menu/resolutionmenu.cpp \
+	common/menu/menudef.cpp \
+	common/menu/savegamemanager.cpp \
 	common/rendering/v_framebuffer.cpp \
 	common/rendering/v_video.cpp \
 	common/rendering/r_thread.cpp \
@@ -513,6 +520,7 @@ PCH_SOURCES = \
 	common/scripting/vm/vmexec.cpp \
 	common/scripting/vm/vmframe.cpp \
 	common/scripting/interface/stringformat.cpp \
+	common/scripting/interface/vmnatives.cpp \
 	common/scripting/frontend/ast.cpp \
 	common/scripting/frontend/zcc_compile.cpp \
 	common/scripting/frontend/zcc_parser.cpp \
@@ -524,6 +532,7 @@ PCH_SOURCES = \
 	utility/nodebuilder/nodebuild_extract.cpp \
 	utility/nodebuilder/nodebuild_gl.cpp \
 	utility/nodebuilder/nodebuild_utility.cpp \
+
 
 
 SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES}
