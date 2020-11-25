@@ -176,8 +176,8 @@ PCH_SOURCES = \
 	playsim/bots/b_think.cpp \
 	bbannouncer.cpp \
 	console/c_cmds.cpp \
-	console/c_console.cpp \
 	console/c_functions.cpp \
+	console/c_notifybuffer.cpp \
 	ct_chat.cpp \
 	d_iwad.cpp \
 	d_main.cpp \
@@ -422,6 +422,8 @@ PCH_SOURCES = \
 	common/console/c_commandbuffer.cpp \
 	common/console/c_tabcomplete.cpp \
 	common/console/c_expr.cpp \
+	common/console/c_console.cpp \
+	common/console/c_notifybufferbase.cpp \
 	common/utility/engineerrors.cpp \
 	common/utility/i_module.cpp \
 	common/utility/m_alloc.cpp \
