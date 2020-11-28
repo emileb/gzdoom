@@ -100,8 +100,17 @@ uint32_t VulkanSwapChain::AcquireImage(int width, int height, VulkanSemaphore *s
 	return imageIndex;
 }
 
+#ifdef __MOBILE__
+extern "C" void frameControls();
+#endif
+
 void VulkanSwapChain::QueuePresent(uint32_t imageIndex, VulkanSemaphore *semaphore)
 {
+	
+#ifdef __MOBILE__
+	frameControls();
+#endif
+
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.waitSemaphoreCount = semaphore ? 1 : 0;
@@ -205,6 +214,9 @@ bool VulkanSwapChain::CreateSwapChain(VkSwapchainKHR oldSwapChain)
 	}
 
 	swapChainCreateInfo.preTransform = surfaceCapabilities.currentTransform;
+#ifdef __MOBILE__ // Stop the display being 90degrees rotated
+	swapChainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+#endif
 	swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // If alpha channel is passed on to the DWM or not
 	swapChainCreateInfo.presentMode = swapChainPresentMode;
 	swapChainCreateInfo.clipped = VK_TRUE;

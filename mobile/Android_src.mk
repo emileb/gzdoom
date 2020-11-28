@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g4
 
-LOCAL_CFLAGS   := -DHAVE_SOFTPOLY -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden -frtti  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   := -DHAVE_VULKAN -DHAVE_SOFTPOLY -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden -frtti  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 #-DNO_PIX_BUFF
 #-DUSE_GL_HW_BUFFERS
 #-DHAVE_VULKAN
@@ -86,6 +86,7 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/platform/posix/sdl \
     	$(GZDOOM_TOP_PATH)/libraries/lzma/C \
         $(GZDOOM_TOP_PATH)/libraries/bzip2 \
+        $(GZDOOM_TOP_PATH)/libraries/glslang \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
@@ -535,6 +536,23 @@ PCH_SOURCES = \
 	utility/nodebuilder/nodebuild_gl.cpp \
 	utility/nodebuilder/nodebuild_utility.cpp \
 
+VULKAN_SOURCES = \
+    common/rendering/vulkan/system/vk_device.cpp \
+	common/rendering/vulkan/system/vk_swapchain.cpp \
+	common/rendering/vulkan/system/vk_builders.cpp \
+	common/rendering/vulkan/system/vk_framebuffer.cpp \
+	common/rendering/vulkan/system/vk_buffers.cpp \
+	common/rendering/vulkan/renderer/vk_renderstate.cpp \
+	common/rendering/vulkan/renderer/vk_renderpass.cpp \
+	common/rendering/vulkan/renderer/vk_streambuffer.cpp \
+	common/rendering/vulkan/renderer/vk_postprocess.cpp \
+	common/rendering/vulkan/renderer/vk_renderbuffers.cpp \
+	common/rendering/vulkan/shaders/vk_shader.cpp \
+	common/rendering/vulkan/textures/vk_samplers.cpp \
+	common/rendering/vulkan/textures/vk_hwtexture.cpp \
+	common/rendering/vulkan/textures/vk_imagetransition.cpp \
+	common/rendering/vulkan/thirdparty/volk/volk.c \
+	common/rendering/vulkan/thirdparty/vk_mem_alloc/vk_mem_alloc.cpp
 
 
 SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES}
@@ -547,6 +565,7 @@ LOCAL_SRC_FILES = \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
 	$(POLYBACKEND_SOURCES) \
+	$(VULKAN_SOURCES) \
 	${PCH_SOURCES} \
 	common/utility/x86.cpp \
 	common/thirdparty/strnatcmp.c \
@@ -577,7 +596,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 glslang_gl3 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
 include $(BUILD_SHARED_LIBRARY)
