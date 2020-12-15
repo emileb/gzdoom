@@ -153,11 +153,34 @@ void VulkanFrameBuffer::InitializeState()
 
 	mPostprocess.reset(new VkPostprocess());
 	mRenderPassManager.reset(new VkRenderPassManager());
-
+#ifdef USE_GL_HW_BUFFERS
+	if (screen->nbrHwBuffers > 1)
+	{
+		for (int n = 0; n < nbrHwBuffers; n++)
+		{
+			mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+			mSkyDataBuf[n] = new FSkyVertexBuffer;
+			mViewpointsBuf[n] = new HWViewpointBuffer;
+			mLightsBuf[n] = new FLightBuffer();
+		}
+		NextVtxBuffer();
+		NextSkyBuffer();
+		NextViewBuffer();
+		NextLightBuffer();
+	}
+	else
+	{
+		mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+    	mSkyData = new FSkyVertexBuffer;
+    	mViewpoints = new HWViewpointBuffer;
+    	mLights = new FLightBuffer();
+	}
+#else
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
 	mSkyData = new FSkyVertexBuffer;
 	mViewpoints = new HWViewpointBuffer;
 	mLights = new FLightBuffer();
+#endif
 
 	CreateFanToTrisIndexBuffer();
 
@@ -316,6 +339,16 @@ void VulkanFrameBuffer::WaitForCommands(bool finish)
 		Finish.Unclock();
 		rendered_commandbuffers = current_rendered_commandbuffers;
 		current_rendered_commandbuffers = 0;
+#ifdef USE_GL_HW_BUFFERS
+		if (screen->nbrHwBuffers > 1)
+		{
+			screen->NextVtxBuffer();
+			screen->NextLightBuffer();
+			screen->NextSkyBuffer();
+			screen->NextViewBuffer();
+			//screen->mVertexData->WaitSync();
+		}
+#endif
 	}
 }
 
