@@ -108,7 +108,7 @@ void VulkanSwapChain::QueuePresent(uint32_t imageIndex, VulkanSemaphore *semapho
 {
 	
 #ifdef __MOBILE__
-	frameControls();
+	//frameControls();
 #endif
 
 	VkPresentInfoKHR presentInfo = {};
