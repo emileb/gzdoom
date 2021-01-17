@@ -186,7 +186,7 @@ void R_DeinitPlanes ()
 	for (visplane_t *pl = freetail; pl != NULL; )
 	{
 		visplane_t *next = pl->next;
-		free (pl);
+		M_Free (pl);
 		pl = next;
 	}
 }
