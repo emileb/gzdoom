@@ -210,7 +210,7 @@ static void unprotect_pages(long pagesize, void *start, void *end)
 	size_t len = (char *)end - (char *)start;
 	if (mprotect(page, len, PROT_READ|PROT_WRITE|PROT_EXEC) != 0)
 	{
-		fprintf(stderr, "mprotect failed\n");
+		LOGI( "mprotect failed\n");
 		exit(1);
 	}
 }
@@ -235,16 +235,11 @@ static void unprotect_rtext()
 void I_StartupJoysticks();
 void I_ShutdownJoysticks();
 
-int main (int argc, char **argv)
+int main_android (int argc, char **argv)
 {
-#if !defined (__APPLE__)
-	{
-		int s[4] = { SIGSEGV, SIGILL, SIGFPE, SIGBUS };
-		cc_install_handlers(argc, argv, 4, s, "zdoom-crash.log", DoomSpecificInfo);
-	}
-#endif // !__APPLE__
 
-	printf(GAMENAME" %s - %s - SDL version\nCompiled on %s\n",
+
+	LOGI(GAMENAME" %s - %s - SDL version\nCompiled on %s\n",
 		GetVersionString(), GetGitTime(), __DATE__);
 
 	seteuid (getuid ());
@@ -267,7 +262,7 @@ int main (int argc, char **argv)
 
 	if (SDL_Init (SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_NOPARACHUTE|SDL_INIT_JOYSTICK) == -1)
 	{
-		fprintf (stderr, "Could not initialize SDL:\n%s\n", SDL_GetError());
+		LOGE( "Could not initialize SDL:\n%s\n", SDL_GetError());
 		return -1;
 	}
 	atterm (SDL_Quit);
@@ -277,7 +272,7 @@ int main (int argc, char **argv)
 
 		if (SDL_VideoDriverName(viddriver, sizeof(viddriver)) != NULL)
 		{
-			printf("Using video driver %s\n", viddriver);
+			LOGI("Using video driver %s\n", viddriver);
 #ifdef USE_XCURSOR
 			UseXCursor = (strcmp(viddriver, "x11") == 0);
 #endif
@@ -355,11 +350,12 @@ int main (int argc, char **argv)
     {
 		I_ShutdownJoysticks();
 		if (error.GetMessage ())
-			fprintf (stderr, "%s\n", error.GetMessage ());
+			LOGE("%s\n", error.GetMessage ());
 		exit (-1);
     }
     catch (...)
     {
+    	LOGI("main catch..");
 		call_terms ();
 		throw;
     }

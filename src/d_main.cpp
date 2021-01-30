@@ -2263,10 +2263,12 @@ void D_DoomMain (void)
 		gameinfo.ConfigName = iwad_info->Configname;
 		lastIWAD = iwad;
 
+#ifndef __ANDROID__
 		if ((gameinfo.flags & GI_SHAREWARE) && pwads.Size() > 0)
 		{
 			I_FatalError ("You cannot -file with the shareware version. Register!");
 		}
+#endif
 
 		FBaseCVar::DisableCallbacks();
 		GameConfig->DoGameSetup (gameinfo.ConfigName);

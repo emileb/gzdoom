@@ -101,7 +101,9 @@ bool DTextEnterMenu::TranslateKeyboardEvents()
 //
 //
 //=============================================================================
-
+#ifdef __ANDROID__
+#include "w_wad.h"
+#endif
 bool DTextEnterMenu::Responder(event_t *ev)
 {
 	if (ev->type == EV_GUI_Event)
@@ -138,6 +140,14 @@ bool DTextEnterMenu::Responder(event_t *ev)
 			}
 			else if (ch == '\r')
 			{
+#ifdef __ANDROID__
+				//Save game name, allow blank names for Ouya
+				if (mSizeMode == 1 && !mEnterString[0])
+				{
+					strcpy(mEnterString,Wads.GetWadName (FWadCollection::IWAD_FILENUM));
+				}
+#endif
+
 				if (mEnterString[0])
 				{
 					DMenu *parent = mParentMenu;

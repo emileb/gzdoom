@@ -337,6 +337,13 @@ void I_Init (void)
     I_InitSound ();
 }
 
+#ifdef __ANDROID__
+extern "C"
+{
+    void appShutdown();
+}
+#endif
+
 //
 // I_Quit
 //
@@ -344,10 +351,15 @@ static int has_exited;
 
 void I_Quit (void)
 {
+    LOGI("I_Quit");
     has_exited = 1;		/* Prevent infinitely recursive exits -- killough */
 
     if (demorecording)
 		G_CheckDemoStatus();
+
+#ifdef __ANDROID__
+    appShutdown();
+#endif
 
 	C_DeinitConsole();
 }
@@ -367,6 +379,7 @@ void STACK_ARGS I_FatalError (const char *error, ...)
 {
     static bool alreadyThrown = false;
     gameisdead = true;
+    LOGI("I_FatalError");
 
     if (!alreadyThrown)		// ignore all but the first message -- killough
     {
@@ -377,6 +390,7 @@ void STACK_ARGS I_FatalError (const char *error, ...)
 		va_start (argptr, error);
 		index = vsnprintf (errortext, MAX_ERRORTEXT, error, argptr);
 		va_end (argptr);
+        LOGI("I_FatalError: %s", errortext);
 
 #ifdef __APPLE__
 		Mac_I_FatalError(errortext);
@@ -395,6 +409,7 @@ void STACK_ARGS I_FatalError (const char *error, ...)
 
     if (!has_exited)	// If it hasn't exited yet, exit now -- killough
     {
+        LOGI("Fatal exit");
 		has_exited = 1;	// Prevent infinitely recursive exits -- killough
 		exit(-1);
     }
@@ -408,6 +423,8 @@ void STACK_ARGS I_Error (const char *error, ...)
     va_start (argptr, error);
     vsprintf (errortext, error, argptr);
     va_end (argptr);
+
+    LOGI("Error: %s", errortext);
 
     throw CRecoverableError (errortext);
 }
@@ -628,7 +645,7 @@ int I_PickIWad (WadStuff *wads, int numwads, bool showwin, int defaultiwad)
 		return defaultiwad;
 	}
 
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(__ANDROID__)
 	const char *str;
 	if((str=getenv("KDE_FULL_SESSION")) && strcmp(str, "true") == 0)
 	{

@@ -383,8 +383,10 @@ FString M_GetCajunPath(const char *botfilename)
 {
 	FString path;
 
+
 	// Just copies the Windows code. Should this be more Mac-specific?
 	path << progdir << "zcajun/" << botfilename;
+
 	if (!FileExists(path))
 	{
 		path = "";
@@ -464,6 +466,178 @@ FString M_GetSavegamesPath()
 		path << cpath << "/" GAME_DIR "/Savegames/";
 	}
 	return path;
+}
+
+#elif defined(__ANDROID__)
+
+FString GetUserFile (const char *file)
+{
+	FString path;
+	struct stat info;
+
+	path = NicePath("./gzdoom_dev/");
+
+	if (stat (path, &info) == -1)
+	{
+		struct stat extrainfo;
+
+		if (stat (path, &extrainfo) == -1)
+		{
+			if (mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+			{
+				//I_FatalError ("Failed to create ./gzdoom/ directory:\n%s", strerror(errno));
+			}
+		}
+	}
+	mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR);
+
+	path += file;
+	return path;
+
+	return;
+	if (stat (path, &info) == -1)
+	{
+		struct stat extrainfo;
+
+		// Sanity check for ~/.config
+		FString configPath = NicePath("./gzdoom");
+		if (stat (configPath, &extrainfo) == -1)
+		{
+			if (mkdir (configPath, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+			{
+				I_FatalError ("Failed to create ./gzdoom/ directory:\n%s", strerror(errno));
+			}
+		}
+		else if (!S_ISDIR(extrainfo.st_mode))
+		{
+			I_FatalError ("./gzdoom/ must be a directory");
+		}
+
+		// This can be removed after a release or two
+		// Transfer the old zdoom directory to the new location
+		bool moved = false;
+		FString oldpath = NicePath("~/.zdoom/");
+		if (stat (oldpath, &extrainfo) != -1)
+		{
+			if (rename(oldpath, path) == -1)
+			{
+				I_Error ("Failed to move old zdoom directory (%s) to new location (%s).",
+					oldpath.GetChars(), path.GetChars());
+			}
+			else
+				moved = true;
+		}
+
+		if (!moved && mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+		{
+			I_FatalError ("Failed to create %s directory:\n%s",
+				path.GetChars(), strerror (errno));
+		}
+	}
+	else
+	{
+		if (!S_ISDIR(info.st_mode))
+		{
+			I_FatalError ("%s must be a directory", path.GetChars());
+		}
+	}
+	path += file;
+	return path;
+}
+
+//===========================================================================
+//
+// M_GetCachePath														Unix
+//
+// Returns the path for cache GL nodes.
+//
+//===========================================================================
+
+FString M_GetCachePath(bool create)
+{
+	// Don't use GAME_DIR and such so that ZDoom and its child ports can
+	// share the node cache.
+	FString path = NicePath("./gzdoom_cache/");
+	if (create)
+	{
+		CreatePath(path);
+	}
+	return path;
+}
+
+//===========================================================================
+//
+// M_GetAutoexecPath													Unix
+//
+// Returns the expected location of autoexec.cfg.
+//
+//===========================================================================
+
+FString M_GetAutoexecPath()
+{
+	return GetUserFile("autoexec.cfg");
+}
+
+//===========================================================================
+//
+// M_GetCajunPath														Unix
+//
+// Returns the location of the Cajun Bot definitions.
+//
+//===========================================================================
+
+FString M_GetCajunPath(const char *botfilename)
+{
+	FString path;
+
+	path << "./zcajun/" << botfilename;
+
+	if (!FileExists(path))
+	{
+		path = "";
+	}
+	return path;
+}
+
+//===========================================================================
+//
+// M_GetConfigPath														Unix
+//
+// Returns the path to the config file. On Windows, this can vary for reading
+// vs writing. i.e. If $PROGDIR/zdoom-<user>.ini does not exist, it will try
+// to read from $PROGDIR/zdoom.ini, but it will never write to zdoom.ini.
+//
+//===========================================================================
+
+FString M_GetConfigPath(bool for_reading)
+{
+	return GetUserFile("zdoom.ini");
+}
+
+//===========================================================================
+//
+// M_GetScreenshotsPath													Unix
+//
+// Returns the path to the default screenshots directory.
+//
+//===========================================================================
+
+FString M_GetScreenshotsPath()
+{
+	return NicePath("./");
+}
+
+//===========================================================================
+//
+// M_GetSavegamesPath													Unix
+//
+// Returns the path to the default save games directory.
+//
+//===========================================================================
+
+FString M_GetSavegamesPath()
+{
+	return NicePath("~/" GAME_DIR);
 }
 
 #else // Linux, et al.

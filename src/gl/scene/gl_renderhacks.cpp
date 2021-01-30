@@ -48,6 +48,7 @@
 #include "gl/renderer/gl_renderer.h"
 #include "gl/data/gl_data.h"
 #include "gl/dynlights/gl_glow.h"
+#include "gl/dynlights/gl_lightbuffer.h"
 #include "gl/scene/gl_drawinfo.h"
 #include "gl/scene/gl_portal.h"
 #include "gl/utility/gl_clock.h"
@@ -162,6 +163,7 @@ void FDrawInfo::AddUpperMissingTexture(side_t * side, subsector_t *sub, fixed_t 
 				return;
 			}
 
+			//@sync-hack
 			for(unsigned int i=0;i<MissingUpperTextures.Size();i++)
 			{
 				if (MissingUpperTextures[i].sub == sub)
@@ -228,12 +230,13 @@ void FDrawInfo::AddLowerMissingTexture(side_t * side, subsector_t *sub, fixed_t 
 			}
 
 			// Ignore FF_FIX's because they are designed to abuse missing textures
-			if (seg->backsector->e->XFloor.ffloors.Size() && (seg->backsector->e->XFloor.ffloors[0]->flags&(FF_FIX|FF_SEETHROUGH)) == FF_FIX)
+			if (seg->backsector->e->XFloor.ffloors.Size() && seg->backsector->e->XFloor.ffloors[0]->flags&FF_FIX)
 			{
 				totalms.Unclock();
 				return;
 			}
 
+			//@sync-hack
 			for(unsigned int i=0;i<MissingLowerTextures.Size();i++)
 			{
 				if (MissingLowerTextures[i].sub == sub)
@@ -730,6 +733,7 @@ void FDrawInfo::AddHackedSubsector(subsector_t * sub)
 {
 	if (!(level.maptype == MAPTYPE_HEXEN))
 	{
+		//@sync-hack (probably not, this is only called from the main thread)
 		SubsectorHackInfo sh={sub, 0};
 		SubsectorHacks.Push (sh);
 	}
@@ -1029,11 +1033,13 @@ ADD_STAT(sectorhacks)
 
 void FDrawInfo::AddFloorStack(sector_t * sec)
 {
+	//@sync-hack
 	FloorStacks.Push(sec);
 }
 
 void FDrawInfo::AddCeilingStack(sector_t * sec)
 {
+	//@sync-hack
 	CeilingStacks.Push(sec);
 }
 

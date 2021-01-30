@@ -112,7 +112,11 @@ inline double bam2rad(angle_t ang)
 }
 inline angle_t rad2bam(double ang)
 {
+#ifdef __ANDROID__
+	return angle_t((int)(ang * (double(1<<30) / PI))) << 1;
+#else
 	return angle_t(ang * (double(1<<30) / PI)) << 1;
+#endif
 }
 
 #endif // __TABLES_H__

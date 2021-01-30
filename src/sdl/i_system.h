@@ -23,6 +23,14 @@
 #ifndef __I_SYSTEM__
 #define __I_SYSTEM__
 
+#include <android/log.h>
+
+#ifndef LOGI
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNI", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "JNI", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"JNI", __VA_ARGS__))
+#endif
+
 #include <dirent.h>
 #include <ctype.h>
 

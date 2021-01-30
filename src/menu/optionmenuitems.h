@@ -379,6 +379,9 @@ IMPLEMENT_ABSTRACT_CLASS(DEnterKey)
 //
 //=============================================================================
 
+#ifdef __ANDROID__
+extern bool bindingbutton;
+#endif
 class FOptionMenuItemControl : public FOptionMenuItem
 {
 	FKeyBindings *mBindings;
@@ -423,6 +426,9 @@ public:
 		if (mkey == MKEY_Input)
 		{
 			mWaiting = false;
+#ifdef __ANDROID__
+		bindingbutton = false;
+#endif
 			mBindings->SetBind(mInput, mAction);
 			return true;
 		}
@@ -434,6 +440,9 @@ public:
 		else if (mkey == MKEY_Abort)
 		{
 			mWaiting = false;
+#ifdef __ANDROID__
+		bindingbutton = false;
+#endif
 			return true;
 		}
 		return false;
@@ -443,6 +452,10 @@ public:
 	{
 		S_Sound (CHAN_VOICE | CHAN_UI, "menu/choose", snd_menuvolume, ATTN_NONE);
 		mWaiting = true;
+#ifdef __ANDROID__
+		mBindings->UnbindACommand(mAction); //Only allow one button to be bound to avoid confusion
+		bindingbutton = true;
+#endif
 		DMenu *input = new DEnterKey(DMenu::CurrentMenu, &mInput);
 		M_ActivateMenu(input);
 		return true;

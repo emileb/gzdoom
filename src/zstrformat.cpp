@@ -692,7 +692,11 @@ fp_begin:
 			dblarg = va_arg(arglist, double);
 			obuff = dtoaresult = dtoa(dblarg, expchar ? 2 : 3, precision, &expt, &signflag, &dtoaend);
 //fp_common:
+#ifdef __ANDROID__
+			decimal_point = ".";
+#else
 			decimal_point = localeconv()->decimal_point;
+#endif
 			flags |= F_SIGNED;
 			if (signflag)
 			{
@@ -1034,11 +1038,17 @@ int myvsnprintf(char *buffer, size_t count, const char *format, va_list argptr)
 
 int mysnprintf(char *buffer, size_t count, const char *format, ...)
 {
+#ifdef __ANDROID__
+	va_list argptr;
+	va_start(argptr, format);
+	return vsnprintf(buffer,count,format,argptr);
+#else
 	va_list argptr;
 	va_start(argptr, format);
 	int len = myvsnprintf(buffer, count, format, argptr);
 	va_end(argptr);
 	return len;
+#endif
 }
 
 }

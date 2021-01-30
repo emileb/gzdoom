@@ -257,7 +257,11 @@ fixed_t UDMFParserBase::CheckFixed(const char *key)
 
 angle_t UDMFParserBase::CheckAngle(const char *key)
 {
+#ifdef __ANDROID__
+	return angle_t((int)(CheckFloat(key) * ANGLE_90 / 90.));
+#else
 	return angle_t(CheckFloat(key) * ANGLE_90 / 90.);
+#endif
 }
 
 bool UDMFParserBase::CheckBool(const char *key)

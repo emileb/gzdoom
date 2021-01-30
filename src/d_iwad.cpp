@@ -451,6 +451,14 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 			}
 		}
 #endif
+
+#ifndef __ANDROID__
+        TArray<FString> steam_path = I_GetSteamPath();
+        for (i = 0; i < steam_path.Size(); ++i)
+        {
+            CheckIWAD (steam_path[i], &wads[0]);
+        }
+#endif
 	}
 
 	if (iwadparm != NULL && !wads[0].Path.IsEmpty())

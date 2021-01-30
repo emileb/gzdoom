@@ -67,15 +67,27 @@
 #include <fcntl.h>
 
 //GL headers
-#include "gl_load.h"
-
 #if defined(__APPLE__)
-	#include <OpenGL/OpenGL.h>
+#include <GL/glew.h>
+#include <OpenGL/OpenGL.h>
+#elif defined(__ANDROID__)
+#include "gl.h"
+#include "glu.h"
+#include "glext.h"
+#include "qgl_linked.h"
+#elif defined(__unix__)
+#include <GL/glew.h>
+#include "gl/api/glext.h"
+#else // !__APPLE__ && !__unix__
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include "gl/api/glext.h"
 #endif
+#include "gl/api/gl_api.h"
 
 #ifdef _WIN32
 #define DWORD WINDOWS_DWORD	// I don't want to depend on this throughout the GL code!
-//#include "gl/api/wglext.h"
+#include "gl/api/wglext.h"
 #ifndef __WINE__
 #undef DWORD
 #endif

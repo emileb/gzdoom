@@ -54,6 +54,14 @@
 #define _msize(p)				malloc_size(p)
 #elif defined(__sun)
 #define _msize(p)				(*((size_t*)(p)-1))
+#elif defined(__ANDROID__)
+//#define _msize(p)				(*((size_t*)(p)-1)) //WTH Android does not have this function Google removed  it, this may work..
+//Above crashes on 5.0 sometimes
+extern "C"
+{
+//extern size_t malloc_usable_size(void* block);
+}
+#define _msize(p)	malloc_usable_size(p)
 #elif !defined(_WIN32)
 #define _msize(p)				malloc_usable_size(p)	// from glibc/FreeBSD
 #endif

@@ -394,7 +394,11 @@ void C_DeinitConsole ()
 	while (hist != NULL)
 	{
 		History *next = hist->Newer;
+#ifdef __ANDROID__
+        M_Free(hist);
+#else
 		free (hist);
+#endif
 		hist = next;
 	}
 	HistTail = HistHead = HistPos = NULL;
@@ -545,6 +549,9 @@ void AddToConsole (int printlevel, const char *text)
 /* Adds a string to the console and also to the notify buffer */
 int PrintString (int printlevel, const char *outline)
 {
+#ifdef __ANDROID__
+    LOGI("PrintString: %s", outline);
+#endif
 	if (printlevel < msglevel || *outline == '\0')
 	{
 		return 0;

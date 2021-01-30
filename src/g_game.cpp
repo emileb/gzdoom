@@ -518,6 +518,11 @@ static inline int joyint(double val)
 	}
 }
 
+
+#ifdef __ANDROID__
+extern void Android_IN_Move(ticcmd_t* cmd );
+
+#endif
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -680,6 +685,10 @@ void G_BuildTiccmd (ticcmd_t *cmd)
 	{
 		forward += (int)((float)mousey * m_forward);
 	}
+
+#ifdef __ANDROID__
+	Android_IN_Move(cmd);
+#endif
 
 	cmd->ucmd.pitch = LocalViewPitch >> 16;
 

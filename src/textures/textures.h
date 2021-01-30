@@ -329,9 +329,10 @@ public:
 
 	struct MiscGLInfo
 	{
-		FMaterial *Material[2];
-		FGLTexture *SystemTexture[2];
+		FMaterial *Material;
+		FGLTexture *SystemTexture;
 		FTexture *Brightmap;
+		FTexture *DecalTexture;					// This is needed for decals of UseType TEX_MiscPatch-
 		PalEntry GlowColor;
 		PalEntry FloorSkyColor;
 		PalEntry CeilingSkyColor;
@@ -349,8 +350,10 @@ public:
 		char bBrightmapChecked:1;				// Set to 1 if brightmap has been checked
 		bool bBrightmap:1;						// This is a brightmap
 		bool bBrightmapDisablesFullbright:1;	// This disables fullbright display
+		bool bDisableFullbright:1;				// This texture will not be displayed as fullbright sprite
 		bool bNoFilter:1;
 		bool bNoCompress:1;
+		bool mExpanded:1;
 
 		MiscGLInfo() throw ();
 		~MiscGLInfo();

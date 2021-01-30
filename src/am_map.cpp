@@ -1579,6 +1579,9 @@ void AM_doFollowPlayer ()
 	}
 }
 
+#ifdef __ANDROID__
+extern void Android_AM_controls(float *zoom, fixed_t *pan_x,fixed_t *pan_y);
+#endif
 //=============================================================================
 //
 // Updates on Game Tick
@@ -1605,6 +1608,9 @@ void AM_Ticker ()
 		if (Button_AM_PanDown.bDown) m_paninc.y -= FTOM(F_PANINC);
 	}
 
+#ifdef __ANDROID__
+	Android_AM_controls(&am_zoomdir,&m_paninc.x,&m_paninc.y);
+#endif
 	// Change the zoom if necessary
 	if (Button_AM_ZoomIn.bDown || Button_AM_ZoomOut.bDown || am_zoomdir != 0)
 		AM_changeWindowScale();

@@ -142,7 +142,11 @@ public:
 		ret.Type = VAL_Float;
 
 		// shall we use the CRT's sin and cos functions?
+#ifdef __ANDROID__
+		angle_t angle = angle_t((int)(v * ANGLE_90/90.));
+#else
 		angle_t angle = angle_t(v * ANGLE_90/90.);
+#endif
 		if (Name == NAME_Sin) ret.Float = FIXED2DBL (finesine[angle>>ANGLETOFINESHIFT]);
 		else ret.Float = FIXED2DBL (finecosine[angle>>ANGLETOFINESHIFT]);
 		return ret;

@@ -927,7 +927,11 @@ void R_ProjectSprite (AActor *thing, int fakeside, F3DFloor *fakefloor, F3DFloor
 		if (voxelspin != 0)
 		{
 			double ang = double(I_FPSTime()) * voxelspin / 1000;
+#ifdef __ANDROID__
+			vis->angle -= angle_t((int)(ang * (4294967296.f / 360)));
+#else
 			vis->angle -= angle_t(ang * (4294967296.f / 360));
+#endif
 		}
 
 		vis->vx = viewx;

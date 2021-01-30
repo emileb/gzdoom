@@ -8353,11 +8353,19 @@ scriptwait:
 			break;
 
 		case PCD_SIN:
+#ifdef __ANDROID__
+			STACK(1) = finesine[angle_t((int)(STACK(1)<<16))>>ANGLETOFINESHIFT];
+#else
 			STACK(1) = finesine[angle_t(STACK(1)<<16)>>ANGLETOFINESHIFT];
+#endif
 			break;
 
 		case PCD_COS:
+#ifdef __ANDROID__
+			STACK(1) = finecosine[angle_t((int)(STACK(1)<<16))>>ANGLETOFINESHIFT];
+#else
 			STACK(1) = finecosine[angle_t(STACK(1)<<16)>>ANGLETOFINESHIFT];
+#endif
 			break;
 
 		case PCD_VECTORANGLE:

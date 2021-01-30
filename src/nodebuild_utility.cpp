@@ -70,7 +70,11 @@ angle_t FNodeBuilder::PointToAngle (fixed_t x, fixed_t y)
 {
 	const double rad2bam = double(1<<30) / M_PI;
 	double ang = atan2 (double(y), double(x));
+#ifdef __ANDROID__
+	return (angle_t((int)(ang * rad2bam))) << 1;
+#else
 	return angle_t(ang * rad2bam) << 1;
+#endif
 }
 
 void FNodeBuilder::FindUsedVertices (vertex_t *oldverts, int max)
