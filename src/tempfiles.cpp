@@ -43,9 +43,8 @@ FTempFileName::FTempFileName (const char *prefix)
 // under VC++, and even if there was, I still need to know the
 // file name so that it can be used as input to Timidity.
 #ifdef __ANDROID__
-	Name = malloc(256);
+	Name = (char*)malloc(256);
 	sprintf(Name,"./gzdoom_cache/%s",prefix);
-
 #else
 	Name = tempnam (NULL, prefix);
 #endif

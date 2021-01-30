@@ -951,7 +951,7 @@ bool FMODSoundRenderer::Init()
 		result = Sys->init(128, FMOD_INIT_NORMAL, 0);
 		Printf(TEXTCOLOR_RED"  Sys->init returned %d\n",result);
 		if (result == FMOD_ERR_OUTPUT_CREATEBUFFER)
-		{ 
+		{
 			Printf(TEXTCOLOR_RED"  Buffer creation failed.\n");
 			/* TO BE FIXED
 			// Possible causes of a buffer creation failure:
@@ -1698,7 +1698,7 @@ FISoundChannel *FMODSoundRenderer::StartSound(SoundHandle sfx, float vol, int pi
 //
 //==========================================================================
 
-FISoundChannel *FMODSoundRenderer::StartSound3D(SoundHandle sfx, SoundListener *listener, float vol, 
+FISoundChannel *FMODSoundRenderer::StartSound3D(SoundHandle sfx, SoundListener *listener, float vol,
 		FRolloffInfo *rolloff, float distscale,
 		int pitch, int priority, const FVector3 &pos, const FVector3 &vel,
 		int channum, int flags, FISoundChannel *reuse_chan)
@@ -2567,10 +2567,9 @@ FMOD_RESULT F_CALLBACK FMODSoundRenderer::ChannelCallback
 // Calculates a volume for the sound based on distance.
 //
 //==========================================================================
-
-float F_CALLBACK FMODSoundRenderer::RolloffCallback(FMOD_CHANNEL *channel, float distance)
+float F_CALLBACK FMODSoundRenderer::RolloffCallback(FMOD_CHANNELCONTROL *channel, float distance)
 {
-	FMOD::Channel *chan = (FMOD::Channel *)channel;
+	FMOD::ChannelControl *chan = (FMOD::ChannelControl *)channel;
 	FISoundChannel *schan;
 
 	if (GRolloff != NULL)
@@ -3048,6 +3047,6 @@ FMOD_RESULT FMODSoundRenderer::SetSystemReverbProperties(const REVERB_PROPERTIES
 
 	return Sys->setReverbProperties(&fr);
 	 */
-
+    return FMOD_OK;
 }
 #endif // NO_FMOD

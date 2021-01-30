@@ -124,7 +124,7 @@ bool FCajunMaster::Check_LOS (AActor *from, AActor *to, angle_t vangle)
 	if (vangle == 0)
 		return false; //Looker seems to be blind.
 
-	return (angle_t)abs (R_PointToAngle2 (from->x, from->y, to->x, to->y) - from->angle) <= vangle/2;
+	return (angle_t)absangle (R_PointToAngle2 (from->x, from->y, to->x, to->y) - from->angle) <= vangle/2;
 }
 
 //-------------------------------------
@@ -213,7 +213,7 @@ void FCajunMaster::Dofire (AActor *actor, ticcmd_t *cmd)
 			{
 				actor->player->angle = an;
 				//have to be somewhat precise. to avoid suicide.
-				if (abs (actor->player->angle - actor->angle) < 12*ANGLE_1)
+				if (absangle (actor->player->angle - actor->angle) < 12*ANGLE_1)
 				{
 					actor->player->t_rocket = 9;
 					no_fire = false;
@@ -255,7 +255,7 @@ shootmissile:
 				actor->player->angle -= m;
 		}
 
-		if (abs (actor->player->angle - actor->angle) < 4*ANGLE_1)
+		if (absangle (actor->player->angle - actor->angle) < 4*ANGLE_1)
 		{
 			inc[actor->id] = !inc[actor->id];
 		}
@@ -408,7 +408,7 @@ AActor *FCajunMaster::Find_enemy (AActor *bot)
 			&& client->mo->health > 0
 			&& bot != client->mo)
 		{
-			if (Check_LOS (bot, client->mo, vangle)) //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
+			if (Check_LOS (bot, client->mo, vangle)) //Here's a strange one, when bot is standing still, the P_CheckSight within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up.
 			//if(P_CheckSight( bot, players[count].mo))
 			{
 				temp = P_AproxDistance (client->mo->x - bot->x,
@@ -474,7 +474,7 @@ void FCajunMaster::SetBodyAt (fixed_t x, fixed_t y, fixed_t z, int hostnum)
 fixed_t FCajunMaster::FakeFire (AActor *source, AActor *dest, ticcmd_t *cmd)
 {
 	AActor *th = Spawn ("CajunTrace", source->x, source->y, source->z + 4*8*FRACUNIT, NO_REPLACE);
-	
+
 	th->target = source;		// where it came from
 
 	float speed = (float)th->Speed;

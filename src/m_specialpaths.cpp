@@ -362,7 +362,7 @@ FString M_GetAutoexecPath()
 
 	char cpath[PATH_MAX];
 	FSRef folder;
-	
+
 	if (noErr == FSFindFolder(kUserDomain, kDocumentsFolderType, kCreateFolder, &folder) &&
 		noErr == FSRefMakePath(&folder, (UInt8*)cpath, PATH_MAX))
 	{
@@ -408,7 +408,7 @@ FString M_GetConfigPath(bool for_reading)
 {
 	char cpath[PATH_MAX];
 	FSRef folder;
-	
+
 	if (noErr == FSFindFolder(kUserDomain, kPreferencesFolderType, kCreateFolder, &folder) &&
 		noErr == FSRefMakePath(&folder, (UInt8*)cpath, PATH_MAX))
 	{
@@ -433,7 +433,7 @@ FString M_GetScreenshotsPath()
 	FString path;
 	char cpath[PATH_MAX];
 	FSRef folder;
-	
+
 	if (noErr == FSFindFolder(kUserDomain, kDocumentsFolderType, kCreateFolder, &folder) &&
 		noErr == FSRefMakePath(&folder, (UInt8*)cpath, PATH_MAX))
 	{
@@ -494,7 +494,6 @@ FString GetUserFile (const char *file)
 	path += file;
 	return path;
 
-	return;
 	if (stat (path, &info) == -1)
 	{
 		struct stat extrainfo;

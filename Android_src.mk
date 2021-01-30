@@ -11,7 +11,7 @@ LOCAL_CPPFLAGS :=  -O2 -DONLY_GPL -DHAVE_FLUIDSYNTH  -Wformat -Werror=format-sec
 
 #$(TOP_DIR)/GL \
 
-	
+
 LOCAL_C_INCLUDES := \
 $(TOP_DIR)/ \
 $(TOP_DIR)/SDL/include  \
@@ -48,6 +48,7 @@ $(TOP_DIR)/MobileTouchControls  \
 PLT_SRC_FILES = \
 android/android-jni.cpp \
 android/in_android.cpp \
+android/extrafiles/fts.c \
 sdl/hardware.cpp \
 sdl/i_cd.cpp \
 sdl/i_input.cpp \
@@ -427,7 +428,7 @@ LOCAL_LDLIBS := -lGLESv1_CM -ldl -llog -lOpenSLES -lz
 
 LOCAL_LDLIBS += -fuse-ld=bfd
 LOCAL_LDLIBS +=  -lEGL
-LOCAL_STATIC_LIBRARIES := nanogl fluidsynth-static jpeg_static lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev
+LOCAL_STATIC_LIBRARIES := nanogl fluidsynth-static libjpeg lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev
 LOCAL_SHARED_LIBRARIES := touchcontrols fmod openal SDL
 #fmod
 include $(BUILD_SHARED_LIBRARY)

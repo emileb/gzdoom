@@ -78,8 +78,8 @@ static void DragonSeek (AActor *actor, angle_t thresh, angle_t turnMax)
 	if (target->flags&MF_SHOOTABLE && pr_dragonseek() < 64)
 	{ // attack the destination mobj if it's attackable
 		AActor *oldTarget;
-	
-		if (abs(actor->angle-R_PointToAngle2(actor->x, actor->y, 
+
+		if (absangle(actor->angle-R_PointToAngle2(actor->x, actor->y,
 			target->x, target->y)) < ANGLE_45/2)
 		{
 			oldTarget = actor->target;
@@ -93,7 +93,7 @@ static void DragonSeek (AActor *actor, angle_t thresh, angle_t turnMax)
 			}
 			else if (pr_dragonseek() < 128 && P_CheckMissileRange(actor))
 			{
-				P_SpawnMissile(actor, target, PClass::FindClass ("DragonFireball"));						
+				P_SpawnMissile(actor, target, PClass::FindClass ("DragonFireball"));
 				S_Sound (actor, CHAN_WEAPON, actor->AttackSound, 1, ATTN_NORM);
 			}
 			actor->target = oldTarget;
@@ -119,11 +119,11 @@ static void DragonSeek (AActor *actor, angle_t thresh, angle_t turnMax)
 				{
 					continue;
 				}
-				angleToSpot = R_PointToAngle2(actor->x, actor->y, 
+				angleToSpot = R_PointToAngle2(actor->x, actor->y,
 					mo->x, mo->y);
-				if ((angle_t)abs(angleToSpot-angleToTarget) < bestAngle)
+				if ((angle_t)absangle(angleToSpot-angleToTarget) < bestAngle)
 				{
-					bestAngle = abs(angleToSpot-angleToTarget);
+					bestAngle = absangle(angleToSpot-angleToTarget);
 					bestActor = mo;
 				}
 			}
@@ -198,14 +198,14 @@ DEFINE_ACTION_FUNCTION(AActor, A_DragonFlight)
 		}
 		angle = R_PointToAngle2(self->x, self->y, self->target->x,
 			self->target->y);
-		if (abs(self->angle-angle) < ANGLE_45/2 && self->CheckMeleeRange())
+		if (absangle(self->angle-angle) < ANGLE_45/2 && self->CheckMeleeRange())
 		{
 			int damage = pr_dragonflight.HitDice (8);
 			int newdam = P_DamageMobj (self->target, self, self, damage, NAME_Melee);
 			P_TraceBleed (newdam > 0 ? newdam : damage, self->target, self);
 			S_Sound (self, CHAN_WEAPON, self->AttackSound, 1, ATTN_NORM);
 		}
-		else if (abs(self->angle-angle) <= ANGLE_1*20)
+		else if (absangle(self->angle-angle) <= ANGLE_1*20)
 		{
 			self->SetState (self->MissileState);
 			S_Sound (self, CHAN_WEAPON, self->AttackSound, 1, ATTN_NORM);
@@ -244,7 +244,7 @@ DEFINE_ACTION_FUNCTION(AActor, A_DragonFlap)
 
 DEFINE_ACTION_FUNCTION(AActor, A_DragonAttack)
 {
-	P_SpawnMissile (self, self->target, PClass::FindClass ("DragonFireball"));						
+	P_SpawnMissile (self, self->target, PClass::FindClass ("DragonFireball"));
 }
 
 //============================================================================
@@ -272,7 +272,7 @@ DEFINE_ACTION_FUNCTION(AActor, A_DragonFX2)
 			mo->tics = delay+(pr_dragonfx2()&3)*i*2;
 			mo->target = self->target;
 		}
-	} 
+	}
 }
 
 //============================================================================

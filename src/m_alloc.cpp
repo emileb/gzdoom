@@ -52,22 +52,14 @@
 #endif
 #if defined(__APPLE__)
 #define _msize(p)				malloc_size(p)
-#elif defined(__sun)
+#elif defined(__sun) || defined(__ANDROID__)
 #define _msize(p)				(*((size_t*)(p)-1))
-#elif defined(__ANDROID__)
-//#define _msize(p)				(*((size_t*)(p)-1)) //WTH Android does not have this function Google removed  it, this may work..
-//Above crashes on 5.0 sometimes
-extern "C"
-{
-//extern size_t malloc_usable_size(void* block);
-}
-#define _msize(p)	malloc_usable_size(p)
 #elif !defined(_WIN32)
 #define _msize(p)				malloc_usable_size(p)	// from glibc/FreeBSD
 #endif
 
 #ifndef _DEBUG
-#if !defined(__sun)
+#if !defined(__sun) && !defined(__ANDROID__)
 void *M_Malloc(size_t size)
 {
 	void *block = malloc(size);
@@ -137,7 +129,7 @@ void *M_Realloc(void *memblock, size_t size)
 #include <crtdbg.h>
 #endif
 
-#if !defined(__sun)
+#if !defined(__sun) && !defined(__ANDROID__)
 void *M_Malloc_Dbg(size_t size, const char *file, int lineno)
 {
 	void *block = _malloc_dbg(size, _NORMAL_BLOCK, file, lineno);
@@ -205,7 +197,7 @@ void *M_Realloc_Dbg(void *memblock, size_t size, const char *file, int lineno)
 #endif
 #endif
 
-#if !defined(__sun)
+#if !defined(__sun) && !defined(__ANDROID__)
 void M_Free (void *block)
 {
 	if (block != NULL)

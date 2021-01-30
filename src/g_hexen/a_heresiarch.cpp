@@ -241,7 +241,7 @@ DEFINE_ACTION_FUNCTION(AActor, A_SorcSpinBalls)
 	self->args[4] = SORCBALL_INITIAL_SPEED;		// Initial orbit speed
 	self->special1 = ANGLE_1;
 	z = self->z - self->floorclip + self->height;
-	
+
 	mo = Spawn("SorcBall1", self->x, self->y, z, NO_REPLACE);
 	if (mo)
 	{
@@ -314,7 +314,7 @@ DEFINE_ACTION_FUNCTION(AActor, A_SorcBallOrbit)
 	case SORC_STOPPING:			// Balls stopping
 		if ((parent->StopBall == RUNTIME_TYPE(actor)) &&
 			 (parent->args[1] > SORCBALL_SPEED_ROTATIONS) &&
-			 (abs(angle - (parent->angle>>ANGLETOFINESHIFT)) < (30<<5)))
+			 (absangle(angle - (parent->angle>>ANGLETOFINESHIFT)) < (30<<5)))
 		{
 			// Can stop now
 			actor->target->args[3] = SORC_FIRESPELL;
@@ -344,7 +344,7 @@ DEFINE_ACTION_FUNCTION(AActor, A_SorcBallOrbit)
 		{
 			if (actor->special2-- <= 0)
 			{
-				// Done rapid firing 
+				// Done rapid firing
 				parent->args[3] = SORC_STOPPED;
 				// Back to orbit balls
 				if (parent->health > 0)
@@ -572,7 +572,7 @@ void ASorcBall3::CastSorcererSpell ()
 		if (mo) mo->target = parent;
 		mo = P_SpawnMissileAngle(parent, cls, ang2, 4*FRACUNIT);
 		if (mo) mo->target = parent;
-	}			
+	}
 	else
 	{
 		if (pr_heresiarch() < 128)
@@ -748,7 +748,7 @@ DEFINE_ACTION_FUNCTION(AActor, A_SorcFX1Seek)
 //		special1		current angle
 //		special2
 //		args[0]		0 = CW,  1 = CCW
-//		args[1]		
+//		args[1]
 //============================================================================
 
 // Split ball in two

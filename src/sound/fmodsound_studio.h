@@ -80,7 +80,7 @@ private:
 	int OutputRate;
 
 	static FMOD_RESULT F_CALLBACK ChannelCallback(FMOD_CHANNELCONTROL *channel, FMOD_CHANNELCONTROL_TYPE controltype, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype,void *data1, void *data2);
-	static float F_CALLBACK RolloffCallback(FMOD_CHANNEL *channel, float distance);
+	static float F_CALLBACK RolloffCallback(FMOD_CHANNELCONTROL *channel, float distance);
 
 	bool HandleChannelDelay(FMOD::Channel *chan, FISoundChannel *reuse_chan, int flags, float freq) const;
 	FISoundChannel *CommonChannelSetup(FMOD::Channel *chan, FISoundChannel *reuse_chan) const;

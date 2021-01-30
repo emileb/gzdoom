@@ -1,4 +1,4 @@
-// Emacs style mode select	 -*- C++ -*- 
+// Emacs style mode select	 -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // $Id:$
@@ -17,7 +17,7 @@
 // DESCRIPTION:
 //		Lookup tables.
 //		Do not try to look them up :-).
-//		In the order of appearance: 
+//		In the order of appearance:
 //
 //		int finetangent[4096]	- Tangens LUT.
 //		 Should work with BAM fairly well (12 of 16bit,
@@ -25,11 +25,11 @@
 //
 //		int finesine[10240] 			- Sine lookup.
 //		 Guess what, serves as cosine, too.
-//		 Remarkable thing is, how to use BAMs with this? 
+//		 Remarkable thing is, how to use BAMs with this?
 //
 //		int tantoangle[2049]	- ArcTan LUT,
-//		  maps tan(angle) to angle fast. Gotta search.	
-//	  
+//		  maps tan(angle) to angle fast. Gotta search.
+//
 //-----------------------------------------------------------------------------
 
 
@@ -91,6 +91,11 @@ extern fixed_t			finetangent[FINEANGLES/2];
 #define DBITS			(FRACBITS-SLOPEBITS)
 
 typedef uint32			angle_t;
+
+inline angle_t absangle(angle_t a)
+{
+	return (angle_t)abs((int32)a);
+}
 
 // Avoid "ambiguous call to overloaded function" errors
 // Only to be used when you have subtracted two angles.

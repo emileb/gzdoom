@@ -469,7 +469,7 @@ void Android_IN_Move(ticcmd_t* cmd )
 
 	if (cmd_to_run)
 	{
-		AddCommandString(cmd_to_run,0);
+		AddCommandString((char*)cmd_to_run,0);
 		cmd_to_run = NULL;
 	}
 }
