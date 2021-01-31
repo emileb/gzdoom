@@ -92,7 +92,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 #ifdef __ANDROID__
-CVAR(String, fluid_patchset, "./audiopack/snd_fluidsynth/fluidsynth.sf2", 0)
+CVAR(String, fluid_patchset, "./gzdoom.sf2", 0)
 #else
 CVAR(String, fluid_patchset, "", CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 #endif
@@ -397,7 +397,7 @@ void FluidSynthMIDIDevice::HandleEvent(int status, int parm1, int parm2)
 {
 	int command = status & 0xF0;
 	int channel = status & 0x0F;
-	
+
 	switch (command)
 	{
 	case MIDI_NOTEOFF:

@@ -197,7 +197,7 @@ CCMD (snd_listmididevices)
 
 // Everything but Windows uses this code.
 // Default to GUS so it passes Android TV test of minimising app and no sound, fluidsynth is borken
-CUSTOM_CVAR(Int, snd_mididevice, -4, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
+CUSTOM_CVAR(Int, snd_mididevice, -5, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 {
 #ifdef __ANDROID__ //Limit to fluidsynth, gus, opl
 	if (self < -5)

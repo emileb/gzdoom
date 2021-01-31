@@ -27,6 +27,8 @@
 
 #ifdef __ANDROID__
 #include "m_argv.h"
+
+#define SDL_WINDOW_FULLSCREEN_DESKTOP SDL_WINDOW_FULLSCREEN
 #endif
 // MACROS ------------------------------------------------------------------
 
@@ -169,7 +171,7 @@ DFrameBuffer *SDLGLVideo::CreateFrameBuffer (int width, int height, bool fullscr
 {
 	static int retry = 0;
 	static int owidth, oheight;
-	
+
 	PalEntry flashColor;
 //	int flashAmount;
 
@@ -180,10 +182,10 @@ DFrameBuffer *SDLGLVideo::CreateFrameBuffer (int width, int height, bool fullscr
 			fb->Height == height)
 		{
 			bool fsnow = (SDL_GetWindowFlags (fb->Screen) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
-	
+
 			if (fsnow != fullscreen)
 			{
-				SDL_SetWindowFullscreen (fb->Screen, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+				//SDL_SetWindowFullscreen (fb->Screen, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
 			}
 			return old;
 		}
@@ -195,10 +197,10 @@ DFrameBuffer *SDLGLVideo::CreateFrameBuffer (int width, int height, bool fullscr
 		flashColor = 0;
 //		flashAmount = 0;
 	}
-	
+
 	SDLGLFB *fb = new OpenGLFrameBuffer (0, width, height, 32, 60, fullscreen);
 	retry = 0;
-	
+
 	// If we could not create the framebuffer, try again with slightly
 	// different parameters in this order:
 	// 1. Try with the closest size
@@ -267,7 +269,7 @@ bool SDLGLVideo::SetResolution (int width, int height, int bits)
 #else
 	bits=24;
 #endif
-	
+
 	V_DoModeSetup(width, height, bits);
 #endif
 	return true;	// We must return true because the old video context no longer exists.
@@ -275,7 +277,7 @@ bool SDLGLVideo::SetResolution (int width, int height, int bits)
 
 //==========================================================================
 //
-// 
+//
 //
 //==========================================================================
 #ifdef __ANDROID__
@@ -298,26 +300,14 @@ bool SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample)
 		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, multisample );
 	}
 
-#ifdef __ANDROID__
-    const char *version = Args->CheckValue("-glversion");
-    if( !strcmp(version, "gles1") )
-    {
-        glesLoad = 1;
-    }
-    else if ( !strcmp(version, "gles2") )
-    {
-        glesLoad = 2;
-    }
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glesLoad);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
+    glesLoad = 1;
+
 	return true;
 }
 
 //==========================================================================
 //
-// 
+//
 //
 //==========================================================================
 
@@ -342,11 +332,11 @@ SDLGLFB::SDLGLFB (void *, int width, int height, int, int, bool fullscreen)
 	if (localmultisample<0) localmultisample=gl_vid_multisample;
 
 	int i;
-	
+
 	m_Lock=0;
 
 	UpdatePending = false;
-	
+
 	if (!static_cast<SDLGLVideo*>(Video)->InitHardware(false, localmultisample))
 	{
 		vid_renderer = 0;
@@ -390,7 +380,7 @@ SDLGLFB::~SDLGLFB ()
 
 
 
-void SDLGLFB::InitializeState() 
+void SDLGLFB::InitializeState()
 {
 }
 
@@ -420,13 +410,13 @@ bool SDLGLFB::Lock(bool buffered)
 	return true;
 }
 
-bool SDLGLFB::Lock () 
-{ 	
-	return Lock(false); 
+bool SDLGLFB::Lock ()
+{
+	return Lock(false);
 }
 
-void SDLGLFB::Unlock () 	
-{ 
+void SDLGLFB::Unlock ()
+{
 	if (UpdatePending && m_Lock == 1)
 	{
 		Update ();
@@ -437,8 +427,8 @@ void SDLGLFB::Unlock ()
 	}
 }
 
-bool SDLGLFB::IsLocked () 
-{ 
+bool SDLGLFB::IsLocked ()
+{
 	return m_Lock>0;// true;
 }
 

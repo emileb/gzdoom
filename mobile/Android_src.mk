@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../src
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := gzdoom_1.9
+LOCAL_MODULE    := gzdoom
 
 #-DNO_FMOD
 LOCAL_CFLAGS   :=  -DNO_CLOCK_GETTIME -D__MOBILE__ -DGZDOOM1_9 -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_1.9\"
@@ -11,11 +11,6 @@ LOCAL_CPPFLAGS := -DNOASM -DFMOD_STUDIO -DDISABLE_SSE -DHAVE_FLUIDSYNTH  -DHAVE_
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
 
 
-ifeq ($(BUILD_SERIAL),1)
-LOCAL_CPPFLAGS += -DANTI_HACK 
-endif
-
-	
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
  $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
@@ -36,14 +31,12 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/g_raven \
  $(GZDOOM_TOP_PATH)/src/g_strife \
  $(GZDOOM_TOP_PATH)/src/g_shared \
- $(SDL_INCLUDE_PATHS) \
+  $(TOP_DIR)/SDL/include  \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
  $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
  $(TOP_DIR)/AudioLibs_OpenTouch/FMOD_studio/api/lowlevel/inc \
  $(TOP_DIR)/jpeg8d \
- $(TOP_DIR)/Clibs_OpenTouch \
- $(TOP_DIR)/Clibs_OpenTouch\idtech1 \
  $(TOP_DIR)/jwzgles \
  $(TOP_DIR)/MobileTouchControls  \
  $(GZDOOM_TOP_PATH)/mobile/src
@@ -55,10 +48,9 @@ LOCAL_C_INCLUDES := \
 
 
 ANDROID_SRC_FILES = \
-    ../../../Clibs_OpenTouch/idtech1/touch_interface.cpp \
-    ../../../Clibs_OpenTouch/idtech1/android_jni.cpp \
-    ../../../Clibs_OpenTouch/idtech1/gzdoom_game_interface.cpp \
-
+    ../mobile/src/in_android.cpp \
+    ../mobile/src/android-jni.cpp \
+    ../mobile/src/fts.c \
 
 #ANDROID_SRC_FILES =
 
@@ -515,8 +507,8 @@ p_acs.cpp_CFLAGS := -O1
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 LOCAL_LDLIBS +=  -lEGL
 
-LOCAL_STATIC_LIBRARIES := sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_1.9 lzma_1.9 gdtoa_1.9 dumb_1.9 gme_1.9 bzip2_1.9 logwritter
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared fmod core_shared saffal
+LOCAL_STATIC_LIBRARIES := sndfile mpg123 fluidsynth-static libjpeg zlib_1.9 lzma_1.9 gdtoa_1.9 dumb_1.9 gme_1.9 bzip2_1.9
+LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL jwzgles_shared fmod
 
 LOCAL_STATIC_LIBRARIES +=
 

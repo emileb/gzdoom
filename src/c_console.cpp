@@ -548,7 +548,7 @@ void AddToConsole (int printlevel, const char *text)
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Gzdoom", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"Gzdoom", __VA_ARGS__))
-#include "LogWritter.h"
+//#include "LogWritter.h"
 #endif
 
 /* Adds a string to the console and also to the notify buffer */
@@ -556,7 +556,7 @@ int PrintString (int printlevel, const char *outline)
 {
 #ifdef __ANDROID__
 	LOGI("PrintString: %s",outline);
-	LogWritter_Write(outline);
+	//LogWritter_Write(outline);
 #endif
 	if (printlevel < msglevel || *outline == '\0')
 	{
@@ -718,7 +718,7 @@ static void C_DrawNotifyText ()
 	bool center = (con_centernotify != 0.f);
 	int i, line, lineadv, color, j, skip;
 	bool canskip;
-	
+
 	if (gamestate == GS_FULLCONSOLE || gamestate == GS_DEMOSCREEN/* || menuactive != MENU_Off*/)
 		return;
 
@@ -787,7 +787,7 @@ static void C_DrawNotifyText ()
 			{
 				if (!center)
 					screen->DrawText (SmallFont, color, 0, line, NotifyStrings[i].Text,
-						DTA_VirtualWidth, screen->GetWidth() / 2, 
+						DTA_VirtualWidth, screen->GetWidth() / 2,
 						DTA_VirtualHeight, screen->GetHeight() / 2,
 						DTA_KeepRatio, true,
 						DTA_Alpha, alpha, TAG_DONE);
@@ -795,7 +795,7 @@ static void C_DrawNotifyText ()
 					screen->DrawText (SmallFont, color, (screen->GetWidth() / 2 -
 						SmallFont->StringWidth (NotifyStrings[i].Text))/2,
 						line, NotifyStrings[i].Text,
-						DTA_VirtualWidth, screen->GetWidth() / 2, 
+						DTA_VirtualWidth, screen->GetWidth() / 2,
 						DTA_VirtualHeight, screen->GetHeight() / 2,
 						DTA_KeepRatio, true,
 						DTA_Alpha, alpha, TAG_DONE);
@@ -1248,7 +1248,7 @@ static bool C_HandleKey (event_t *ev, BYTE *buffer, int len)
 
 				for (; c < e; c++)
 					*(c - 1) = *c;
-				
+
 				buffer[0]--;
 				buffer[1]--;
 				if (buffer[len+4])
@@ -1306,7 +1306,7 @@ static bool C_HandleKey (event_t *ev, BYTE *buffer, int len)
 			if (HistPos && HistPos->Newer)
 			{
 				HistPos = HistPos->Newer;
-			
+
 				strcpy ((char *)&buffer[2], HistPos->String);
 				buffer[0] = buffer[1] = (BYTE)strlen ((char *)&buffer[2]);
 			}
@@ -1406,7 +1406,7 @@ static bool C_HandleKey (event_t *ev, BYTE *buffer, int len)
 			TabbedLast = false;
 			TabbedList = false;
 			break;
-		
+
 		case '`':
 			// Check to see if we have ` bound to the console before accepting
 			// it as a way to close the console.
@@ -1778,7 +1778,7 @@ static void C_TabComplete (bool goForward)
 			CmdLine[0] = CmdLine[1] = TabSize + TabStart - 2;
 		}
 		else
-		{		
+		{
 			strcpy ((char *)(CmdLine + TabStart), TabCommands[TabPos].TabName.GetChars());
 			CmdLine[0] = CmdLine[1] = (BYTE)strlen ((char *)(CmdLine + 2)) + 1;
 			CmdLine[CmdLine[0] + 1] = ' ';

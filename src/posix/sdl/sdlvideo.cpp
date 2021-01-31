@@ -257,7 +257,7 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer (int width, int height, bool fullscree
 {
 	static int retry = 0;
 	static int owidth, oheight;
-	
+
 	PalEntry flashColor;
 	int flashAmount;
 
@@ -269,8 +269,8 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer (int width, int height, bool fullscree
 		if (fb->Width == width &&
 			fb->Height == height)
 		{
-			bool fsnow = (SDL_GetWindowFlags (fb->Screen) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
-	
+			bool fsnow = (SDL_GetWindowFlags (fb->Screen) & SDL_WINDOW_FULLSCREEN) != 0;
+
 			if (fsnow != fullscreen)
 			{
 				fb->SetFullscreen (fullscreen);
@@ -291,9 +291,9 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer (int width, int height, bool fullscree
 		flashColor = 0;
 		flashAmount = 0;
 	}
-	
+
 	SDLFB *fb = new SDLFB (width, height, fullscreen, oldwin);
-	
+
 	// If we could not create the framebuffer, try again with slightly
 	// different parameters in this order:
 	// 1. Try with the closest size
@@ -350,7 +350,7 @@ SDLFB::SDLFB (int width, int height, bool fullscreen, SDL_Window *oldwin)
 	: DFrameBuffer (width, height)
 {
 	int i;
-	
+
 	NeedPalUpdate = false;
 	NeedGammaUpdate = false;
 	UpdatePending = false;
@@ -373,7 +373,7 @@ SDLFB::SDLFB (int width, int height, bool fullscreen, SDL_Window *oldwin)
 
 		Screen = SDL_CreateWindow (caption,
 			SDL_WINDOWPOS_UNDEFINED_DISPLAY(vid_adapter), SDL_WINDOWPOS_UNDEFINED_DISPLAY(vid_adapter),
-			width, height, (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)|SDL_WINDOW_RESIZABLE);
+			width, height, (fullscreen ? SDL_WINDOW_FULLSCREEN : 0)|SDL_WINDOW_RESIZABLE);
 
 		if (Screen == NULL)
 			return;
@@ -541,7 +541,7 @@ void SDLFB::Update ()
 		CalcGamma ((Windowed || bgamma == 0.f) ? Gamma : (Gamma * bgamma), GammaTable[2]);
 		NeedPalUpdate = true;
 	}
-	
+
 	if (NeedPalUpdate)
 	{
 		NeedPalUpdate = false;
@@ -554,7 +554,7 @@ void SDLFB::UpdateColors ()
 	if (NotPaletted)
 	{
 		PalEntry palette[256];
-		
+
 		for (int i = 0; i < 256; ++i)
 		{
 			palette[i].r = GammaTable[0][SourcePalette[i].r];
@@ -572,7 +572,7 @@ void SDLFB::UpdateColors ()
 	else
 	{
 		SDL_Color colors[256];
-		
+
 		for (int i = 0; i < 256; ++i)
 		{
 			colors[i].r = GammaTable[0][SourcePalette[i].r];
@@ -635,7 +635,7 @@ void SDLFB::SetFullscreen (bool fullscreen)
 	if (IsFullscreen() == fullscreen)
 		return;
 
-	SDL_SetWindowFullscreen (Screen, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+	//SDL_SetWindowFullscreen (Screen, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 	if (!fullscreen)
 	{
 		// Restore proper window size
@@ -647,7 +647,7 @@ void SDLFB::SetFullscreen (bool fullscreen)
 
 bool SDLFB::IsFullscreen ()
 {
-	return (SDL_GetWindowFlags (Screen) & SDL_WINDOW_FULLSCREEN_DESKTOP) != 0;
+	return (SDL_GetWindowFlags (Screen) & SDL_WINDOW_FULLSCREEN) != 0;
 }
 
 void SDLFB::ResetSDLRenderer ()
@@ -662,7 +662,7 @@ void SDLFB::ResetSDLRenderer ()
 	UsingRenderer = !vid_forcesurface;
 	if (UsingRenderer)
 	{
-		Renderer = SDL_CreateRenderer (Screen, -1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_TARGETTEXTURE|
+		Renderer = SDL_CreateRenderer (Screen, -1,SDL_RENDERER_ACCELERATED|
 										(vid_vsync ? SDL_RENDERER_PRESENTVSYNC : 0));
 		if (!Renderer)
 			return;
@@ -712,7 +712,7 @@ void SDLFB::ResetSDLRenderer ()
 		int w, h;
 		SDL_GetWindowSize (Screen, &w, &h);
 		ScaleWithAspect (w, h, Width, Height);
-		SDL_RenderSetLogicalSize (Renderer, w, h);
+		//SDL_RenderSetLogicalSize (Renderer, w, h);
 	}
 }
 

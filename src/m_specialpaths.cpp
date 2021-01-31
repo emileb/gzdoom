@@ -361,7 +361,7 @@ FString M_GetAutoexecPath()
 
 	char cpath[PATH_MAX];
 	FSRef folder;
-	
+
 	if (noErr == FSFindFolder(kUserDomain, kDocumentsFolderType, kCreateFolder, &folder) &&
 		noErr == FSRefMakePath(&folder, (UInt8*)cpath, PATH_MAX))
 	{
@@ -405,7 +405,7 @@ FString M_GetConfigPath(bool for_reading)
 {
 	char cpath[PATH_MAX];
 	FSRef folder;
-	
+
 	if (noErr == FSFindFolder(kUserDomain, kPreferencesFolderType, kCreateFolder, &folder) &&
 		noErr == FSRefMakePath(&folder, (UInt8*)cpath, PATH_MAX))
 	{
@@ -430,7 +430,7 @@ FString M_GetScreenshotsPath()
 	FString path;
 	char cpath[PATH_MAX];
 	FSRef folder;
-	
+
 	if (noErr == FSFindFolder(kUserDomain, kDocumentsFolderType, kCreateFolder, &folder) &&
 		noErr == FSRefMakePath(&folder, (UInt8*)cpath, PATH_MAX))
 	{
@@ -473,15 +473,24 @@ FString GetUserFile (const char *file)
 	FString path;
 	struct stat info;
 #ifdef __ANDROID__
-    path = "./user_files/gzdoom_1.9/";
-    if (stat (path, &info) == -1)
-    {
-        if (mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-        {
-            I_FatalError ("Failed to create ~/.config directory:\n%s", strerror(errno));
-        }
-    }
-    return path + file;
+ 	path = NicePath("./gzdoom_dev/");
+
+ 	if (stat (path, &info) == -1)
+ 	{
+ 		struct stat extrainfo;
+
+ 		if (stat (path, &extrainfo) == -1)
+ 		{
+ 			if (mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+ 			{
+ 				//I_FatalError ("Failed to create ./gzdoom/ directory:\n%s", strerror(errno));
+ 			}
+ 		}
+ 	}
+ 	mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR);
+
+ 	path += file;
+ 	return path;
 #else
 	path = NicePath("~/" GAME_DIR "/");
 #endif
