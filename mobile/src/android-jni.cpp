@@ -312,7 +312,7 @@ void automap_multitouch_mouse_move(int action,float x, float y,float dx, float d
 
 	if (action == MULTITOUCHMOUSE_MOVE)
 	{
-		PortableAutomapControl(0,dx*4000000,dy*4000000);
+		PortableAutomapControl(0, dx, dy);
 	}
 	else if (action == MULTITOUCHMOUSE_ZOOM)
 	{

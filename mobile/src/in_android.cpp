@@ -407,10 +407,9 @@ void PortableCommand(const char * cmd)
 float am_zoom = 0, am_pan_x = 0,am_pan_y = 0;
 void PortableAutomapControl(float zoom, float x, float y)
 {
-	am_zoom += zoom;
-	am_pan_x += x;
-	am_pan_y += y;
-	LOGI("am_pan_x = %f",am_pan_x);
+    am_zoom += zoom * 5;
+    am_pan_x += x * 400;
+    am_pan_y += y * 400;
 }
 
 
