@@ -19,8 +19,6 @@
 /DOOMSTATS.TXT
 /src/gitinfo.h
 /src/sc_man_scanner.h
-/src/xlat/xlat_parser.c
-/src/xlat/xlat_parser.h
 /src/xlat/xlat_parser.out
 /tools/*/debug
 /tools/*/release
