@@ -218,21 +218,20 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		precision highp float;
 
 		// This must match the HWViewpointUniforms struct
-		layout(std140) uniform ViewpointUBO {
-			mat4 ProjectionMatrix;
-			mat4 ViewMatrix;
-			mat4 NormalViewMatrix;
 
-			vec4 uCameraPos;
-			vec4 uClipLine;
+		uniform	mat4 ProjectionMatrix;
+		uniform	mat4 ViewMatrix;
+		uniform	mat4 NormalViewMatrix;
 
-			float uGlobVis;			// uGlobVis = R_GetGlobVis(r_visibility) / 32.0
-			int uPalLightLevels;	
-			int uViewHeight;		// Software fuzz scaling
-			float uClipHeight;
-			float uClipHeightDirection;
-			int uShadowmapFilter;
-		};
+		uniform	vec4 uCameraPos;
+		uniform	vec4 uClipLine;
+
+		uniform	float uGlobVis;			// uGlobVis = R_GetGlobVis(r_visibility) / 32.0
+		uniform	int uPalLightLevels;	
+		uniform	int uViewHeight;		// Software fuzz scaling
+		uniform	float uClipHeight;
+		uniform	float uClipHeightDirection;
+		uniform	int uShadowmapFilter;
 
 		uniform int uTextureMode;
 		uniform vec2 uClipSplit;
@@ -566,6 +565,23 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		hFragProg = 0;
 	}
 
+
+	ProjectionMatrix_index = glGetUniformLocation(hShader, "ProjectionMatrix");
+	ViewMatrix_index = glGetUniformLocation(hShader, "ViewMatrix");
+	NormalViewMatrix_index = glGetUniformLocation(hShader, "NormalViewMatrix");
+
+	muCameraPos.Init(hShader, "uCameraPos");
+	muClipLine.Init(hShader, "uClipLine");
+
+	muGlobVis.Init(hShader, "uGlobVis");
+	muPalLightLevels.Init(hShader, "uPalLightLevels");
+	muViewHeight.Init(hShader, "uViewHeight");
+	muClipHeight.Init(hShader, "uClipHeight");
+	muClipHeightDirection.Init(hShader, "uClipHeightDirection");
+	muShadowmapFilter.Init(hShader, "uShadowmapFilter");
+
+	////
+
 	muDesaturation.Init(hShader, "uDesaturationFactor");
 	muFogEnabled.Init(hShader, "uFogEnabled");
 	muTextureMode.Init(hShader, "uTextureMode");
@@ -607,8 +623,8 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		int tempindex = glGetUniformBlockIndex(hShader, "LightBufferUBO");
 		if (tempindex != -1) glUniformBlockBinding(hShader, tempindex, LIGHTBUF_BINDINGPOINT);
 	}
-	int tempindex = glGetUniformBlockIndex(hShader, "ViewpointUBO");
-	if (tempindex != -1) glUniformBlockBinding(hShader, tempindex, VIEWPOINT_BINDINGPOINT);
+	//int tempindex = glGetUniformBlockIndex(hShader, "ViewpointUBO");
+	//if (tempindex != -1) glUniformBlockBinding(hShader, tempindex, VIEWPOINT_BINDINGPOINT);
 
 	glUseProgram(hShader);
 

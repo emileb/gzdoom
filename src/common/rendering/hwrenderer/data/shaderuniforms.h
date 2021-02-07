@@ -47,6 +47,7 @@ class UniformBlockDecl
 public:
 	static FString Create(const char *name, const std::vector<UniformFieldDesc> &fields, int bindingpoint)
 	{
+		/*
 		FString decl;
 		FString layout;
 		if (bindingpoint == -1)
@@ -66,7 +67,17 @@ public:
 		{
 			decl.AppendFormat("\t%s %s;\n", GetTypeStr(fields[i].Type), fields[i].Name);
 		}
-		decl += "};\n";
+		decl += "}\n";
+		*/
+
+		FString decl;
+	
+		decl += "\n";
+		for (size_t i = 0; i < fields.size(); i++)
+		{
+			decl.AppendFormat("\tuniform %s %s;\n", GetTypeStr(fields[i].Type), fields[i].Name);
+		}
+		decl += "\n";
 
 		return decl;
 	}
@@ -105,8 +116,8 @@ public:
 
 	~ShaderUniforms()
 	{
-		if (mBuffer != nullptr)
-			delete mBuffer;
+		//if (mBuffer != nullptr)
+	//		delete mBuffer;
 	}
 
 	int BindingPoint() const
@@ -119,36 +130,46 @@ public:
 		mFields = fields;
 		return UniformBlockDecl::Create(name, fields, bindingpoint);
 	}
+	
+	void setFieldIndex(int field, int index)
+	{
+		mFields_index[field] = index;
+	}
 
 	void Init()
 	{
-		if (mBuffer == nullptr)
-			mBuffer = screen->CreateDataBuffer(bindingpoint, false, false);
+		mFields_index.resize(100);
+		//if (mBuffer == nullptr)
+		//	mBuffer = screen->CreateDataBuffer(bindingpoint, false, false);
 	}
 
 	void SetData()
 	{
-		if (mBuffer != nullptr)
-			mBuffer->SetData(sizeof(T), &Values);
+		//if (mBuffer != nullptr)
+		//	mBuffer->SetData(sizeof(T), &Values);
 	}
-
+	/*
 	IDataBuffer* GetBuffer() const
 	{
 		// OpenGL needs to mess around with this in ways that should not be part of the interface.
 		return mBuffer;
 	}
-
+	*/
 	T *operator->() { return &Values; }
 	const T *operator->() const { return &Values; }
 
 	T Values;
 
+	std::vector<UniformFieldDesc> mFields;
+
+	std::vector<int> mFields_index;
 private:
 	ShaderUniforms(const ShaderUniforms &) = delete;
 	ShaderUniforms &operator=(const ShaderUniforms &) = delete;
 
-    IDataBuffer *mBuffer = nullptr;
-	std::vector<UniformFieldDesc> mFields;
+    //IDataBuffer *mBuffer = nullptr;
+	
+
 };
 
 

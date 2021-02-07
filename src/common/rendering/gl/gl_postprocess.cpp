@@ -219,7 +219,30 @@ void FGLRenderer::DrawPresentTexture(const IntRect &box, bool applyGamma)
 	mPresentShader->Uniforms->Scale = { screen->mScreenViewport.width / (float)mBuffers->GetWidth(), screen->mScreenViewport.height / (float)mBuffers->GetHeight() };
 	mPresentShader->Uniforms->Offset = { 0.0f, 0.0f };
 	mPresentShader->Uniforms.SetData();
-	static_cast<GLDataBuffer*>(mPresentShader->Uniforms.GetBuffer())->BindBase();
+
+	
+	for (int n = 0; n < mPresentShader->Uniforms.mFields.size(); n++)
+	{
+		int index = -1;
+		UniformFieldDesc desc = mPresentShader->Uniforms.mFields[n];
+		switch (desc.Type)
+		{
+		case UniformType::Int:
+			glUniform1i(mPresentShader->Uniforms.mFields_index[n], *((GLint*)(((char*)(&mPresentShader->Uniforms)) + desc.Offset)));
+			break;
+		case UniformType::Float:
+			glUniform1f(mPresentShader->Uniforms.mFields_index[n], *((GLfloat*)(((char*)(&mPresentShader->Uniforms)) + desc.Offset)));
+			break;
+		case UniformType::Vec2:
+			glUniform2fv(mPresentShader->Uniforms.mFields_index[n],1, ((GLfloat*)(((char*)(&mPresentShader->Uniforms)) + desc.Offset)));
+			break;
+		}
+		//index = glGetUniformLocation(mShader->mProgram, desc.Name);
+		//Uniforms.setFieldIndex(n, index);
+	}
+	
+
+	//static_cast<GLDataBuffer*>(mPresentShader->Uniforms.GetBuffer())->BindBase();
 	RenderScreenQuad();
 }
 

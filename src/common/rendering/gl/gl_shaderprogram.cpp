@@ -300,8 +300,18 @@ void FPresentShaderBase::Init(const char * vtx_shader_name, const char * program
 	mShader->Compile(FShaderProgram::Vertex, "shaders/pp/screenquad.vp", prolog, 330);
 	mShader->Compile(FShaderProgram::Fragment, vtx_shader_name, prolog, 330);
 	mShader->Link(program_name);
-	mShader->SetUniformBufferLocation(Uniforms.BindingPoint(), "Uniforms");
+	//mShader->SetUniformBufferLocation(Uniforms.BindingPoint(), "Uniforms");
+	//mShader->
+	mShader->Bind();
 	Uniforms.Init();
+	for (int n = 0; n < Uniforms.mFields.size(); n++)
+	{
+		int index = -1;
+		UniformFieldDesc desc = Uniforms.mFields[n];
+		index = glGetUniformLocation(mShader->mProgram, desc.Name);
+		Uniforms.setFieldIndex(n, index);
+	}
+	
 }
 
 void FPresentShader::Bind()

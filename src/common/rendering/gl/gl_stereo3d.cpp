@@ -178,7 +178,7 @@ void FGLRenderer::prepareInterleavedPresent(FPresentShaderBase& shader)
 	};
 	shader.Uniforms->Offset = { 0.0f, 0.0f };
 	shader.Uniforms.SetData();
-	static_cast<GLDataBuffer*>(shader.Uniforms.GetBuffer())->BindBase();
+	//static_cast<GLDataBuffer*>(shader.Uniforms.GetBuffer())->BindBase();
 }
 
 //==========================================================================
@@ -203,7 +203,7 @@ void FGLRenderer::PresentColumnInterleaved()
 
 	mPresent3dColumnShader->Uniforms->WindowPositionParity = windowHOffset;
 	mPresent3dColumnShader->Uniforms.SetData();
-	static_cast<GLDataBuffer*>(mPresent3dColumnShader->Uniforms.GetBuffer())->BindBase();
+	//static_cast<GLDataBuffer*>(mPresent3dColumnShader->Uniforms.GetBuffer())->BindBase();
 
 	RenderScreenQuad();
 }
@@ -231,7 +231,7 @@ void FGLRenderer::PresentRowInterleaved()
 			) % 2;
 
 	mPresent3dRowShader->Uniforms.SetData();
-	static_cast<GLDataBuffer*>(mPresent3dRowShader->Uniforms.GetBuffer())->BindBase();
+	//static_cast<GLDataBuffer*>(mPresent3dRowShader->Uniforms.GetBuffer())->BindBase();
 	RenderScreenQuad();
 }
 
@@ -263,7 +263,7 @@ void FGLRenderer::PresentCheckerInterleaved()
 			) % 2; // because we want the top pixel offset, but gl_FragCoord.y is the bottom pixel offset
 
 	mPresent3dCheckerShader->Uniforms.SetData();
-	static_cast<GLDataBuffer*>(mPresent3dCheckerShader->Uniforms.GetBuffer())->BindBase();
+	//static_cast<GLDataBuffer*>(mPresent3dCheckerShader->Uniforms.GetBuffer())->BindBase();
 	RenderScreenQuad();
 }
 

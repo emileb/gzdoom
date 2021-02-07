@@ -20,6 +20,9 @@ protected:
 	bool mPersistent = false;
 	bool nomap = true;
 
+	bool isMemory = false;
+	char *memory = nullptr;
+
 	GLBuffer(int usetype);
 	~GLBuffer();
 	void SetData(size_t size, const void *data, bool staticdata) override;

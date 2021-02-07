@@ -30,6 +30,7 @@
 #include "hw_renderstate.h"
 #include "hw_material.h"
 #include "c_cvars.h"
+#include "hwrenderer/data/hw_viewpointuniforms.h"
 
 namespace OpenGLRenderer
 {
@@ -71,6 +72,7 @@ class FGLRenderState final : public FRenderState
 	int mCurrentVertexOffsets[2];	// one per binding point
 	IIndexBuffer *mCurrentIndexBuffer;
 
+	HWViewpointUniforms* mHwUniforms = nullptr;
 
 public:
 
@@ -139,6 +141,8 @@ public:
 	void EnableMultisampling(bool on) override;
 	void EnableLineSmooth(bool on) override;
 
+
+	void ApplyViewport(void *data);
 
 };
 

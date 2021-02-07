@@ -118,6 +118,25 @@ bool FGLRenderState::ApplyShader()
 		}
 	}
 
+
+	if (mHwUniforms)
+	{
+		matrixToGL(mHwUniforms->mProjectionMatrix, activeShader->ProjectionMatrix_index);
+		matrixToGL(mHwUniforms->mViewMatrix, activeShader->ViewMatrix_index);
+		matrixToGL(mHwUniforms->mNormalViewMatrix, activeShader->NormalViewMatrix_index);
+
+		activeShader->muCameraPos.Set(&mHwUniforms->mCameraPos.X);
+		activeShader->muClipLine.Set(&mHwUniforms->mClipLine.X);
+
+		activeShader->muGlobVis.Set(mHwUniforms->mGlobVis);
+
+		activeShader->muPalLightLevels.Set(mHwUniforms->mGlobVis);
+		activeShader->muViewHeight.Set(mHwUniforms->mViewHeight);
+		activeShader->muClipHeight.Set(mHwUniforms->mClipHeight);
+		activeShader->muClipHeightDirection.Set(mHwUniforms->mClipHeightDirection);
+		activeShader->muShadowmapFilter.Set(mHwUniforms->mShadowmapFilter);
+	}
+
 	glVertexAttrib4fv(VATTR_COLOR, &mStreamData.uVertexColor.X);
 	glVertexAttrib4fv(VATTR_NORMAL, &mStreamData.uVertexNormal.X);
 
@@ -593,6 +612,13 @@ bool FGLRenderState::SetDepthClamp(bool on)
 	else glEnable(GL_DEPTH_CLAMP);
 	mLastDepthClamp = on;
 	return res;
+}
+
+
+void FGLRenderState::ApplyViewport(void* data)
+{	
+	mHwUniforms = reinterpret_cast<HWViewpointUniforms*>(static_cast<uint8_t*>(data));
+
 }
 
 }
