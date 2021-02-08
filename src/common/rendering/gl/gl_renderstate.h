@@ -109,6 +109,7 @@ public:
 
 	void EnableDrawBuffers(int count, bool apply = false) override
 	{
+		/*
 		count = std::min(count, 3);
 		if (mNumDrawBuffers != count)
 		{
@@ -116,6 +117,7 @@ public:
 			glDrawBuffers(count, buffers);
 			mNumDrawBuffers = count;
 		}
+		*/
 		if (apply) Apply();
 	}
 

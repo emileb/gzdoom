@@ -402,6 +402,6 @@ void FVoxelModel::RenderFrame(FModelRenderer *renderer, FGameTexture * skin, int
 {
 	renderer->SetMaterial(skin, true, translation);
 	renderer->SetupFrame(this, 0, 0, 0);
-	renderer->DrawElements(mNumIndices, 0);
+	//renderer->DrawElements(mNumIndices, 0);
 }
 

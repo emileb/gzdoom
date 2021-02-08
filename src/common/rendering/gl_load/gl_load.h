@@ -1,6 +1,14 @@
 #ifndef POINTER_C_GENERATED_HEADER_OPENGL_H
 #define POINTER_C_GENERATED_HEADER_OPENGL_H
 
+#if 0
+#include "GLES2/gl2.h"
+#include "GLES2/gl2ext.h"
+
+#define USE_GLES2
+
+#else
+
 #if defined(__glew_h__) || defined(__GLEW_H__)
 #error Attempt to include auto-generated header after including glew.h
 #endif
@@ -4204,6 +4212,16 @@ extern void (CODEGEN_FUNCPTR *_ptrc_glVertexArrayVertexBuffer)(GLuint vaobj, GLu
 extern void (CODEGEN_FUNCPTR *_ptrc_glVertexArrayVertexBuffers)(GLuint vaobj, GLuint first, GLsizei count, const GLuint * buffers, const GLintptr * offsets, const GLsizei * strides);
 #define glVertexArrayVertexBuffers _ptrc_glVertexArrayVertexBuffers
 
+#define  GL_DEPTH24_STENCIL8_OES GL_DEPTH24_STENCIL8
+#define  GL_DEPTH_COMPONENT24_OES GL_DEPTH_COMPONENT24
+#define  GL_STENCIL_INDEX_OES GL_STENCIL_INDEX
+#define  GL_DEPTH_STENCIL_OES GL_DEPTH_STENCIL
+
+#define  glGenVertexArraysOES glGenVertexArrays
+#define  glBindVertexArrayOES glBindVertexArray
+#define  glDeleteVertexArraysOES glDeleteVertexArrays
+
+
 enum ogl_LoadStatus
 {
 	ogl_LOAD_FAILED = 0,
@@ -4220,4 +4238,6 @@ int ogl_IsVersionGEQ(int majorVersion, int minorVersion);
 }
 #endif /*__cplusplus*/
 
+
+#endif
 #endif /*POINTER_C_GENERATED_HEADER_OPENGL_H*/

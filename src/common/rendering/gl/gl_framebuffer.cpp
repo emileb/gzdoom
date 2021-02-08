@@ -125,10 +125,12 @@ void OpenGLFrameBuffer::InitializeState()
 
 	if (first)
 	{
+#ifndef USE_GLES2
 		if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 		{
 			I_FatalError("Failed to load OpenGL functions.");
 		}
+#endif
 	}
 
 	gl_LoadExtensions();
@@ -151,15 +153,15 @@ void OpenGLFrameBuffer::InitializeState()
 	glEnable(GL_DITHER);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
-	glEnable(GL_POLYGON_OFFSET_LINE);
+	//glEnable(GL_POLYGON_OFFSET_LINE);
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_CLAMP);
+	//glEnable(GL_DEPTH_CLAMP);
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_LINE_SMOOTH);
+	//glDisable(GL_LINE_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClearDepth(1.0f);
+	glClearDepthf(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	SetViewportRects(nullptr);
@@ -258,6 +260,8 @@ void OpenGLFrameBuffer::Swap()
 	Finish.Clock();
 	if (swapbefore) glFinish();
 	FPSLimit();
+	//screen->mVertexData->upload();
+
 	SwapBuffers();
 	if (!swapbefore) glFinish();
 	Finish.Unclock();
@@ -275,17 +279,7 @@ void OpenGLFrameBuffer::Swap()
 
 void OpenGLFrameBuffer::SetVSync(bool vsync)
 {
-	// Switch to the default frame buffer because some drivers associate the vsync state with the bound FB object.
-	GLint oldDrawFramebufferBinding = 0, oldReadFramebufferBinding = 0;
-	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &oldDrawFramebufferBinding);
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &oldReadFramebufferBinding);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-
-	Super::SetVSync(vsync);
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldDrawFramebufferBinding);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, oldReadFramebufferBinding);
+	
 }
 
 //===========================================================================

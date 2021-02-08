@@ -108,6 +108,12 @@ public:
 		mVertexBuffer->Unmap();
 	}
 
+	void upload()
+	{
+		mVertexBuffer->Upload();
+		mIndexBuffer->Upload();
+	}
+
 };
 
 #endif

@@ -30,7 +30,7 @@ private:
 	static bool IsFilteredByDebugLevel(GLenum severity);
 	static void PrintMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message);
 
-	static void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam);
+	static void  DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam);
 
 	static FString SourceToString(GLenum source);
 	static FString TypeToString(GLenum type);

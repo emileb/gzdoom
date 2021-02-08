@@ -275,6 +275,7 @@ void FGLRenderer::PresentCheckerInterleaved()
 
 bool FGLRenderer::QuadStereoCheckInitialRenderContextState()
 {
+	/*
 	// Keep trying until we see at least one good OpenGL context to render to
 	bool bQuadStereoSupported = false;
 	bool bDecentContextWasFound = false;
@@ -297,6 +298,8 @@ bool FGLRenderer::QuadStereoCheckInitialRenderContextState()
 		}
 	}
 	return bQuadStereoSupported;
+	*/
+	return false;
 }
 
 //==========================================================================
@@ -309,6 +312,7 @@ void FGLRenderer::PresentQuadStereo()
 {
 	if (QuadStereoCheckInitialRenderContextState())
 	{
+		/*
 		mBuffers->BindOutputFB();
 
 		glDrawBuffer(GL_BACK_LEFT);
@@ -322,6 +326,7 @@ void FGLRenderer::PresentQuadStereo()
 		DrawPresentTexture(screen->mOutputLetterbox, true);
 
 		glDrawBuffer(GL_BACK);
+		*/
 	}
 	else
 	{

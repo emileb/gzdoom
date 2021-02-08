@@ -58,6 +58,7 @@ namespace
 
 void FGLDebug::Update()
 {
+	/*
 	gpuStatOutput = "";
 	for (auto &query : timeElapsedQueries)
 	{
@@ -80,6 +81,7 @@ void FGLDebug::Update()
 	SetupBreakpointMode();
 	UpdateLoggingLevel();
 	OutputMessageLog();
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -91,18 +93,22 @@ void FGLDebug::Update()
 
 void FGLDebug::LabelObject(GLenum type, GLuint handle, const char *name)
 {
+	/*
 	if (HasDebugApi() && gl_debug_level != 0)
 	{
 		glObjectLabel(type, handle, -1, name);
 	}
+	*/
 }
 
 void FGLDebug::LabelObjectPtr(void *ptr, const char *name)
 {
+	/*
 	if (HasDebugApi() && gl_debug_level != 0)
 	{
 		glObjectPtrLabel(ptr, -1, name);
 	}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -114,6 +120,7 @@ void FGLDebug::LabelObjectPtr(void *ptr, const char *name)
 
 void FGLDebug::PushGroup(const FString &name)
 {
+	/*
 	if (HasDebugApi() && gl_debug_level != 0)
 	{
 		glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, (GLsizei)name.Len(), name.GetChars());
@@ -126,10 +133,12 @@ void FGLDebug::PushGroup(const FString &name)
 		glBeginQuery(GL_TIME_ELAPSED, queryHandle);
 		timeElapsedQueries.push_back({ name, queryHandle });
 	}
+	*/
 }
 
 void FGLDebug::PopGroup()
 {
+	/*
 	if (HasDebugApi() && gl_debug_level != 0)
 	{
 		glPopDebugGroup();
@@ -139,6 +148,7 @@ void FGLDebug::PopGroup()
 	{
 		glEndQuery(GL_TIME_ELAPSED);
 	}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -152,6 +162,7 @@ void FGLDebug::PopGroup()
 
 void FGLDebug::SetupBreakpointMode()
 {
+	/*
 	if (mBreakpointMode != gl_debug_breakpoint)
 	{
 		if (gl_debug_breakpoint)
@@ -166,6 +177,7 @@ void FGLDebug::SetupBreakpointMode()
 		}
 		mBreakpointMode = gl_debug_breakpoint;
 	}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -176,6 +188,7 @@ void FGLDebug::SetupBreakpointMode()
 
 void FGLDebug::UpdateLoggingLevel()
 {
+	/*
 	const GLenum level = gl_debug_level;
 	if (level != mCurrentLevel)
 	{
@@ -185,6 +198,7 @@ void FGLDebug::UpdateLoggingLevel()
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, level > 3);
 		mCurrentLevel = level;
 	}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -196,6 +210,7 @@ void FGLDebug::UpdateLoggingLevel()
 
 bool FGLDebug::IsFilteredByDebugLevel(GLenum severity)
 {
+	/*
 	int severityLevel = 0;
 	switch (severity)
 	{
@@ -205,6 +220,8 @@ bool FGLDebug::IsFilteredByDebugLevel(GLenum severity)
 	case GL_DEBUG_SEVERITY_NOTIFICATION: severityLevel = 4; break;
 	}
 	return severityLevel > (int)gl_debug_level;
+	*/
+	return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -215,6 +232,7 @@ bool FGLDebug::IsFilteredByDebugLevel(GLenum severity)
 
 void FGLDebug::OutputMessageLog()
 {
+	/*
 	if (mCurrentLevel <= 0)
 		return;
 
@@ -249,6 +267,7 @@ void FGLDebug::OutputMessageLog()
 			offset += lengths[i];
 		}
 	}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -259,6 +278,7 @@ void FGLDebug::OutputMessageLog()
 
 void FGLDebug::PrintMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message)
 {
+	/*
 	if (type == GL_DEBUG_TYPE_PUSH_GROUP || type == GL_DEBUG_TYPE_POP_GROUP)
 		return;
 
@@ -290,6 +310,7 @@ void FGLDebug::PrintMessage(GLenum source, GLenum type, GLuint id, GLenum severi
 		else
 			Printf("[%s] %s: %s\n", sourceStr.GetChars(), severityStr.GetChars(), msg.GetChars());
 	}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -304,7 +325,6 @@ void FGLDebug::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 		return;
 
 	PrintMessage(source, type, id, severity, length, message);
-	assert(severity == GL_DEBUG_SEVERITY_NOTIFICATION);
 }
 
 //-----------------------------------------------------------------------------
@@ -315,6 +335,7 @@ void FGLDebug::DebugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 
 FString FGLDebug::SourceToString(GLenum source)
 {
+	/*
 	FString s;
 	switch (source)
 	{
@@ -327,10 +348,13 @@ FString FGLDebug::SourceToString(GLenum source)
 	default: s.Format("%d", (int)source);
 	}
 	return s;
+	*/
+	return "";
 }
 
 FString FGLDebug::TypeToString(GLenum type)
 {
+	/*
 	FString s;
 	switch (type)
 	{
@@ -346,10 +370,13 @@ FString FGLDebug::TypeToString(GLenum type)
 	default: s.Format("%d", (int)type);
 	}
 	return s;
+	*/
+	return "";
 }
 
 FString FGLDebug::SeverityToString(GLenum severity)
 {
+	/*
 	FString s;
 	switch (severity)
 	{
@@ -360,6 +387,8 @@ FString FGLDebug::SeverityToString(GLenum severity)
 	default: s.Format("%d", (int)severity);
 	}
 	return s;
+	*/
+	return "";
 }
 
 }

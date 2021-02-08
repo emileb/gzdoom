@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include "gl_load.h"
 
+#ifndef USE_GLES2
+
 #if defined(__APPLE__)
 #include <dlfcn.h>
 
@@ -3366,6 +3368,8 @@ static void LoadExtByName(const char *extensionName)
 	}
 }
 
+#endif
+
 /* BEGINNING OF MANUAL CHANGES, DO NOT REMOVE! */
 
 static void ProcExtsFromExtString(const char *strExtList)
@@ -3404,6 +3408,7 @@ static void ProcExtsFromExtString(const char *strExtList)
 
 static int ProcExtsFromExtList(void)
 {
+#ifndef USE_GLES2
 	GLint iLoop;
 	GLint iNumExtensions = 0;
 
@@ -3418,10 +3423,14 @@ static int ProcExtsFromExtList(void)
 	}
 
 	return iNumExtensions;
+#else
+	return 0;
+#endif
 }
 
 int ogl_LoadFunctions()
 {
+#ifndef USE_GLES2
 	int numFailed = 0;
 	ClearExtensionVars();
 	
@@ -3443,6 +3452,9 @@ int ogl_LoadFunctions()
 		return ogl_LOAD_SUCCEEDED;
 	else
 		return ogl_LOAD_SUCCEEDED + numFailed;
+
+#endif
+	return 0;
 }
 
 /* END OF MANUAL CHANGES, DO NOT REMOVE! */
@@ -3452,8 +3464,13 @@ static int g_minor_version = 0;
 
 static void GetGLVersion(void)
 {
+#ifndef USE_GLES2
 	glGetIntegerv(GL_MAJOR_VERSION, &g_major_version);
 	glGetIntegerv(GL_MINOR_VERSION, &g_minor_version);
+#else
+	g_major_version = 2;
+	g_minor_version = 0;
+#endif
 }
 
 int ogl_GetMajorVersion(void)

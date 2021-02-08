@@ -484,7 +484,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	}
 
 	hShader = glCreateProgram();
-	FGLDebug::LabelObject(GL_PROGRAM, hShader, name);
+	//FGLDebug::LabelObject(GL_PROGRAM, hShader, name);
 
 	uint32_t binaryFormat = 0;
 	TArray<uint8_t> binary;
@@ -492,6 +492,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		binary = LoadCachedProgramBinary(vp_comb, fp_comb, binaryFormat);
 
 	bool linked = false;
+	/*
 	if (binary.Size() > 0 && glProgramBinary)
 	{
 		glProgramBinary(hShader, binaryFormat, binary.Data(), binary.Size());
@@ -499,14 +500,14 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		glGetProgramiv(hShader, GL_LINK_STATUS, &status);
 		linked = (status == GL_TRUE);
 	}
-
+	*/
 	if (!linked)
 	{
 		hVertProg = glCreateShader(GL_VERTEX_SHADER);
 		hFragProg = glCreateShader(GL_FRAGMENT_SHADER);
 
-		FGLDebug::LabelObject(GL_SHADER, hVertProg, vert_prog_lump);
-		FGLDebug::LabelObject(GL_SHADER, hFragProg, frag_prog_lump);
+		//FGLDebug::LabelObject(GL_SHADER, hVertProg, vert_prog_lump);
+		//FGLDebug::LabelObject(GL_SHADER, hFragProg, frag_prog_lump);
 
 		int vp_size = (int)vp_comb.Len();
 		int fp_size = (int)fp_comb.Len();
@@ -544,11 +545,13 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		GLint status = 0;
 		glGetProgramiv(hShader, GL_LINK_STATUS, &status);
 		linked = (status == GL_TRUE);
+
 		if (!linked)
 		{
 			// only print message if there's an error.
 			I_Error("Init Shader '%s':\n%s\n", name, error.GetChars());
 		}
+		/*
 		else if (glProgramBinary && IsShaderCacheActive())
 		{
 			int binaryLength = 0;
@@ -558,6 +561,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 			binary.Resize(binaryLength);
 			SaveCachedProgramBinary(vp_comb, fp_comb, binary, binaryFormat);
 		}
+		*/
 	}
 	else
 	{
@@ -617,12 +621,13 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	modelmatrix_index = glGetUniformLocation(hShader, "ModelMatrix");
 	texturematrix_index = glGetUniformLocation(hShader, "TextureMatrix");
 	normalmodelmatrix_index = glGetUniformLocation(hShader, "NormalModelMatrix");
-
+	/*
 	if (!lightbuffertype)
 	{
 		int tempindex = glGetUniformBlockIndex(hShader, "LightBufferUBO");
 		if (tempindex != -1) glUniformBlockBinding(hShader, tempindex, LIGHTBUF_BINDINGPOINT);
 	}
+	*/
 	//int tempindex = glGetUniformBlockIndex(hShader, "ViewpointUBO");
 	//if (tempindex != -1) glUniformBlockBinding(hShader, tempindex, VIEWPOINT_BINDINGPOINT);
 

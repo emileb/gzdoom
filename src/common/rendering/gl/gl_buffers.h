@@ -15,7 +15,7 @@ class GLBuffer : virtual public IBuffer
 {
 protected:
 	const int mUseType;
-	unsigned int mBufferId;
+	unsigned int mBufferId = 0;
 	int mAllocationSize = 0;
 	bool mPersistent = false;
 	bool nomap = true;
@@ -34,6 +34,7 @@ protected:
 	void Unlock() override;
 public:
 	void Bind();
+	void Upload();
 };
 
 
@@ -61,6 +62,7 @@ public:
 class GLIndexBuffer : public IIndexBuffer, public GLBuffer
 {
 public:
+
 	GLIndexBuffer();
 };
 

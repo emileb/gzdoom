@@ -104,7 +104,7 @@ void FShaderProgram::CompileShader(ShaderType type)
 
 	const auto &handle = mShaders[type];
 
-	FGLDebug::LabelObject(GL_SHADER, handle, mShaderNames[type]);
+	//FGLDebug::LabelObject(GL_SHADER, handle, mShaderNames[type]);
 
 	const FString &patchedCode = mShaderSources[type];
 	int lengths[1] = { (int)patchedCode.Len() };
@@ -135,8 +135,8 @@ void FShaderProgram::CompileShader(ShaderType type)
 
 void FShaderProgram::Link(const char *name)
 {
-	FGLDebug::LabelObject(GL_PROGRAM, mProgram, name);
-
+	//FGLDebug::LabelObject(GL_PROGRAM, mProgram, name);
+	/*
 	uint32_t binaryFormat = 0;
 	TArray<uint8_t> binary;
 	if (IsShaderCacheActive())
@@ -152,7 +152,8 @@ void FShaderProgram::Link(const char *name)
 		glGetProgramiv(mProgram, GL_LINK_STATUS, &status);
 		loadedFromBinary = (status == GL_TRUE);
 	}
-
+	*/
+	bool loadedFromBinary = false;
 	if (!loadedFromBinary)
 	{
 		CompileShader(Vertex);
@@ -166,6 +167,7 @@ void FShaderProgram::Link(const char *name)
 		{
 			I_FatalError("Link Shader '%s':\n%s\n", name, GetProgramInfoLog(mProgram).GetChars());
 		}
+		/*
 		else if (glProgramBinary && IsShaderCacheActive())
 		{
 			int binaryLength = 0;
@@ -175,6 +177,7 @@ void FShaderProgram::Link(const char *name)
 			binary.Resize(binaryLength);
 			SaveCachedProgramBinary(mShaderSources[Vertex], mShaderSources[Fragment], binary, binaryFormat);
 		}
+		*/
 	}
 
 	// This is only for old OpenGL which didn't allow to set the binding from within the shader.
@@ -202,12 +205,14 @@ void FShaderProgram::Link(const char *name)
 
 void FShaderProgram::SetUniformBufferLocation(int index, const char *name)
 {
+	/*
 	if (screen->glslversion < 4.20)
 	{
 		GLuint uniformBlockIndex = glGetUniformBlockIndex(mProgram, name);
 		if (uniformBlockIndex != GL_INVALID_INDEX)
 			glUniformBlockBinding(mProgram, uniformBlockIndex, index);
 	}
+	*/
 }
 
 //==========================================================================

@@ -80,7 +80,7 @@ unsigned int FHardwareTexture::lastbound[FHardwareTexture::MAX_TEXTURES];
 unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, const char *name)
 {
 	int rh,rw;
-	int texformat = GL_RGBA8;// TexFormat[gl_texture_format];
+	int texformat = GL_RGBA;// TexFormat[gl_texture_format];
 	bool deletebuffer=false;
 
 	/*
@@ -107,7 +107,7 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	rh = GetTexDimension(h);
 	if (glBufferID > 0)
 	{
-		glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+		//glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 		buffer = nullptr;
 	}
 	else if (!buffer)
@@ -133,8 +133,9 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		}
 	}
 	// store the physical size.
-
+	
 	int sourcetype;
+	/*
 	if (glTextureBytes > 0)
 	{
 		if (glTextureBytes < 4) glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -148,7 +149,9 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	{
 		sourcetype = GL_BGRA;
 	}
-	
+	*/
+	texformat = sourcetype = GL_RGBA;
+
 	if (!firstCall && glBufferID > 0)
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rw, rh, sourcetype, GL_UNSIGNED_BYTE, buffer);
 	else
@@ -158,7 +161,7 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	else if (glBufferID)
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+		//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	}
 
 	if (mipmap && TexFilter[gl_texture_filter].mipmapping)
@@ -166,6 +169,10 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		glGenerateMipmap(GL_TEXTURE_2D);
 		mipmapped = true;
 	}
+
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (texunit > 0) glActiveTexture(GL_TEXTURE0);
 	else if (texunit == -1) glBindTexture(GL_TEXTURE_2D, textureBinding);
@@ -188,17 +195,18 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 	if (rw == w || rh == h)
 	{
 		glGenBuffers(1, &glBufferID);
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
-		glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*texelsize, nullptr, GL_STREAM_DRAW);
-		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+		//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
+		//glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*texelsize, nullptr, GL_STREAM_DRAW);
+		//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	}
 }
 
 
 uint8_t *FHardwareTexture::MapBuffer()
 {
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
-	return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
+	//return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+	return 0;
 }
 
 //===========================================================================
@@ -269,7 +277,7 @@ int FHardwareTexture::GetDepthBuffer(int width, int height)
 	{
 		glGenRenderbuffers(1, &glDepthID);
 		glBindRenderbuffer(GL_RENDERBUFFER, glDepthID);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, 
 			GetTexDimension(width), GetTexDimension(height));
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	}

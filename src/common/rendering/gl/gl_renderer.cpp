@@ -91,9 +91,9 @@ void FGLRenderer::Initialize(int width, int height)
 	mShadowMapShader = new FShadowMapShader();
 
 	// needed for the core profile, because someone decided it was a good idea to remove the default VAO.
-	glGenVertexArrays(1, &mVAOID);
-	glBindVertexArray(mVAOID);
-	FGLDebug::LabelObject(GL_VERTEX_ARRAY, mVAOID, "FGLRenderer.mVAOID");
+	glGenVertexArraysOES(1, &mVAOID);
+	glBindVertexArrayOES(mVAOID);
+	//FGLDebug::LabelObject(GL_VERTEX_ARRAY, mVAOID, "FGLRenderer.mVAOID");
 
 	mFBID = 0;
 	mOldFBID = 0;
@@ -111,8 +111,8 @@ FGLRenderer::~FGLRenderer()
 	if (mFBID != 0) glDeleteFramebuffers(1, &mFBID);
 	if (mVAOID != 0)
 	{
-		glBindVertexArray(0);
-		glDeleteVertexArrays(1, &mVAOID);
+		glBindVertexArrayOES(0);
+		glDeleteVertexArraysOES(1, &mVAOID);
 	}
 	if (mBuffers) delete mBuffers;
 	if (mSaveBuffers) delete mSaveBuffers;

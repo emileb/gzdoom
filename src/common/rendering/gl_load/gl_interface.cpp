@@ -54,6 +54,7 @@ static double realglversion;	// this is public so the statistics code can access
 
 static void CollectExtensions()
 {
+	/*
 	const char *extension;
 
 	int max = 0;
@@ -64,6 +65,24 @@ static void CollectExtensions()
 	{
 		extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
 		m_Extensions.Push(FString(extension));
+	}
+	*/
+	const char* supported = (char*)glGetString(GL_EXTENSIONS);
+
+	if (nullptr != supported)
+	{
+		char* extensions = new char[strlen(supported) + 1];
+		strcpy(extensions, supported);
+
+		char* extension = strtok(extensions, " ");
+
+		while (extension)
+		{
+			m_Extensions.Push(FString(extension));
+			extension = strtok(nullptr, " ");
+		}
+
+		delete[] extensions;
 	}
 }
 
@@ -178,7 +197,7 @@ void gl_LoadExtensions()
 	else
 	{
 		// Assume that everything works without problems on GL 4.5 drivers where these things are core features.
-		gl.flags |= RFL_SHADER_STORAGE_BUFFER | RFL_BUFFER_STORAGE;
+		//gl.flags |= RFL_SHADER_STORAGE_BUFFER | RFL_BUFFER_STORAGE;
 	}
 
 	// Mesa implements shader storage only for fragment shaders.

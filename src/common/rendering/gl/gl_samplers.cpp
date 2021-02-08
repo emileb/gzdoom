@@ -51,6 +51,7 @@ extern TexFilter_s TexFilter[];
 
 FSamplerManager::FSamplerManager()
 {
+	/*
 	glGenSamplers(NUMSAMPLERS, mSamplers);
 
 	glSamplerParameteri(mSamplers[CLAMP_X], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -83,6 +84,7 @@ FSamplerManager::FSamplerManager()
 		name.Format("mSamplers[%d]", i);
 		FGLDebug::LabelObject(GL_SAMPLER, mSamplers[i], name.GetChars());
 	}
+	*/
 }
 
 FSamplerManager::~FSamplerManager()
@@ -95,20 +97,23 @@ void FSamplerManager::UnbindAll()
 {
 	for (int i = 0; i < IHardwareTexture::MAX_TEXTURES; i++)
 	{
-		glBindSampler(i, 0);
+		//glBindSampler(i, 0);
 	}
 }
 	
 uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 {
+	/*
 	unsigned int samp = mSamplers[num];
 	glBindSampler(texunit, samp);
+	*/
 	return 255;
 }
 
 	
 void FSamplerManager::SetTextureFilterMode()
 {
+	/*
 	GLint bounds[IHardwareTexture::MAX_TEXTURES];
 	
 	// Unbind all
@@ -135,6 +140,7 @@ void FSamplerManager::SetTextureFilterMode()
 	{
 		glBindSampler(i, bounds[i]);
 	}
+	*/
 }
 
 

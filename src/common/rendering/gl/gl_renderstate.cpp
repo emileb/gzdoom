@@ -251,16 +251,6 @@ void FGLRenderState::ApplyState()
 
 	if (mSplitEnabled != stSplitEnabled)
 	{
-		if (mSplitEnabled)
-		{
-			glEnable(GL_CLIP_DISTANCE3);
-			glEnable(GL_CLIP_DISTANCE4);
-		}
-		else
-		{
-			glDisable(GL_CLIP_DISTANCE3);
-			glDisable(GL_CLIP_DISTANCE4);
-		}
 		stSplitEnabled = mSplitEnabled;
 	}
 
@@ -287,7 +277,7 @@ void FGLRenderState::ApplyState()
 
 void FGLRenderState::ApplyBuffers()
 {
-	if (mVertexBuffer != mCurrentVertexBuffer || mVertexOffsets[0] != mCurrentVertexOffsets[0] || mVertexOffsets[1] != mCurrentVertexOffsets[1])
+	//if (mVertexBuffer != mCurrentVertexBuffer || mVertexOffsets[0] != mCurrentVertexOffsets[0] || mVertexOffsets[1] != mCurrentVertexOffsets[1])
 	{
 		assert(mVertexBuffer != nullptr);
 		static_cast<GLVertexBuffer*>(mVertexBuffer)->Bind(mVertexOffsets);
@@ -295,7 +285,7 @@ void FGLRenderState::ApplyBuffers()
 		mCurrentVertexOffsets[0] = mVertexOffsets[0];
 		mCurrentVertexOffsets[1] = mVertexOffsets[1];
 	}
-	if (mIndexBuffer != mCurrentIndexBuffer)
+	//if (mIndexBuffer != mCurrentIndexBuffer)
 	{
 		if (mIndexBuffer) static_cast<GLIndexBuffer*>(mIndexBuffer)->Bind();
 		mCurrentIndexBuffer = mIndexBuffer;
@@ -424,6 +414,8 @@ static int dt2gl[] = { GL_POINTS, GL_LINES, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_TR
 
 void FGLRenderState::Draw(int dt, int index, int count, bool apply)
 {
+	//screen->mVertexData->upload();
+
 	if (apply)
 	{
 		Apply();
@@ -435,6 +427,7 @@ void FGLRenderState::Draw(int dt, int index, int count, bool apply)
 
 void FGLRenderState::DrawIndexed(int dt, int index, int count, bool apply)
 {
+	//screen->mVertexData->upload();
 	if (apply)
 	{
 		Apply();
@@ -457,7 +450,7 @@ void FGLRenderState::SetDepthFunc(int func)
 
 void FGLRenderState::SetDepthRange(float min, float max)
 {
-	glDepthRange(min, max);
+	glDepthRangef(min, max);
 }
 
 void FGLRenderState::SetColorMask(bool r, bool g, bool b, bool a)
@@ -510,7 +503,7 @@ void FGLRenderState::EnableClipDistance(int num, bool state)
 	// Update the viewpoint-related clip plane setting.
 	if (!(gl.flags & RFL_NO_CLIP_PLANES))
 	{
-		ToggleState(GL_CLIP_DISTANCE0 + num, state);
+		//ToggleState(GL_CLIP_DISTANCE0 + num, state);
 	}
 }
 
@@ -521,7 +514,7 @@ void FGLRenderState::Clear(int targets)
 	if (targets & CT_Depth)
 	{
 		gltarget |= GL_DEPTH_BUFFER_BIT;
-		glClearDepth(1);
+		glClearDepthf(1);
 	}
 	if (targets & CT_Stencil)
 	{
@@ -566,12 +559,12 @@ void FGLRenderState::EnableDepthTest(bool on)
 
 void FGLRenderState::EnableMultisampling(bool on)
 {
-	ToggleState(GL_MULTISAMPLE, on);
+	//ToggleState(GL_MULTISAMPLE, on);
 }
 
 void FGLRenderState::EnableLineSmooth(bool on)
 {
-	ToggleState(GL_LINE_SMOOTH, on);
+	//ToggleState(GL_LINE_SMOOTH, on);
 }
 
 //==========================================================================
@@ -581,19 +574,19 @@ void FGLRenderState::EnableLineSmooth(bool on)
 //==========================================================================
 void FGLRenderState::ClearScreen()
 {
-	bool multi = !!glIsEnabled(GL_MULTISAMPLE);
+	//bool multi = !!glIsEnabled(GL_MULTISAMPLE);
 
 	screen->mViewpoints->Set2D(*this, SCREENWIDTH, SCREENHEIGHT);
 	SetColor(0, 0, 0);
 	Apply();
 
-	glDisable(GL_MULTISAMPLE);
+	//glDisable(GL_MULTISAMPLE);
 	glDisable(GL_DEPTH_TEST);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, FFlatVertexBuffer::FULLSCREEN_INDEX, 4);
 
 	glEnable(GL_DEPTH_TEST);
-	if (multi) glEnable(GL_MULTISAMPLE);
+	//if (multi) glEnable(GL_MULTISAMPLE);
 }
 
 
