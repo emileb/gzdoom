@@ -524,6 +524,15 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		glAttachShader(hShader, hVertProg);
 		glAttachShader(hShader, hFragProg);
 
+
+		glBindAttribLocation(hShader, VATTR_VERTEX, "aPosition");
+		glBindAttribLocation(hShader, VATTR_TEXCOORD, "aTexCoord");
+		glBindAttribLocation(hShader, VATTR_COLOR, "aColor");
+		glBindAttribLocation(hShader, VATTR_VERTEX2, "aVertex2");
+		glBindAttribLocation(hShader, VATTR_NORMAL, "aNormal");
+		glBindAttribLocation(hShader, VATTR_NORMAL2, "aNormal2");
+
+
 		glLinkProgram(hShader);
 
 		glGetShaderInfoLog(hVertProg, 10000, NULL, buffer);
@@ -568,6 +577,8 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		hVertProg = 0;
 		hFragProg = 0;
 	}
+
+	
 
 
 	ProjectionMatrix_index = glGetUniformLocation(hShader, "ProjectionMatrix");

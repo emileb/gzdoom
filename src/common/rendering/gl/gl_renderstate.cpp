@@ -601,8 +601,8 @@ void FGLRenderState::ClearScreen()
 bool FGLRenderState::SetDepthClamp(bool on)
 {
 	bool res = mLastDepthClamp;
-	if (!on) glDisable(GL_DEPTH_CLAMP);
-	else glEnable(GL_DEPTH_CLAMP);
+	//if (!on) glDisable(GL_DEPTH_CLAMP);
+	//else glEnable(GL_DEPTH_CLAMP);
 	mLastDepthClamp = on;
 	return res;
 }

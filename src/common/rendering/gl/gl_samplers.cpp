@@ -90,7 +90,7 @@ FSamplerManager::FSamplerManager()
 FSamplerManager::~FSamplerManager()
 {
 	UnbindAll();
-	glDeleteSamplers(NUMSAMPLERS, mSamplers);
+	//glDeleteSamplers(NUMSAMPLERS, mSamplers);
 }
 
 void FSamplerManager::UnbindAll()

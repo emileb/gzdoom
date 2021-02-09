@@ -202,6 +202,7 @@ void gl_LoadExtensions()
 
 	// Mesa implements shader storage only for fragment shaders.
 	// Just disable the feature there. The light buffer may just use a uniform buffer without any adverse effects.
+#ifndef USE_GLES2
 	int v = 0;
 	glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &v);
 	if (v == 0)
@@ -217,7 +218,7 @@ void gl_LoadExtensions()
 	gl.maxuniformblock = v;
 	glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &v);
 	gl.uniformblockalignment = v;
-
+#endif
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl.max_texturesize);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
@@ -231,11 +232,11 @@ void gl_LoadExtensions()
 void gl_PrintStartupLog()
 {
 	int v = 0;
-	glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &v);
+	//glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &v);
 
 	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	Printf ("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
-	Printf ("GL_VERSION: %s (%s profile)\n", glGetString(GL_VERSION), (v & GL_CONTEXT_CORE_PROFILE_BIT)? "Core" : "Compatibility");
+	Printf ("GL_VERSION: %s ()\n", glGetString(GL_VERSION));
 	Printf ("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	Printf (PRINT_LOG, "GL_EXTENSIONS:");
 	for (unsigned i = 0; i < m_Extensions.Size(); i++)
@@ -247,9 +248,9 @@ void gl_PrintStartupLog()
 	Printf("\nMax. texture size: %d\n", v);
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);
 	Printf ("Max. texture units: %d\n", v);
-	glGetIntegerv(GL_MAX_VARYING_FLOATS, &v);
+	//glGetIntegerv(GL_MAX_VARYING_FLOATS, &v);
 	Printf ("Max. varying: %d\n", v);
-	
+#ifndef USE_GLES2	
 	if (gl.flags & RFL_SHADER_STORAGE_BUFFER)
 	{
 		glGetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &v);
@@ -264,6 +265,7 @@ void gl_PrintStartupLog()
 		glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &v);
 		Printf("Uniform block alignment: %d\n", v);
 	}
+#endif
 }
 
 std::pair<double, bool> gl_getInfo()
