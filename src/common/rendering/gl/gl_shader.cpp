@@ -288,10 +288,9 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 			vec4 lights[];
 		};
 		#elif defined NUM_UBO_LIGHTS
-		uniform LightBufferUBO
-		{
-			vec4 lights[NUM_UBO_LIGHTS];
-		};
+		
+		uniform vec4 lights[32];
+		
 		#endif
 
 		// textures
@@ -370,7 +369,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	unsigned int lightbuffersize = screen->mLights->GetBlockSize();
 	if (!lightbuffertype)
 	{
-		vp_comb.Format("#version 330 core\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+		vp_comb.Format("#version 100\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
 	}
 	else
 	{
@@ -700,7 +699,7 @@ FShader *FShaderCollection::Compile (const char *ShaderName, const char *ShaderP
 	defines += shaderdefines;
 	// this can't be in the shader code due to ATI strangeness.
 	if (!usediscard) defines += "#define NO_ALPHATEST\n";
-	if (passType == GBUFFER_PASS) defines += "#define GBUFFER_PASS\n";
+	//if (passType == GBUFFER_PASS) defines += "#define GBUFFER_PASS\n";
 
 	FShader *shader = NULL;
 	try

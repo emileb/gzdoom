@@ -170,7 +170,8 @@ void gl_LoadExtensions()
 	if (CheckExtension("GL_ARB_texture_compression")) gl.flags |= RFL_TEXTURE_COMPRESSION;
 	if (CheckExtension("GL_EXT_texture_compression_s3tc")) gl.flags |= RFL_TEXTURE_COMPRESSION_S3TC;
 
-	if (gl_version < 4.f)
+	//if (gl_version < 4.f)
+	if(1) // AYWAYS
 	{
 #ifdef _WIN32
 		if (strstr(gl.vendorstring, "ATI Tech"))

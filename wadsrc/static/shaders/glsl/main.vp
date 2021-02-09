@@ -3,25 +3,24 @@ attribute vec4 aPosition;
 attribute vec2 aTexCoord;
 attribute vec4 aColor;
 
-layout(location = 0) out vec4 vTexCoord;
-layout(location = 1) out vec4 vColor;
-
+varying vec4 vTexCoord;
+varying vec4 vColor;
 
 #ifndef SIMPLE	// we do not need these for simple shaders
 attribute vec4 aVertex2;
 attribute vec4 aNormal;
 attribute vec4 aNormal2;
 
-layout(location = 2) out vec4 pixelpos;
-layout(location = 3) out vec3 glowdist;
-layout(location = 4) out vec3 gradientdist;
-layout(location = 5) out vec4 vWorldNormal;
-layout(location = 6) out vec4 vEyeNormal;
+varying vec4 pixelpos;
+varying vec3 glowdist;
+varying vec3 gradientdist;
+varying vec4 vWorldNormal;
+varying vec4 vEyeNormal;
 #endif
 
 #ifdef NO_CLIPDISTANCE_SUPPORT
-layout(location = 7) out vec4 ClipDistanceA;
-layout(location = 8) out vec4 ClipDistanceB;
+varying vec4 ClipDistanceA;
+varying vec4 ClipDistanceB;
 #endif
 
 void main()
@@ -54,8 +53,8 @@ void main()
 	#ifndef SIMPLE
 		pixelpos.xyz = worldcoord.xyz;
 		pixelpos.w = -eyeCoordPos.z/eyeCoordPos.w;
-
-		if (uGlowTopColor.a > 0 || uGlowBottomColor.a > 0)
+  
+		if (uGlowTopColor.a > 0.0 || uGlowBottomColor.a > 0.0)
 		{
 			float topatpoint = (uGlowTopPlane.w + uGlowTopPlane.x * worldcoord.x + uGlowTopPlane.y * worldcoord.z) * uGlowTopPlane.z;
 			float bottomatpoint = (uGlowBottomPlane.w + uGlowBottomPlane.x * worldcoord.x + uGlowBottomPlane.y * worldcoord.z) * uGlowBottomPlane.z;
@@ -64,7 +63,7 @@ void main()
 			glowdist.z = clamp(glowdist.x / (topatpoint - bottomatpoint), 0.0, 1.0);
 		}
 		
-		if (uObjectColor2.a != 0)
+		if (uObjectColor2.a != 0.0)
 		{
 			float topatpoint = (uGradientTopPlane.w + uGradientTopPlane.x * worldcoord.x + uGradientTopPlane.y * worldcoord.z) * uGradientTopPlane.z;
 			float bottomatpoint = (uGradientBottomPlane.w + uGradientBottomPlane.x * worldcoord.x + uGradientBottomPlane.y * worldcoord.z) * uGradientBottomPlane.z;
@@ -117,7 +116,7 @@ void main()
 	}
 	else
 	{
-		ClipDistance0 = 1;
+		ClipDistance0 = 1.0;
 	}
 
 	// clip planes used for translucency splitting

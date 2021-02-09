@@ -1,21 +1,21 @@
 
-layout(location = 0) in vec4 vTexCoord;
-layout(location = 1) in vec4 vColor;
-layout(location = 2) in vec4 pixelpos;
-layout(location = 3) in vec3 glowdist;
-layout(location = 4) in vec3 gradientdist;
-layout(location = 5) in vec4 vWorldNormal;
-layout(location = 6) in vec4 vEyeNormal;
+varying vec4 vTexCoord;
+varying vec4 vColor;
+varying vec4 pixelpos;
+varying vec3 glowdist;
+varying vec3 gradientdist;
+varying vec4 vWorldNormal;
+varying vec4 vEyeNormal;
 
 #ifdef NO_CLIPDISTANCE_SUPPORT
-layout(location = 7) in vec4 ClipDistanceA;
-layout(location = 8) in vec4 ClipDistanceB;
+varying vec4 ClipDistanceA;
+varying vec4 ClipDistanceB;
 #endif
 
-layout(location=0) out vec4 FragColor;
+vec4 FragColor;
 #ifdef GBUFFER_PASS
-layout(location=1) out vec4 FragFog;
-layout(location=2) out vec4 FragNormal;
+//layout(location=1) out vec4 FragFog;
+//layout(location=2) out vec4 FragNormal;
 #endif
 
 struct Material
@@ -767,13 +767,13 @@ void main()
 		if ((uTextureMode & 0xffff) == 7)
 		{
 			float gray = grayscale(frag);
-			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2;
+			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2.0;
 			frag = vec4(clamp(cm.rgb, 0.0, 1.0), frag.a);
 		}
 			frag = frag * ProcessLight(material, vColor);
 		frag.rgb = frag.rgb + uFogColor.rgb;
 	}
-	FragColor = frag;
+	gl_FragColor = frag;
 #ifdef GBUFFER_PASS
 	FragFog = vec4(AmbientOcclusionColor(), 1.0);
 	FragNormal = vec4(vEyeNormal.xyz * 0.5 + 0.5, 1.0);
