@@ -298,8 +298,9 @@ static void CheckTimer(FRenderState &state, uint64_t ShaderStartTime)
 sector_t* RenderView(player_t* player)
 {
 	auto RenderState = screen->RenderState();
-	RenderState->SetVertexBuffer(screen->mVertexData);
+	
 	screen->mVertexData->Reset();
+	RenderState->SetVertexBuffer(screen->mVertexData);
 
 	sector_t* retsec;
 	if (!V_IsHardwareRenderer())

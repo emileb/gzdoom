@@ -34,7 +34,7 @@ protected:
 	void Unlock() override;
 public:
 	void Bind();
-	void Upload();
+	void Upload(size_t start, size_t end);
 };
 
 

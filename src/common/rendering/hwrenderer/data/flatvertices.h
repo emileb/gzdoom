@@ -47,12 +47,16 @@ public:
 	TArray<uint32_t> ibo_data;
 
 	IVertexBuffer *mVertexBuffer;
+	IVertexBuffer* mVertexBuffer1;
+	IVertexBuffer* mVertexBuffer2;
+
 	IIndexBuffer *mIndexBuffer;
 
 	unsigned int mIndex;
 	std::atomic<unsigned int> mCurIndex;
 	unsigned int mNumReserved;
 
+	unsigned int mMapStart;
 
 	static const unsigned int BUFFER_SIZE = 2000000;
 	static const unsigned int BUFFER_SIZE_TO_USE = BUFFER_SIZE-500;
@@ -96,22 +100,28 @@ public:
 	void Reset()
 	{
 		mCurIndex = mIndex;
+		if (mVertexBuffer == mVertexBuffer1)
+			mVertexBuffer = mVertexBuffer2;
+		else
+			mVertexBuffer = mVertexBuffer1;
 	}
 
 	void Map()
 	{
+		mMapStart = mCurIndex;
 		mVertexBuffer->Map();
 	}
 
 	void Unmap()
 	{
 		mVertexBuffer->Unmap();
+		mVertexBuffer->Upload(mMapStart * sizeof(FFlatVertex), (mCurIndex - mMapStart) * sizeof(FFlatVertex));
 	}
 
 	void upload()
 	{
-		mVertexBuffer->Upload();
-		mIndexBuffer->Upload();
+		//mVertexBuffer->Upload();
+		//mIndexBuffer->Upload();
 	}
 
 };

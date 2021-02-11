@@ -97,61 +97,6 @@ const int Tex_Blend_Screen = 2;
 const int Tex_Blend_Overlay = 3;
 const int Tex_Blend_Hardlight = 4;
  
- vec4 ApplyTextureManipulation(vec4 texel, int blendflags)
- {
-	// Step 1: desaturate according to the material's desaturation factor. 
-	texel = dodesaturate(texel, uTextureModulateColor.a);
-	
-	// Step 2: Invert if requested
-	if ((blendflags & 8) != 0)
-	{
-		texel.rgb = vec3(1.0 - texel.r, 1.0 - texel.g, 1.0 - texel.b);
-	}
-	
-	// Step 3: Apply additive color
-	texel.rgb += uTextureAddColor.rgb;
-	
-	// Step 4: Colorization, including gradient if set.
-	texel.rgb *= uTextureModulateColor.rgb;
-	
-	// Before applying the blend the value needs to be clamped to [0..1] range.
-	texel.rgb = clamp(texel.rgb, 0.0, 1.0);
-	
-	// Step 5: Apply a blend. This may just be a translucent overlay or one of the blend modes present in current Build engines.
-	if ((blendflags & 7) != 0)
-	{
-		vec3 tcol = texel.rgb * 255.0;	// * 255.0 to make it easier to reuse the integer math.
-		vec4 tint = uTextureBlendColor * 255.0;
-
-		switch (blendflags & 7)
-		{
-			default:
-				tcol.b = tcol.b * (1.0 - uTextureBlendColor.a) + tint.b * uTextureBlendColor.a;
-				tcol.g = tcol.g * (1.0 - uTextureBlendColor.a) + tint.g * uTextureBlendColor.a;
-				tcol.r = tcol.r * (1.0 - uTextureBlendColor.a) + tint.r * uTextureBlendColor.a;
-				break;
-			// The following 3 are taken 1:1 from the Build engine
-			case Tex_Blend_Screen:
-				tcol.b = 255.0 - (((255.0 - tcol.b) * (255.0 - tint.r)) / 256.0);
-				tcol.g = 255.0 - (((255.0 - tcol.g) * (255.0 - tint.g)) / 256.0);
-				tcol.r = 255.0 - (((255.0 - tcol.r) * (255.0 - tint.b)) / 256.0);
-				break;
-			case Tex_Blend_Overlay:
-				tcol.b = tcol.b < 128.0? (tcol.b * tint.b) / 128.0 : 255.0 - (((255.0 - tcol.b) * (255.0 - tint.b)) / 128.0);
-				tcol.g = tcol.g < 128.0? (tcol.g * tint.g) / 128.0 : 255.0 - (((255.0 - tcol.g) * (255.0 - tint.g)) / 128.0);
-				tcol.r = tcol.r < 128.0? (tcol.r * tint.r) / 128.0 : 255.0 - (((255.0 - tcol.r) * (255.0 - tint.r)) / 128.0);
-				break;
-			case Tex_Blend_Hardlight:
-				tcol.b = tint.b < 128.0 ? (tcol.b * tint.b) / 128.0 : 255.0 - (((255.0 - tcol.b) * (255.0 - tint.b)) / 128.0);
-				tcol.g = tint.g < 128.0 ? (tcol.g * tint.g) / 128.0 : 255.0 - (((255.0 - tcol.g) * (255.0 - tint.g)) / 128.0);
-				tcol.r = tint.r < 128.0 ? (tcol.r * tint.r) / 128.0 : 255.0 - (((255.0 - tcol.r) * (255.0 - tint.r)) / 128.0);
-				break;
-		}
-		texel.rgb = tcol / 255.0;
-	}
-	return texel;
-}
-
 //===========================================================================
 //
 // This function is common for all (non-special-effect) fragment shaders
@@ -160,55 +105,11 @@ const int Tex_Blend_Hardlight = 4;
 
 vec4 getTexel(vec2 st)
 {
-	vec4 texel = texture(tex, st);
-	
-	//
-	// Apply texture modes
-	//
-	switch (uTextureMode & 0xffff)
-	{
-		case 1:	// TM_STENCIL
-			texel.rgb = vec3(1.0,1.0,1.0);
-			break;
-			
-		case 2:	// TM_OPAQUE
-			texel.a = 1.0;
-			break;
-			
-		case 3:	// TM_INVERSE
-			texel = vec4(1.0-texel.r, 1.0-texel.b, 1.0-texel.g, texel.a);
-			break;
-			
-		case 4:	// TM_ALPHATEXTURE
-		{
-			float gray = grayscale(texel);
-			texel = vec4(1.0, 1.0, 1.0, gray*texel.a);
-			break;
-		}
-			
-		case 5:	// TM_CLAMPY
-			if (st.t < 0.0 || st.t > 1.0)
-			{
-				texel.a = 0.0;
-			}
-			break;
-			
-		case 6: // TM_OPAQUEINVERSE
-			texel = vec4(1.0-texel.r, 1.0-texel.b, 1.0-texel.g, 1.0);
-			break;
-			
-		case 7: //TM_FOGLAYER 
-			return texel;
-
-	}
+	vec4 texel = texture2D(tex, st);
 	
 	// Apply the texture modification colors.
 	int blendflags = int(uTextureAddColor.a);	// this alpha is unused otherwise
-	if (blendflags != 0)	
-	{
-		// only apply the texture manipulation if it contains something.
-		texel = ApplyTextureManipulation(texel, blendflags);
-	}
+
 
 	// Apply the Doom64 style material colors on top of everything from the texture modification settings.
 	// This may be a bit redundant in terms of features but the data comes from different sources so this is unavoidable.
@@ -229,7 +130,7 @@ float R_WallColormap(float lightnum, float z, vec3 normal)
 {
 	// R_ScaleFromGlobalAngle calculation
 	float projection = 160.0; // projection depends on SCREENBLOCKS!! 160 is the fullscreen value
-	vec2 line_v1 = pixelpos.xz; // in vanilla this is the first curline vertex
+	vec2 line_v1 = pixelpos.xz; // in vanillla this is the first curline vertex
 	vec2 line_normal = normal.xz;
 	float texscale = projection * clamp(dot(normalize(uCameraPos.xz - line_v1), line_normal), 0.0, 1.0) / z;
 
@@ -271,21 +172,7 @@ float R_ZDoomColormap(float light, float z)
 
 float R_DoomColormap(float light, float z)
 {
-	if ((uPalLightLevels >> 16) == 16) // gl_lightmode 16
-	{
-		float lightnum = clamp(light * 15.0, 0.0, 15.0);
 
-		if (dot(vWorldNormal.xyz, vWorldNormal.xyz) > 0.5)
-		{
-			vec3 normal = normalize(vWorldNormal.xyz);
-			return mix(R_WallColormap(lightnum, z, normal), R_PlaneColormap(lightnum, z), abs(normal.y));
-		}
-		else // vWorldNormal is not set on sprites
-		{
-			return R_PlaneColormap(lightnum, z);
-		}
-	}
-	else
 	{
 		return R_ZDoomColormap(light, z);
 	}
@@ -300,29 +187,14 @@ float R_DoomLightingEquation(float light)
 {
 	// z is the depth in view space, positive going into the screen
 	float z;
-	if (((uPalLightLevels >> 8)  & 0xff) == 2)
-	{
-		z = distance(pixelpos.xyz, uCameraPos.xyz);
-	}
-	else 
+
 	{
 		z = pixelpos.w;
 	}
 	
-	if ((uPalLightLevels >> 16) == 5) // gl_lightmode 5: Build software lighting emulation.
-	{
-		// This is a lot more primitive than Doom's lighting...
-		float numShades = float(uPalLightLevels & 255);
-		float curshade = (1.0 - light) * (numShades - 1.0);
-		float visibility = max(uGlobVis * uLightFactor * z, 0.0);
-		float shade = clamp((curshade + visibility), 0.0, numShades - 1.0);
-		return clamp(shade * uLightDist, 0.0, 1.0);
-	}
+
 
 	float colormap = R_DoomColormap(light, z);
-
-	if ((uPalLightLevels & 0xff) != 0)
-		colormap = floor(colormap) + 0.5;
 
 	// Result is the normalized colormap index (0 bright .. 1 dark)
 	return clamp(colormap, 0.0, 31.0) / 32.0;
@@ -336,139 +208,6 @@ float R_DoomLightingEquation(float light)
 
 #ifdef SUPPORTS_SHADOWMAPS
 
-float shadowDirToU(vec2 dir)
-{
-	if (abs(dir.y) > abs(dir.x))
-	{
-		float x = dir.x / dir.y * 0.125;
-		if (dir.y >= 0.0)
-			return 0.125 + x;
-		else
-			return (0.50 + 0.125) + x;
-	}
-	else
-	{
-		float y = dir.y / dir.x * 0.125;
-		if (dir.x >= 0.0)
-			return (0.25 + 0.125) - y;
-		else
-			return (0.75 + 0.125) - y;
-	}
-}
-
-vec2 shadowUToDir(float u)
-{
-	u *= 4.0;
-	vec2 raydir;
-	switch (int(u))
-	{
-	case 0: raydir = vec2(u * 2.0 - 1.0, 1.0); break;
-	case 1: raydir = vec2(1.0, 1.0 - (u - 1.0) * 2.0); break;
-	case 2: raydir = vec2(1.0 - (u - 2.0) * 2.0, -1.0); break;
-	case 3: raydir = vec2(-1.0, (u - 3.0) * 2.0 - 1.0); break;
-	}
-	return raydir;
-}
-
-float sampleShadowmap(vec3 planePoint, float v)
-{
-	float bias = 1.0;
-	float negD = dot(vWorldNormal.xyz, planePoint);
-
-	vec3 ray = planePoint;
-
-	vec2 isize = textureSize(ShadowMap, 0);
-	float scale = float(isize.x) * 0.25;
-
-	// Snap to shadow map texel grid
-	if (abs(ray.z) > abs(ray.x))
-	{
-		ray.y = ray.y / abs(ray.z);
-		ray.x = ray.x / abs(ray.z);
-		ray.x = (floor((ray.x + 1.0) * 0.5 * scale) + 0.5) / scale * 2.0 - 1.0;
-		ray.z = sign(ray.z);
-	}
-	else
-	{
-		ray.y = ray.y / abs(ray.x);
-		ray.z = ray.z / abs(ray.x);
-		ray.z = (floor((ray.z + 1.0) * 0.5 * scale) + 0.5) / scale * 2.0 - 1.0;
-		ray.x = sign(ray.x);
-	}
-
-	float t = negD / dot(vWorldNormal.xyz, ray) - bias;
-	vec2 dir = ray.xz * t;
-
-	float u = shadowDirToU(dir);
-	float dist2 = dot(dir, dir);
-	return step(dist2, texture(ShadowMap, vec2(u, v)).x);
-}
-
-float sampleShadowmapPCF(vec3 planePoint, float v)
-{
-	float bias = 1.0;
-	float negD = dot(vWorldNormal.xyz, planePoint);
-
-	vec3 ray = planePoint;
-
-	if (abs(ray.z) > abs(ray.x))
-		ray.y = ray.y / abs(ray.z);
-	else
-		ray.y = ray.y / abs(ray.x);
-
-	vec2 isize = textureSize(ShadowMap, 0);
-	float scale = float(isize.x);
-	float texelPos = floor(shadowDirToU(ray.xz) * scale);
-
-	float sum = 0.0;
-	float step_count = uShadowmapFilter;
-		
-	texelPos -= step_count + 0.5;
-	for (float x = -step_count; x <= step_count; x++)
-	{
-		float u = fract(texelPos / scale);
-		vec2 dir = shadowUToDir(u);
-
-		ray.x = dir.x;
-		ray.z = dir.y;
-		float t = negD / dot(vWorldNormal.xyz, ray) - bias;
-		dir = ray.xz * t;
-
-		float dist2 = dot(dir, dir);
-		sum += step(dist2, texture(ShadowMap, vec2(u, v)).x);
-		texelPos++;
-	}
-	return sum / (uShadowmapFilter * 2.0 + 1.0);
-}
-
-float shadowmapAttenuation(vec4 lightpos, float shadowIndex)
-{
-	if (shadowIndex >= 1024.0)
-		return 1.0; // No shadowmap available for this light
-
-	vec3 planePoint = pixelpos.xyz - lightpos.xyz;
-	planePoint += 0.01; // nudge light position slightly as Doom maps tend to have their lights perfectly aligned with planes
-
-	if (dot(planePoint.xz, planePoint.xz) < 1.0)
-		return 1.0; // Light is too close
-
-	float v = (shadowIndex + 0.5) / 1024.0;
-
-	if (uShadowmapFilter <= 0)
-	{
-		return sampleShadowmap(planePoint, v);
-	}
-	else
-	{
-		return sampleShadowmapPCF(planePoint, v);
-	}
-}
-
-float shadowAttenuation(vec4 lightpos, float lightcolorA)
-{
-	float shadowIndex = abs(lightcolorA) - 1.0;
-	return shadowmapAttenuation(lightpos, shadowIndex);
-}
 
 #else
 
@@ -563,17 +302,7 @@ void SetMaterialProps(inout Material material, vec2 texCoord)
 
 // OpenGL doesn't care, but Vulkan pukes all over the place if these texture samplings are included in no-texture shaders, even though never called.
 #ifndef NO_LAYERS
-	if ((uTextureMode & TEXF_Brightmap) != 0)
-		material.Bright = texture(brighttexture, texCoord.st);
-		
-	if ((uTextureMode & TEXF_Detailmap) != 0)
-	{
-		vec4 Detail = texture(detailtexture, texCoord.st * uDetailParms.xy) * uDetailParms.z;
-		material.Base *= Detail;
-	}
-	
-	if ((uTextureMode & TEXF_Glowmap) != 0)
-		material.Glow = texture(glowtexture, texCoord.st);
+
 #endif
 }
 
@@ -698,7 +427,7 @@ vec3 AmbientOcclusionColor()
 void main()
 {
 #ifdef NO_CLIPDISTANCE_SUPPORT
-	if (ClipDistanceA.x < 0 || ClipDistanceA.y < 0 || ClipDistanceA.z < 0 || ClipDistanceA.w < 0 || ClipDistanceB.x < 0) discard;
+	if (ClipDistanceA.x < 0.0 || ClipDistanceA.y < 0.0 || ClipDistanceA.z < 0.0 || ClipDistanceA.w < 0.0 || ClipDistanceB.x < 0.0) discard;
 #endif
 
 #ifndef LEGACY_USER_SHADER
@@ -745,31 +474,11 @@ void main()
 			fogfactor = exp2 (uFogDensity * fogdist);
 		}
 		
-		if ((uTextureMode & 0xffff) != 7)
-		{
-			frag = getLightColor(material, fogdist, fogfactor);
-
-			//
-			// colored fog
-			//
-			if (uFogEnabled < 0) 
-			{
-				frag = applyFog(frag, fogfactor);
-			}
-		}
-		else
-		{
-			frag = vec4(uFogColor.rgb, (1.0 - fogfactor) * frag.a * 0.75 * vColor.a);
-		}
+	
 	}
 	else // simple 2D (uses the fog color to add a color overlay)
 	{
-		if ((uTextureMode & 0xffff) == 7)
-		{
-			float gray = grayscale(frag);
-			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2.0;
-			frag = vec4(clamp(cm.rgb, 0.0, 1.0), frag.a);
-		}
+		
 			frag = frag * ProcessLight(material, vColor);
 		frag.rgb = frag.rgb + uFogColor.rgb;
 	}
@@ -779,3 +488,4 @@ void main()
 	FragNormal = vec4(vEyeNormal.xyz * 0.5 + 0.5, 1.0);
 #endif
 }
+ 

@@ -78,17 +78,22 @@ FFlatVertexBuffer::FFlatVertexBuffer(int width, int height)
 	vbo_shadowdata[18].Set(32767.0f, -32767.0f, 32767.0f, 0, 0);
 	vbo_shadowdata[19].Set(32767.0f, -32767.0f, -32767.0f, 0, 0);
 
-	mVertexBuffer = screen->CreateVertexBuffer();
+	mVertexBuffer1 = screen->CreateVertexBuffer();
+	mVertexBuffer2 = screen->CreateVertexBuffer();
+
+	mVertexBuffer = mVertexBuffer1;
 	mIndexBuffer = screen->CreateIndexBuffer();
 
 	unsigned int bytesize = BUFFER_SIZE * sizeof(FFlatVertex);
-	mVertexBuffer->SetData(bytesize, nullptr, false);
+	mVertexBuffer1->SetData(bytesize, nullptr, false);
+	mVertexBuffer2->SetData(bytesize, nullptr, false);
 
 	static const FVertexBufferAttribute format[] = {
 		{ 0, VATTR_VERTEX, VFmt_Float3, (int)myoffsetof(FFlatVertex, x) },
 		{ 0, VATTR_TEXCOORD, VFmt_Float2, (int)myoffsetof(FFlatVertex, u) }
 	};
-	mVertexBuffer->SetFormat(1, 2, sizeof(FFlatVertex), format);
+	mVertexBuffer1->SetFormat(1, 2, sizeof(FFlatVertex), format);
+	mVertexBuffer2->SetFormat(1, 2, sizeof(FFlatVertex), format);
 
 	mIndex = mCurIndex = NUM_RESERVED;
 	mNumReserved = NUM_RESERVED;
@@ -153,6 +158,14 @@ void FFlatVertexBuffer::Copy(int start, int count)
 {
 	Map();
 	memcpy(GetBuffer(start), &vbo_shadowdata[0], count * sizeof(FFlatVertex));
-	Unmap();
+	//Unmap();
+	mVertexBuffer->Upload(start * sizeof(FFlatVertex), count * sizeof(FFlatVertex));
+	
+	Reset();
+
+	Map();
+	memcpy(GetBuffer(start), &vbo_shadowdata[0], count * sizeof(FFlatVertex));
+	//Unmap();
+	mVertexBuffer->Upload(start * sizeof(FFlatVertex), count * sizeof(FFlatVertex));
 }
 

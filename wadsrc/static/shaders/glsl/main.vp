@@ -22,7 +22,7 @@ varying vec4 vEyeNormal;
 varying vec4 ClipDistanceA;
 varying vec4 ClipDistanceB;
 #endif
-
+ 
 void main()
 {
 	float ClipDistance0, ClipDistance1, ClipDistance2, ClipDistance3, ClipDistance4;

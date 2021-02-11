@@ -369,7 +369,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	unsigned int lightbuffersize = screen->mLights->GetBlockSize();
 	if (!lightbuffertype)
 	{
-		vp_comb.Format("#version 100\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+		vp_comb.Format("#version 100\n#define NUM_UBO_LIGHTS %d\n#define NO_CLIPDISTANCE_SUPPORT\n", lightbuffersize);
 	}
 	else
 	{

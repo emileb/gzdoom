@@ -55,7 +55,7 @@ public:
 	virtual void Unlock() = 0;
 	virtual void Resize(size_t newsize) = 0;
 
-	virtual void Upload() {}
+	virtual void Upload(size_t start, size_t size) {}
 
 	virtual void Map() {}		// Only needed by old OpenGL but this needs to be in the interface.
 	virtual void Unmap() {}

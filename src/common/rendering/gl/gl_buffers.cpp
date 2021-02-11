@@ -122,7 +122,7 @@ void GLBuffer::SetData(size_t size, const void* data, bool staticdata)
 			else
 			{
 				//glBufferData(mUseType, size, nullptr, staticdata ? GL_STATIC_DRAW : GL_STREAM_DRAW);
-				glBufferData(mUseType, size, nullptr, GL_STREAM_DRAW);
+				glBufferData(mUseType, size, memory, GL_STREAM_DRAW);
 				//map = nullptr;
 			}
 			if (!staticdata) nomap = false;
@@ -145,11 +145,14 @@ void GLBuffer::SetSubData(size_t offset, size_t size, const void *data)
 	}
 }
 
-void GLBuffer::Upload()
+void GLBuffer::Upload(size_t start, size_t size)
 {
 	Bind();
 	//glUnmapBuffer(mUseType);
-	glBufferData(mUseType, buffersize, map, GL_STREAM_DRAW);
+	glBufferSubData(mUseType, start, size, memory + start);
+	//glBufferSubData(mUseType, 0, start, memory);
+	//glBufferSubData(mUseType, 0, size, memory);
+	//glBufferSubData(mUseType, 0, buffersize/4, memory);
 }
 
 void GLBuffer::Map()
@@ -180,7 +183,7 @@ void GLBuffer::Unmap()
 		{
 			Bind();
 			//glUnmapBuffer(mUseType);
-			glBufferData(mUseType, buffersize, map, GL_STREAM_DRAW);
+			//glBufferData(mUseType, buffersize, map, GL_STREAM_DRAW);
 
 			//glBindBuffer(mUseType, 0);
 			InvalidateBufferState();
