@@ -13,7 +13,7 @@ LOCAL_CFLAGS   := -DHAVE_SOFTPOLY -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisib
 #-DHAVE_VULKAN
 #-DUSE_GL_HW_BUFFERS
 
-LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
 LOCAL_CFLAGS  += -DNO_SEND_STATS
 
@@ -58,6 +58,7 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/scripting/interface \
     	$(GZDOOM_TOP_PATH)/src/common/scripting/frontend \
     	$(GZDOOM_TOP_PATH)/src/common/scripting/backend \
+    	$(GZDOOM_TOP_PATH)/src/common/statusbar \
     	$(GZDOOM_TOP_PATH)/src/g_statusbar \
     	$(GZDOOM_TOP_PATH)/src/console \
     	$(GZDOOM_TOP_PATH)/src/playsim \
@@ -91,9 +92,10 @@ LOCAL_C_INCLUDES := \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/jpeg8d \
  $(TOP_DIR)/Clibs_OpenTouch \
+ $(TOP_DIR)/Clibs_OpenTouch\idtech1 \
  $(TOP_DIR)/jwzgles \
  $(TOP_DIR)/MobileTouchControls  \
-  $(TOP_DIR)/Doom/ZMusic/include  \
+ $(TOP_DIR)/Doom/ZMusic/include  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/mobile/src
 
@@ -470,6 +472,7 @@ PCH_SOURCES = \
 	common/engine/serializer.cpp \
 	common/engine/m_joy.cpp \
 	common/engine/m_random.cpp \
+	common/objects/autosegs.cpp \
 	common/objects/dobject.cpp \
 	common/objects/dobjgc.cpp \
 	common/objects/dobjtype.cpp \
@@ -528,6 +531,7 @@ PCH_SOURCES = \
 	common/scripting/frontend/zcc_parser.cpp \
 	common/scripting/backend/vmbuilder.cpp \
 	common/scripting/backend/codegen.cpp \
+	common/statusbar/base_sbar.cpp \
 	utility/nodebuilder/nodebuild.cpp \
 	utility/nodebuilder/nodebuild_classify_nosse2.cpp \
 	utility/nodebuilder/nodebuild_events.cpp \
@@ -542,7 +546,6 @@ SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES}
 #$(ANDROID_SRC_FILES) \
 
 LOCAL_SRC_FILES = \
-	__autostart.cpp \
     $(ANDROID_SRC_FILES) \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
@@ -570,7 +573,6 @@ LOCAL_SRC_FILES = \
 	common/thirdparty/math/tan.c \
 	common/thirdparty/math/tanh.c \
 	common/thirdparty/math/fastsin.cpp \
-	zzautozend.cpp \
 
 
 
