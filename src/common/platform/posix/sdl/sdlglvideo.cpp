@@ -81,6 +81,7 @@ EXTERN_CVAR (Int, vid_defwidth)
 EXTERN_CVAR (Int, vid_defheight)
 EXTERN_CVAR (Int, vid_preferbackend)
 EXTERN_CVAR (Bool, cl_capfps)
+EXTERN_CVAR(Int, gl_pipeline_depth);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
