@@ -83,6 +83,7 @@ EXTERN_CVAR (Int, vid_defwidth)
 EXTERN_CVAR (Int, vid_defheight)
 EXTERN_CVAR (Int, vid_preferbackend)
 EXTERN_CVAR (Bool, cl_capfps)
+EXTERN_CVAR(Int, gl_pipeline_depth);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -512,6 +513,7 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer ()
 	if (fb == nullptr)
 	{
 		fb = new OpenGLRenderer::OpenGLFrameBuffer(0, vid_fullscreen);
+		fb->mPipelineNbr = gl_pipeline_depth;
 	}
 
 	return fb;
