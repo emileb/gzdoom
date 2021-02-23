@@ -49,6 +49,7 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/hwrenderer/data \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl_load \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl \
+    	$(GZDOOM_TOP_PATH)/src/common/rendering/gles \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/vulkan/thirdparty \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/polyrenderer/backend \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/polyrenderer/drawers \
@@ -515,6 +516,17 @@ PCH_SOURCES = \
 	common/rendering/gl/gl_samplers.cpp \
 	common/rendering/gl/gl_shader.cpp \
 	common/rendering/gl/gl_shaderprogram.cpp \
+    common/rendering/gles/gl_renderer.cpp \
+    common/rendering/gles/gl_framebuffer.cpp \
+    common/rendering/gles/gl_renderstate.cpp \
+    common/rendering/gles/gl_renderbuffers.cpp \
+    common/rendering/gles/gl_postprocess.cpp \
+    common/rendering/gles/gl_postprocessstate.cpp \
+    common/rendering/gles/gl_debug.cpp \
+    common/rendering/gles/gl_buffers.cpp \
+    common/rendering/gles/gl_hwtexture.cpp \
+    common/rendering/gles/gl_shader.cpp \
+    common/rendering/gles/gl_shaderprogram.cpp \
 	common/scripting/core/dictionary.cpp \
 	common/scripting/core/dynarrays.cpp \
 	common/scripting/core/symbols.cpp \

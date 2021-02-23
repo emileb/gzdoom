@@ -50,6 +50,7 @@
 
 #include "gl_renderer.h"
 #include "gl_framebuffer.h"
+#include "gles_framebuffer.h"
 
 #ifdef HAVE_VULKAN
 #include "vulkan/system/vk_framebuffer.h"
@@ -512,7 +513,8 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer ()
 #endif
 	if (fb == nullptr)
 	{
-		fb = new OpenGLRenderer::OpenGLFrameBuffer(0, vid_fullscreen);
+		//fb = new OpenGLRenderer::OpenGLFrameBuffer(0, vid_fullscreen);
+		fb = new OpenGLESRenderer::OpenGLFrameBuffer(0, vid_fullscreen);
 		fb->mPipelineNbr = gl_pipeline_depth;
 	}
 
