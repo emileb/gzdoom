@@ -517,6 +517,7 @@ PCH_SOURCES = \
 	common/rendering/gl/gl_samplers.cpp \
 	common/rendering/gl/gl_shader.cpp \
 	common/rendering/gl/gl_shaderprogram.cpp \
+	common/rendering/gles/glad/src/glad.c \
     common/rendering/gles/gles_renderer.cpp \
     common/rendering/gles/gles_framebuffer.cpp \
     common/rendering/gles/gles_renderstate.cpp \
@@ -527,6 +528,7 @@ PCH_SOURCES = \
     common/rendering/gles/gles_hwtexture.cpp \
     common/rendering/gles/gles_shader.cpp \
     common/rendering/gles/gles_shaderprogram.cpp \
+    common/rendering/gles/gles_system.cpp \
 	common/scripting/core/dictionary.cpp \
 	common/scripting/core/dynarrays.cpp \
 	common/scripting/core/symbols.cpp \
