@@ -49,7 +49,6 @@
 #include <map>
 #include <memory>
 
-
 EXTERN_CVAR(Bool, r_skipmats)
 
 namespace OpenGLRenderer
@@ -629,7 +628,6 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	{
 		char stringbuf[20];
 		mysnprintf(stringbuf, 20, "texture%d", i);
-<<<<<<< HEAD
 		tempindex = glGetUniformLocation(hShader, stringbuf);
 		if (tempindex != -1) glUniform1i(tempindex, i - 1);
 	}
@@ -639,22 +637,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 
 	int lightmapindex = glGetUniformLocation(hShader, "LightMap");
 	if (lightmapindex != -1) glUniform1i(lightmapindex, 17);
-=======
-		int tempindex = glGetUniformLocation(hShader, stringbuf);
-#ifdef __ANDROID__
-		if (tempindex >= 0) glUniform1i(tempindex, i - 1);
-#else
-		if (tempindex > 0) glUniform1i(tempindex, i - 1);
-#endif
-	}
 
-	int shadowmapindex = glGetUniformLocation(hShader, "ShadowMap");
-#ifdef __ANDROID__
-	if (shadowmapindex >= 0) glUniform1i(shadowmapindex, 16);
-#else
-	if (shadowmapindex > 0) glUniform1i(shadowmapindex, 16);
-#endif
->>>>>>> 811c39d4a (Added some mobile changes)
 
 	glUseProgram(0);
 	return linked;

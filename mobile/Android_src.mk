@@ -49,6 +49,8 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/hwrenderer/data \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl_load \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl \
+    	$(GZDOOM_TOP_PATH)/src/common/rendering/gles \
+    	$(GZDOOM_TOP_PATH)/src/common/rendering/gles/glad/include \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/vulkan/thirdparty \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/polyrenderer/backend \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/polyrenderer/drawers \
@@ -515,6 +517,19 @@ PCH_SOURCES = \
 	common/rendering/gl/gl_samplers.cpp \
 	common/rendering/gl/gl_shader.cpp \
 	common/rendering/gl/gl_shaderprogram.cpp \
+	common/rendering/gles/glad/src/glad.c \
+    common/rendering/gles/gles_renderer.cpp \
+    common/rendering/gles/gles_framebuffer.cpp \
+    common/rendering/gles/gles_renderstate.cpp \
+    common/rendering/gles/gles_renderbuffers.cpp \
+    common/rendering/gles/gles_postprocess.cpp \
+    common/rendering/gles/gles_postprocessstate.cpp \
+    common/rendering/gles/gles_buffers.cpp \
+    common/rendering/gles/gles_hwtexture.cpp \
+    common/rendering/gles/gles_shader.cpp \
+    common/rendering/gles/gles_samplers.cpp \
+    common/rendering/gles/gles_shaderprogram.cpp \
+    common/rendering/gles/gles_system.cpp \
 	common/scripting/core/dictionary.cpp \
 	common/scripting/core/dynarrays.cpp \
 	common/scripting/core/symbols.cpp \
