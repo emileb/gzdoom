@@ -23,8 +23,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define USE_GLES2 0 // For Desktop PC leave as 0, it will use the exisiting OpenGL context creationg code but run with the GLES2 renderer
+#define USE_GLES2 1 // For Desktop PC leave as 0, it will use the exisiting OpenGL context creationg code but run with the GLES2 renderer
                     // Set to 1 for when comipling for a real GLES device
+
 
 #if (USE_GLES2)
 	#include "glad/glad.h"

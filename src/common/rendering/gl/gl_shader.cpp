@@ -50,7 +50,6 @@
 #include <map>
 #include <memory>
 
-
 EXTERN_CVAR(Bool, r_skipmats)
 
 namespace OpenGLRenderer
