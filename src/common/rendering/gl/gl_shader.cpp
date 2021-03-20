@@ -50,7 +50,7 @@
 #include <memory>
 
 #ifdef __MOBILE__
-CVAR(Bool, gl_customshader, true, 0)
+EXTERN_CVAR(Bool, gl_customshader)
 #endif
 
 namespace OpenGLRenderer

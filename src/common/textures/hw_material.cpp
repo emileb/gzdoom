@@ -40,9 +40,6 @@ void FMaterial::SetLayerCallback(IHardwareTexture* (*cb)(int layer, int translat
 	layercallback = cb;
 }
 
-#ifdef __MOBILE__
-EXTERN_CVAR(Bool, gl_customshader)
-#endif
 
 //===========================================================================
 //
