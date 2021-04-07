@@ -447,6 +447,7 @@ PCH_SOURCES = \
 	common/thirdparty/base64.cpp \
 	common/thirdparty/md5.cpp \
  	common/thirdparty/superfasthash.cpp \
+ 	common/thirdparty/gain_analysis.cpp \
 	common/filesystem/filesystem.cpp \
 	common/filesystem/ancientzip.cpp \
 	common/filesystem/file_7z.cpp \
