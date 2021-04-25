@@ -157,8 +157,8 @@ void OpenGLFrameBuffer::InitializeState()
 
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight(), mPipelineNbr);
 	mSkyData = new FSkyVertexBuffer;
-	mViewpoints = new HWViewpointBuffer(mPipelineNbr);
-	mLights = new FLightBuffer(mPipelineNbr);
+	mViewpoints = new HWViewpointBufferPipe(mPipelineNbr);
+	mLights = new FLightBufferPipe(mPipelineNbr);
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
 	static_cast<GLDataBuffer*>(mLights->GetBuffer())->BindBase();
@@ -247,6 +247,8 @@ void OpenGLFrameBuffer::Swap()
 
 	FPSLimit();
 	SwapBuffers();
+
+	screen->mVertexData->NextPipelineBuffer();
 
 	Finish.Unclock();
 	camtexcount = 0;
