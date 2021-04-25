@@ -67,6 +67,8 @@ EXTERN_CVAR(Int, gl_tonemap)
 EXTERN_CVAR(Bool, cl_capfps)
 EXTERN_CVAR(Int, gl_pipeline_depth);
 
+CVAR(Int, gl_pipeline_depth, 4, CVAR_ARCHIVE | CVAR_GLOBALCONFIG);
+
 void gl_LoadExtensions();
 void gl_PrintStartupLog();
 void Draw2D(F2DDrawer *drawer, FRenderState &state);
@@ -169,8 +171,8 @@ void OpenGLFrameBuffer::InitializeState()
 
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight(), screen->mPipelineNbr);
 	mSkyData = new FSkyVertexBuffer;
-	mViewpoints = new HWViewpointBuffer(screen->mPipelineNbr);
-	mLights = new FLightBuffer(screen->mPipelineNbr);
+	mViewpoints = new HWViewpointBufferPipe(screen->mPipelineNbr);
+	mLights = new FLightBufferPipe(screen->mPipelineNbr);
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
 	static_cast<GLDataBuffer*>(mLights->GetBuffer())->BindBase();
@@ -260,10 +262,14 @@ void OpenGLFrameBuffer::Swap()
 	Finish.Reset();
 	Finish.Clock();
 	//if (swapbefore) glFinish();
+
 	screen->mVertexData->DropSync();
 
 	FPSLimit();
 	SwapBuffers();
+
+	screen->mVertexData->NextPipelineBuffer();
+	screen->mVertexData->WaitSync();
 
 	//if (!swapbefore) glFinish();
 	Finish.Unclock();

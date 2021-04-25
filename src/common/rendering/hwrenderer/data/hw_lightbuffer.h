@@ -11,10 +11,8 @@ class FRenderState;
 
 class FLightBuffer
 {
+protected:
 	IDataBuffer *mBuffer;
-	IDataBuffer* mBufferPipeline[HW_MAX_PIPELINE_BUFFERS];
-	int mPipelineNbr;
-	int mPipelinePos = 0;
 
 	bool mBufferType;
     std::atomic<unsigned int> mIndex;
@@ -28,7 +26,7 @@ class FLightBuffer
 
 public:
 
-	FLightBuffer(int pipelineNbr = 1);
+	FLightBuffer();
 	~FLightBuffer();
 	void Clear();
 	int UploadLights(FDynLightData &data);
@@ -46,6 +44,21 @@ public:
 
 };
 
+
+class FLightBufferPipe : public FLightBuffer
+{
+
+	IDataBuffer* mBufferPipeline[HW_MAX_PIPELINE_BUFFERS];
+	int mPipelineNbr;
+	int mPipelinePos = 0;
+
+public:
+
+	FLightBufferPipe(int pipelineNbr);
+
+	void Clear();
+
+};
 
 #endif
 
