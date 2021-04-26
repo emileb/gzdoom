@@ -7,6 +7,7 @@
 
 CVAR(Bool, gles_use_mapped_buffer, false, 0);
 CVAR(Bool, gles_force_glsl_v100, false, 0);
+CVAR(Int, gl_pipeline_depth, 4, 0);
 
 
 #if USE_GLES2

@@ -360,15 +360,15 @@ static void CreateVertices(FFlatVertexBuffer* fvb, TArray<sector_t>& sectors)
 
 static void CheckPlanes(FFlatVertexBuffer* fvb, sector_t* sector)
 {
-	if (sector->GetPlaneTexZ(sector_t::ceiling) != sector->vboheight[screen->mVertexData->GetPipelinePos()][sector_t::ceiling])
+	if (sector->GetPlaneTexZ(sector_t::ceiling) != sector->vboheight[screen->mPipelinePos][sector_t::ceiling])
 	{
 		UpdatePlaneVertices(fvb, sector, sector_t::ceiling);
-		sector->vboheight[screen->mVertexData->GetPipelinePos()][sector_t::ceiling] = sector->GetPlaneTexZ(sector_t::ceiling);
+		sector->vboheight[screen->mPipelinePos][sector_t::ceiling] = sector->GetPlaneTexZ(sector_t::ceiling);
 	}
-	if (sector->GetPlaneTexZ(sector_t::floor) != sector->vboheight[screen->mVertexData->GetPipelinePos()][sector_t::floor])
+	if (sector->GetPlaneTexZ(sector_t::floor) != sector->vboheight[screen->mPipelinePos][sector_t::floor])
 	{
 		UpdatePlaneVertices(fvb, sector, sector_t::floor);
-		sector->vboheight[screen->mVertexData->GetPipelinePos()][sector_t::floor] = sector->GetPlaneTexZ(sector_t::floor);
+		sector->vboheight[screen->mPipelinePos][sector_t::floor] = sector->GetPlaneTexZ(sector_t::floor);
 	}
 }
 

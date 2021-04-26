@@ -247,6 +247,9 @@ void OpenGLFrameBuffer::Swap()
 
 	FPSLimit();
 	SwapBuffers();
+	
+	screen->mPipelinePos++;
+	screen->mPipelinePos %= screen->mPipelineNbr;
 
 	screen->mVertexData->NextPipelineBuffer();
 

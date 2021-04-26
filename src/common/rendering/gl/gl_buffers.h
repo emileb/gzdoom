@@ -19,7 +19,6 @@ protected:
 	int mAllocationSize = 0;
 	bool mPersistent = false;
 	bool nomap = true;
-	GLsync mGLSync = 0;
 
 	GLBuffer(int usetype);
 	~GLBuffer();
@@ -30,9 +29,6 @@ protected:
 	void Resize(size_t newsize) override;
 	void *Lock(unsigned int size) override;
 	void Unlock() override;
-
-	void GPUDropSync();
-	void GPUWaitSync();
 public:
 	void Bind();
 };
