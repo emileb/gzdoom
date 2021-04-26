@@ -125,16 +125,6 @@ public:
 		mVertexBuffer->Upload(mMapStart * sizeof(FFlatVertex), (mCurIndex - mMapStart) * sizeof(FFlatVertex));
 	}
 
-	void DropSync()
-	{
-		mVertexBuffer->GPUDropSync();
-	}
-
-	void WaitSync()
-	{
-		mVertexBuffer->GPUWaitSync();
-	}
-
 	int GetPipelinePos() 
 	{ 
 		return mPipelinePos; 

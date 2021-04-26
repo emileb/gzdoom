@@ -67,8 +67,6 @@ EXTERN_CVAR(Int, gl_tonemap)
 EXTERN_CVAR(Bool, cl_capfps)
 EXTERN_CVAR(Int, gl_pipeline_depth);
 
-CVAR(Int, gl_pipeline_depth, 4, CVAR_ARCHIVE | CVAR_GLOBALCONFIG);
-
 void gl_LoadExtensions();
 void gl_PrintStartupLog();
 void Draw2D(F2DDrawer *drawer, FRenderState &state);
@@ -262,16 +260,15 @@ void OpenGLFrameBuffer::Swap()
 	Finish.Reset();
 	Finish.Clock();
 	//if (swapbefore) glFinish();
-
-	screen->mVertexData->DropSync();
-
 	FPSLimit();
 	SwapBuffers();
-
-	screen->mVertexData->NextPipelineBuffer();
-	screen->mVertexData->WaitSync();
-
+	
 	//if (!swapbefore) glFinish();
+	screen->mVertexData->NextPipelineBuffer();
+	
+	screen->mPipelinePos++;
+	screen->mPipelinePos %= screen->mPipelineNbr;
+	
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();

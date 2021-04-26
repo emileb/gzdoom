@@ -63,8 +63,6 @@ public:
 	virtual void Unmap() {}
 	void *Memory() { return map; }
 	size_t Size() { return buffersize; }
-	virtual void GPUDropSync() {}
-	virtual void GPUWaitSync() {}
 };
 
 class IVertexBuffer : virtual public IBuffer
