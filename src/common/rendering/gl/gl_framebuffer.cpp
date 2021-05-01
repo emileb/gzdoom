@@ -65,7 +65,6 @@ EXTERN_CVAR (Bool, vid_vsync)
 EXTERN_CVAR(Bool, r_drawvoxels)
 EXTERN_CVAR(Int, gl_tonemap)
 EXTERN_CVAR(Bool, cl_capfps)
-EXTERN_CVAR(Int, gl_pipeline_depth);
 
 void gl_LoadExtensions();
 void gl_PrintStartupLog();
@@ -134,8 +133,6 @@ void OpenGLFrameBuffer::InitializeState()
 
 	gl_LoadExtensions();
 
-	mPipelineNbr = gl_pipeline_depth;
-
 	// Move some state to the framebuffer object for easier access.
 	hwcaps = gl.flags;
 	glslversion = gl.glslversion;
@@ -167,10 +164,10 @@ void OpenGLFrameBuffer::InitializeState()
 
 	SetViewportRects(nullptr);
 
-	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight(), screen->mPipelineNbr);
+	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
 	mSkyData = new FSkyVertexBuffer;
-	mViewpoints = new HWViewpointBufferPipe(screen->mPipelineNbr);
-	mLights = new FLightBufferPipe(screen->mPipelineNbr);
+	mViewpoints = new HWViewpointBuffer;
+	mLights = new FLightBuffer();
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
 	static_cast<GLDataBuffer*>(mLights->GetBuffer())->BindBase();
@@ -259,16 +256,10 @@ void OpenGLFrameBuffer::Swap()
 	bool swapbefore = gl_finishbeforeswap && camtexcount == 0;
 	Finish.Reset();
 	Finish.Clock();
-	//if (swapbefore) glFinish();
+	if (swapbefore) glFinish();
 	FPSLimit();
 	SwapBuffers();
-	
-	//if (!swapbefore) glFinish();
-	screen->mVertexData->NextPipelineBuffer();
-	
-	screen->mPipelinePos++;
-	screen->mPipelinePos %= screen->mPipelineNbr;
-	
+	if (!swapbefore) glFinish();
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
