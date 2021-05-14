@@ -182,8 +182,8 @@ void RedrawProgressBar(int CurPos, int MaxPos)
 void I_PrintStr(const char *cp)
 {
 #ifdef __ANDROID__
-        LOGI("GZDOOM: %s", cp);
-        LogWritter_Write(cp);
+        //LOGI("GZDOOM: %s", cp);
+        //LogWritter_Write(cp);
 #endif
 	const char * srcp = cp;
 	FString printData = "";
