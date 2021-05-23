@@ -181,7 +181,18 @@ void OpenGLFrameBuffer::Update()
 	Swap();
 	Super::Update();
 }
+#ifdef __MOBILE__
+uint8_t * gles_convertRGB(uint8_t* src, uint8_t * dst, int width, int height)
+{
+	for (int i=0; i<width*height; i++) {
+		for (int j=0; j<3; j++)
+			*(dst++) = *(src++);
+		src++;
+	}
 
+	return dst;
+}
+#endif
 void OpenGLFrameBuffer::CopyScreenToBuffer(int width, int height, uint8_t* scr)
 {
 	IntRect bounds;
@@ -193,7 +204,14 @@ void OpenGLFrameBuffer::CopyScreenToBuffer(int width, int height, uint8_t* scr)
 
 	// strictly speaking not needed as the glReadPixels should block until the scene is rendered, but this is to safeguard against shitty drivers
 	glFinish();
+#ifdef __MOBILE__
+	uint8_t* tmp = (uint8_t *)M_Malloc(width * height * 4);
+	glReadPixels(0, 0, width, height, GL_RGBA,GL_UNSIGNED_BYTE, tmp);
+	gles_convertRGB( tmp, scr, width, height);
+	M_Free(tmp);
+#else
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, scr);
+#endif
 }
 
 //===========================================================================
