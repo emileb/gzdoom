@@ -271,6 +271,10 @@ void OpenGLFrameBuffer::Swap()
 
 	RenderState()->SetVertexBuffer(screen->mVertexData); // Needed for Raze because it does not reset it
 
+#ifdef __MOBILE__
+	GLRenderer->mShaderManager->SetActiveShader(0);
+#endif
+
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
