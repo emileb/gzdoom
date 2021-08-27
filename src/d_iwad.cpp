@@ -616,6 +616,7 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 		}
 	}
 	TArray<FFoundWadInfo> picks;
+	int pickedprio = -1;
 	if (numFoundWads < mFoundWads.Size())
 	{
 		// We have a -iwad parameter. Pick the first usable IWAD we found through that.
@@ -630,7 +631,6 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 	}
 	else if (iwad != nullptr && *iwad != 0)
 	{
-		int pickedprio = -1;
 		// scan the list of found IWADs for a matching one for the current PWAD.
 		for (auto &found : mFoundWads)
 		{
@@ -694,7 +694,7 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 	int pick = 0;
 
 	// Present the IWAD selection box.
-	if (picks.Size() > 0 && !iwadparm)
+	if (picks.Size() > 0 && !iwadparm && pickedprio < 0)
 	{
 		// Locate the user's prefered IWAD, if it was found.
 		if (defaultiwad[0] != '\0')
@@ -709,30 +709,27 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 				}
 			}
 		}
-		if (picks.Size() > 0)
+		if (!havepicked)
 		{
-			if (!havepicked)
+			TArray<WadStuff> wads;
+			for (auto & found : picks)
 			{
-				TArray<WadStuff> wads;
-				for (auto & found : picks)
-				{
-					WadStuff stuff;
-					stuff.Name = mIWadInfos[found.mInfoIndex].Name;
-					stuff.Path = ExtractFileBase(found.mFullPath);
-					wads.Push(stuff);
-				}
-				pick = I_PickIWad(&wads[0], (int)wads.Size(), queryiwad, pick);
-				if (pick >= 0)
-				{
-					// The newly selected IWAD becomes the new default
-					defaultiwad = mIWadInfos[picks[pick].mInfoIndex].Name;
-				}
-				else
-				{
-					return -1;
-				}
-				havepicked = true;
+				WadStuff stuff;
+				stuff.Name = mIWadInfos[found.mInfoIndex].Name;
+				stuff.Path = ExtractFileBase(found.mFullPath);
+				wads.Push(stuff);
 			}
+			pick = I_PickIWad(&wads[0], (int)wads.Size(), queryiwad, pick);
+			if (pick >= 0)
+			{
+				// The newly selected IWAD becomes the new default
+				defaultiwad = mIWadInfos[picks[pick].mInfoIndex].Name;
+			}
+			else
+			{
+				return -1;
+			}
+			havepicked = true;
 		}
 	}
 

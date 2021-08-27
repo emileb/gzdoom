@@ -1157,7 +1157,7 @@ class GLDefsParser
 			if (lumpnum != -1)
 			{
 				if (iwad && Wads.GetLumpFile(lumpnum) <= Wads.GetIwadNum()) useme = true;
-				if (thiswad && Wads.GetLumpFile(lumpnum) == workingLump) useme = true;
+				if (thiswad && Wads.GetLumpFile(lumpnum) == Wads.GetLumpFile(workingLump)) useme = true;
 			}
 			if (!useme) return;
 		}
@@ -1349,7 +1349,7 @@ class GLDefsParser
 			if (lumpnum != -1)
 			{
 				if (iwad && Wads.GetLumpFile(lumpnum) <= Wads.GetIwadNum()) useme = true;
-				if (thiswad && Wads.GetLumpFile(lumpnum) == workingLump) useme = true;
+				if (thiswad && Wads.GetLumpFile(lumpnum) == Wads.GetLumpFile(workingLump)) useme = true;
 			}
 			if (!useme) return;
 		}

@@ -1895,6 +1895,26 @@ CCMD (unset)
 	}
 }
 
+CCMD (resetcvar)
+{
+	if (argv.argc() != 2)
+	{
+		Printf ("usage: resetcvar <variable>\n");
+	}
+	else
+	{
+		FBaseCVar *var = FindCVar (argv[1], NULL);
+		if (var != NULL)
+		{
+			var->ResetToDefault();
+		}
+		else
+		{
+			Printf ("No such variable: %s\n", argv[1]);
+		}
+	}
+}
+
 CCMD (get)
 {
 	FBaseCVar *var, *prev;
@@ -2041,7 +2061,8 @@ void C_GrabCVarDefaults ()
 		if (lumpversion < 219)
 			sc.ScriptError("Version must be at least 219 (current version %i)", gamelastrunversion);
 
-		FBaseCVar *var;
+		FBaseCVar* var;
+		FString CurrentFindCVar;
 
 		while (sc.GetString())
 		{
@@ -2049,6 +2070,35 @@ void C_GrabCVarDefaults ()
 			{
 				sc.MustGetString();
 			}
+
+			CurrentFindCVar = sc.String;
+			CurrentFindCVar.ToLower();
+
+			// these two got renamed
+			if (strcmp(CurrentFindCVar, "vid_gamma") == 0)
+			{
+				CurrentFindCVar = "gamma";
+			}
+			if (strcmp(CurrentFindCVar, "vid_fullscreen") == 0)
+			{
+				CurrentFindCVar = "fullscreen";
+			}
+			// these are removed
+			if (strcmp(CurrentFindCVar, "cl_defaultconfiguration") == 0)
+				break;
+			if (strcmp(CurrentFindCVar, "m_sensitivity_x") == 0)
+				break;
+			if (strcmp(CurrentFindCVar, "m_sensitivity_y") == 0)
+				break;
+			if (strcmp(CurrentFindCVar, "inter_classic_scaling") == 0)
+				break;
+			if (strcmp(CurrentFindCVar, "m_cleanscale") == 0)
+				break;
+			if (strcmp(CurrentFindCVar, "wi_cleantextscale") == 0)
+				break;
+			if (strcmp(CurrentFindCVar, "vid_allowtrueultrawide") == 0)
+				break;
+
 			var = FindCVar (sc.String, NULL);
 			if (var != NULL)
 			{

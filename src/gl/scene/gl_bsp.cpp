@@ -43,6 +43,9 @@
 #include "gl/scene/gl_wall.h"
 #include "gl/utility/gl_clock.h"
 
+
+EXTERN_CVAR(Float, r_actorspriteshadowdist)
+
 EXTERN_CVAR(Bool, gl_render_segs)
 
 CVAR(Bool, gl_render_things, true, 0)
@@ -395,6 +398,18 @@ void GLSceneDrawer::RenderThings(subsector_t * sub, sector_t * sector)
 		}
 
 		GLSprite sprite(this);
+
+		// [Nash] draw sprite shadow
+		if (R_ShouldDrawSpriteShadow(thing))
+		{
+			double dist = (thing->Pos() - r_viewpoint.Pos).LengthSquared();
+			double check = r_actorspriteshadowdist;
+			if (dist <= check * check)
+			{
+				sprite.Process(thing, sector, false, true);
+			}
+		}
+
 		sprite.Process(thing, sector, false);
 	}
 	
@@ -413,6 +428,18 @@ void GLSceneDrawer::RenderThings(subsector_t * sub, sector_t * sector)
 		}
 
 		GLSprite sprite(this);
+
+	// [Nash] draw sprite shadow
+	if (R_ShouldDrawSpriteShadow(thing))
+	{
+		double dist = (thing->Pos() - r_viewpoint.Pos).LengthSquared();
+		double check = r_actorspriteshadowdist;
+		if (dist <= check * check)
+		{
+			sprite.Process(thing, sector, true, true);
+		}
+	}
+
 		sprite.Process(thing, sector, true);
 	}
 	SetupSprite.Unclock();

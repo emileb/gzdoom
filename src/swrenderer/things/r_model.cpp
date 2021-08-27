@@ -137,7 +137,9 @@ namespace swrenderer
 		ThingColor.a = 255;
 
 		renderer.fillcolor = fullbrightSprite ? ThingColor : ThingColor.Modulate(playermo->Sector->SpecialColors[sector_t::sprites]);
-		renderer.Translation = 0xffffffff;// playermo->Translation;
+		uint32_t trans = psp->GetTranslation() != 0 ? psp->GetTranslation() : 0;
+		if ((psp->Flags & PSPF_PLAYERTRANSLATED)) trans = playermo->Translation;
+		renderer.Translation = trans;
 
 		renderer.RenderHUDModel(psp, ofsx, ofsy);
 		PolyTriangleDrawer::SetModelVertexShader(thread->DrawQueue, -1, -1, 0.0f);

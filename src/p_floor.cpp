@@ -650,7 +650,7 @@ bool EV_BuildStairs (int tag, DFloor::EStair type, line_t *line,
 		floor->m_Instant = false;
 
 		floor->m_Crush = (usespecials & DFloor::stairCrush) ? 10 : -1; //jff 2/27/98 fix uninitialized crush field
-		floor->m_Hexencrush = false;
+		floor->m_Hexencrush = true;
 
 		floor->m_Speed = speed;
 		height = sec->CenterFloor() + stairstep;

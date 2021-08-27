@@ -70,6 +70,7 @@ EXTERN_CVAR (Bool, wi_percents)
 EXTERN_CVAR (Int, gl_texture_hqresizemode)
 EXTERN_CVAR (Int, gl_texture_hqresizemult)
 EXTERN_CVAR(Int, adl_volume_model)
+EXTERN_CVAR(Int, wipetype)
 
 FGameConfigFile::FGameConfigFile ()
 {
@@ -327,38 +328,6 @@ void FGameConfigFile::DoGlobalSetup ()
 		if (lastver != NULL)
 		{
 			double last = atof (lastver);
-			if (last < 123.1)
-			{
-				FBaseCVar *noblitter = FindCVar ("vid_noblitter", NULL);
-				if (noblitter != NULL)
-				{
-					noblitter->ResetToDefault ();
-				}
-			}
-			if (last < 202)
-			{
-				// Make sure the Hexen hotkeys are accessible by default.
-				if (SetSection ("Hexen.Bindings"))
-				{
-					SetValueForKey ("\\", "use ArtiHealth");
-					SetValueForKey ("scroll", "+showscores");
-					SetValueForKey ("0", "useflechette");
-					SetValueForKey ("9", "use ArtiBlastRadius");
-					SetValueForKey ("8", "use ArtiTeleport");
-					SetValueForKey ("7", "use ArtiTeleportOther");
-					SetValueForKey ("6", "use ArtiPork");
-					SetValueForKey ("5", "use ArtiInvulnerability2");
-				}
-			}
-			if (last < 204)
-			{ // The old default for vsync was true, but with an unlimited framerate
-			  // now, false is a better default.
-				FBaseCVar *vsync = FindCVar ("vid_vsync", NULL);
-				if (vsync != NULL)
-				{
-					vsync->ResetToDefault ();
-				}
-			}
 			/* spc_amp no longer exists
 			if (last < 206)
 			{ // spc_amp is now a float, not an int.
@@ -572,6 +541,11 @@ void FGameConfigFile::DoGameSetup (const char *gamename)
 	if (gameinfo.gametype & GAME_Raven)
 	{
 		SetRavenDefaults (gameinfo.gametype == GAME_Hexen);
+	}
+
+	if (gameinfo.gametype & GAME_Strife)
+	{
+		SetStrifeDefaults ();
 	}
 
 	// The NetServerInfo section will be read and override anything loaded
@@ -875,6 +849,9 @@ void FGameConfigFile::SetRavenDefaults (bool isHexen)
 	val.Int = 0x734323;
 	am_cdwallcolor.SetGenericRepDefault (val, CVAR_Int);
 
+	val.Int = 0;
+	wipetype.SetGenericRepDefault(val, CVAR_Int);
+
 	// Fix the Heretic/Hexen automap colors so they are correct.
 	// (They were wrong on older versions.)
 	if (*am_wallcolor == 0x2c1808 && *am_fdwallcolor == 0x887058 && *am_cdwallcolor == 0x4c3820)
@@ -889,6 +866,13 @@ void FGameConfigFile::SetRavenDefaults (bool isHexen)
 		val.Int = 0x3f6040;
 		color.SetGenericRepDefault (val, CVAR_Int);
 	}
+}
+
+void FGameConfigFile::SetStrifeDefaults ()
+{
+	UCVarValue val;
+	val.Int = 3;
+	wipetype.SetGenericRepDefault(val, CVAR_Int);
 }
 
 CCMD (whereisini)

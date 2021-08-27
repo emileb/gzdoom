@@ -137,7 +137,7 @@ extend class Actor
 		bInCombat = true;
 
 		self.target = target;
-		let painstate = FindState('Pain', 'Dagger');
+		let painstate = FindState('Pain.Dagger');
 		if (painstate != NULL)
 		{
 			SetState(painstate);

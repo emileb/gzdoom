@@ -813,7 +813,7 @@ static void ReadMultiplePlayers(FSerializer &arc, int numPlayers, int numPlayers
 	}
 	else
 	{
-		for (i = 0; i < MAXPLAYERS; ++i)
+		for (i = 0; i < numPlayers; ++i)
 		{
 			players[i].mo = playertemp[i].mo;
 		}
@@ -986,6 +986,7 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 		("level.bodyqueslot", level.bodyqueslot)
 		("level.spawnindex", level.spawnindex)
 		.Array("level.bodyque", level.bodyque, level.BODYQUESIZE)
+		("level.corpsequeue", level.CorpseQueue)
 		("level.frozenstate", level.frozenstate);
 
 	// Hub transitions must keep the current total time

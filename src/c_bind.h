@@ -41,6 +41,7 @@ class FConfigFile;
 class FCommandLine;
 
 void C_NameKeys (char *str, int first, int second);
+FString C_NameKeys (int *keys, int count, bool colors = false);
 
 class FKeyBindings
 {
@@ -51,6 +52,7 @@ public:
 	bool DoKey(event_t *ev);
 	void ArchiveBindings(FConfigFile *F, const char *matchcmd = NULL);
 	int  GetKeysForCommand (const char *cmd, int *first, int *second);
+	TArray<int> GetKeysForCommand (const char *cmd);
 	void UnbindACommand (const char *str);
 	void UnbindAll ();
 	void UnbindKey(const char *key);

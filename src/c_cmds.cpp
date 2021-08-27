@@ -371,7 +371,18 @@ CCMD (changemap)
 	if (argv.argc() > 1)
 	{
 		const char *mapname = argv[1];
-		if (!strcmp(mapname, "*")) mapname = level.MapName.GetChars();
+		if (!strcmp(mapname, "*"))
+		{
+			mapname = level.MapName.GetChars();
+		}
+		else if (!strcmp(mapname, "+") && level.NextMap.Len() > 0 && level.NextMap.Compare("enDSeQ", 6))
+		{
+			mapname = level.NextMap.GetChars();
+		}
+		else if (!strcmp(mapname, "+$") && level.NextSecretMap.Len() > 0 && level.NextSecretMap.Compare("enDSeQ", 6))
+		{
+			mapname = level.NextSecretMap.GetChars();
+		}
 
 		try
 		{
@@ -1508,22 +1519,6 @@ CCMD(idclip)
 
 	Net_WriteByte (DEM_GENERICCHEAT);
 	Net_WriteByte (CHT_NOCLIP);
-}
-
-CCMD(randi)
-{
-	if (CheckCheatmode ())
-		return;
-
-	if (players[consoleplayer].health < 100)
-	{
-		Net_WriteByte (DEM_GIVECHEAT);
-		Net_WriteString ("health");
-		Net_WriteLong(0);
-	}
-	Net_WriteByte (DEM_GIVECHEAT);
-	Net_WriteString ("greenarmor");
-	Net_WriteLong(0);
 }
 
 CCMD(angleconvtest)

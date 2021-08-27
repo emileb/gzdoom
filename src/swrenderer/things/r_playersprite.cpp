@@ -305,6 +305,10 @@ namespace swrenderer
 		vis.yscale = float(pspriteyscale / tex->Scale.Y);
 		vis.pic = tex;
 
+		uint32_t trans = pspr->GetTranslation() != 0 ? pspr->GetTranslation() : 0;
+		if ((pspr->Flags & PSPF_PLAYERTRANSLATED)) trans = owner->Translation;
+		vis.Translation = trans;
+
 		// If flip is used, provided that it's not already flipped (that would just invert itself)
 		// (It's an XOR...)
 		if (!(flip) != !(pspr->Flags & PSPF_FLIP))
@@ -429,6 +433,8 @@ namespace swrenderer
 				accelSprite.basecolormap = colormap_to_use;
 				accelSprite.x1 = x1;
 				accelSprite.flip = vis.xiscale < 0;
+
+				accelSprite.Translation = trans;
 
 				if (vis.Light.BaseColormap >= &SpecialSWColormaps[0] &&
 					vis.Light.BaseColormap < &SpecialSWColormaps[SpecialColormaps.Size()])

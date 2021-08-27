@@ -2,6 +2,11 @@
 
 class ListMenuDescriptor : MenuDescriptor native
 {
+	enum EScale
+	{
+		CleanScale = -1,
+		OptCleanScale = -2
+	};
 	native Array<ListMenuItem> mItems;
 	native int mSelectedItem;
 	native double mSelectOfsX;
@@ -31,6 +36,14 @@ class ListMenuDescriptor : MenuDescriptor native
 		mFont = NULL;
 		mFontColor = Font.CR_UNTRANSLATED;
 		mFontColor2 = Font.CR_UNTRANSLATED;
+	}
+	int DisplayWidth()
+	{
+		return CleanScale;
+	}
+	int DisplayHeight()
+	{
+		return CleanScale;
 	}
 }
 
@@ -247,10 +260,10 @@ class ListMenu : Menu
 	{
 		for(int i=0;i<mDesc.mItems.Size(); i++)
 		{
-			if (mDesc.mItems[i].mEnabled) mDesc.mItems[i].Drawer(mDesc.mSelectedItem == i);
+			if (mDesc.mItems[i].mEnabled) mDesc.mItems[i].Draw(mDesc.mSelectedItem == i, mDesc);
 		}
 		if (mDesc.mSelectedItem >= 0 && mDesc.mSelectedItem < mDesc.mItems.Size())
-			mDesc.mItems[mDesc.mSelectedItem].DrawSelector(mDesc.mSelectOfsX, mDesc.mSelectOfsY, mDesc.mSelector);
+			mDesc.mItems[mDesc.mSelectedItem].DrawSelector(mDesc.mSelectOfsX, mDesc.mSelectOfsY, mDesc.mSelector, mDesc);
 		Super.Drawer();
 	}
 	

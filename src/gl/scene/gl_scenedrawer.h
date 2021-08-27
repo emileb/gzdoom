@@ -68,7 +68,7 @@ public:
 	void RenderView(player_t *player);
 	void WriteSavePic(player_t *player, FileWriter *file, int width, int height);
 
-	void DrawPSprite(player_t * player, DPSprite *psp, float sx, float sy, bool hudModelStep, int OverrideShader, bool alphatexture);
+	void DrawPSprite(player_t * player, DPSprite *psp, float sx, float sy, bool hudModelStep, int OverrideShader, bool alphatexture, double ticfrac);
 	void DrawPlayerSprites(sector_t * viewsector, bool hudModelStep);
 	void DrawTargeterSprites();
 

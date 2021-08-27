@@ -101,7 +101,7 @@ struct TeaserSpeech
 	Response Responses[5];
 };
 
-static FRandom pr_randomspeech("RandomSpeech");
+static FRandom pr_randomspeech("RandomSpeech", false);
 
 TArray<FStrifeDialogueNode *> StrifeDialogues;
 
@@ -194,6 +194,20 @@ void P_LoadStrifeConversations (MapData *map, const char *mapname)
 	}
 	else
 	{
+		// additive dialogues via MAPINFO
+		bool addedDialogues = false;
+		for (const FString &addd : gameinfo.AddDialogues)
+		{
+			if (!LoadScriptFile(addd, true, 0))
+			{
+				continue;
+			}
+			else
+			{
+				addedDialogues = true;
+			}
+		}
+
 		if (strnicmp (mapname, "MAP", 3) == 0)
 		{
 			char scriptname_b[9] = { 'S','C','R','I','P','T',mapname[3],mapname[4],0 };
@@ -682,6 +696,22 @@ static int FindNode (const FStrifeDialogueNode *node)
 
 //============================================================================
 //
+// ClearConversationStuff
+//
+// Clear the conversation pointers on the player
+//
+//============================================================================
+
+static void ClearConversationStuff(player_t* player)
+{
+	player->ConversationFaceTalker = false;
+	player->ConversationNPC = nullptr;
+	player->ConversationPC = nullptr;
+	player->ConversationNPCAngle = 0.;
+}
+
+//============================================================================
+//
 // CheckStrifeItem
 //
 // Checks if you have an item. A NULL itemtype is always considered to be
@@ -914,13 +944,15 @@ void P_StartConversation (AActor *npc, AActor *pc, bool facetalker, bool saveang
 		}
 	}
 
+	// [Nash] Play voice clip from the actor so that positional audio can be heard by all players
+	if (CurNode->SpeakerVoice != 0) S_Sound(npc, CHAN_VOICE, CHANF_NOPAUSE, CurNode->SpeakerVoice, 1, ATTN_NORM);
+
 	// The rest is only done when the conversation is actually displayed.
 	if (pc->player == &players[consoleplayer])
 	{
 		if (CurNode->SpeakerVoice != 0)
 		{
 			I_SetMusicVolume (dlg_musicvolume);
-			S_Sound (npc, CHAN_VOICE, CHANF_NOPAUSE, CurNode->SpeakerVoice, 1, ATTN_NORM);
 		}
 
 		// Create the menu. This may be a user-defined class so check if it is good to use.
@@ -1009,6 +1041,7 @@ static void HandleReply(player_t *player, bool isconsole, int nodenum, int reply
 		if (!(npc->flags8 & MF8_DONTFACETALKER))
 			npc->Angles.Yaw = player->ConversationNPCAngle;
 		npc->flags5 &= ~MF5_INCONVERSATION;
+		if (gameaction != ga_slideshow) ClearConversationStuff(player);
 		return;
 	}
 
@@ -1026,6 +1059,7 @@ static void HandleReply(player_t *player, bool isconsole, int nodenum, int reply
 			if (!(npc->flags8 & MF8_DONTFACETALKER))
 				npc->Angles.Yaw = player->ConversationNPCAngle;
 			npc->flags5 &= ~MF5_INCONVERSATION;
+			if (gameaction != ga_slideshow) ClearConversationStuff(player);
 			return;
 		}
 	}
@@ -1164,10 +1198,7 @@ static void HandleReply(player_t *player, bool isconsole, int nodenum, int reply
 	if (gameaction != ga_slideshow)
 	{
 		npc->flags5 &= ~MF5_INCONVERSATION;
-		player->ConversationFaceTalker = false;
-		player->ConversationNPC = nullptr;
-		player->ConversationPC = nullptr;
-		player->ConversationNPCAngle = 0.;
+		ClearConversationStuff(player);
 	}
 
 	if (isconsole)
@@ -1211,10 +1242,7 @@ void P_ConversationCommand (int netcode, int pnum, uint8_t **stream)
 		}
 		if (netcode == DEM_CONVNULL)
 		{
-			player->ConversationFaceTalker = false;
-			player->ConversationNPC = nullptr;
-			player->ConversationPC = nullptr;
-			player->ConversationNPCAngle = 0.;
+			ClearConversationStuff(player);
 		}
 	}
 }

@@ -640,7 +640,7 @@ void DBaseStatusBar::Tick ()
 	for (size_t i = 0; i < countof(Messages); ++i)
 	{
 		DHUDMessageBase *msg = Messages[i];
-		DHUDMessageBase **prev = &Messages[i];
+		TObjPtr<DHUDMessageBase *>*prev = &Messages[i];
 
 		while (msg)
 		{
@@ -704,7 +704,7 @@ void DBaseStatusBar::AttachMessage (DHUDMessageBase *msg, uint32_t id, int layer
 {
 	DHUDMessageBase *old = NULL;
 	DObject* pointing;
-	DHUDMessageBase **prevp;
+	TObjPtr<DHUDMessageBase *>*prevp;
 	DHUDMessageBase* prev;
 
 	old = (id == 0 || id == 0xFFFFFFFF) ? NULL : DetachMessage (id);
@@ -752,7 +752,7 @@ DHUDMessageBase *DBaseStatusBar::DetachMessage (DHUDMessageBase *msg)
 	{
 		DHUDMessageBase *probe = Messages[i];
 		DObject* pointing = this;
-		DHUDMessageBase **prev = &Messages[i];
+		TObjPtr<DHUDMessageBase *>*prev = &Messages[i];
 
 		while (probe && probe != msg)
 		{
@@ -777,7 +777,7 @@ DHUDMessageBase *DBaseStatusBar::DetachMessage (uint32_t id)
 	{
 		DObject* pointing = this;
 		DHUDMessageBase *probe = Messages[i];
-		DHUDMessageBase **prev = &Messages[i];
+		TObjPtr<DHUDMessageBase *>*prev = &Messages[i];
 
 		while (probe && probe->SBarID != id)
 		{
@@ -1427,7 +1427,7 @@ void DBaseStatusBar::StatusbarToRealCoords(double &x, double &y, double &w, doub
 //
 //============================================================================
 
-void DBaseStatusBar::DrawGraphic(FTextureID texture, double x, double y, int flags, double Alpha, double boxwidth, double boxheight, double scaleX, double scaleY)
+void DBaseStatusBar::DrawGraphic(FTextureID texture, double x, double y, int flags, double Alpha, double boxwidth, double boxheight, double scaleX, double scaleY, ERenderStyle style)
 {
 	if (!texture.isValid())
 		return;
@@ -1542,6 +1542,7 @@ void DBaseStatusBar::DrawGraphic(FTextureID texture, double x, double y, int fla
 		DTA_AlphaChannel, !!(flags & DI_ALPHAMAPPED),
 		DTA_FillColor, (flags & DI_ALPHAMAPPED) ? 0 : -1,
 		DTA_FlipX, !!(flags & DI_MIRROR),
+		DTA_LegacyRenderStyle, (flags & DI_ALPHAMAPPED) ? STYLE_Shaded : style,
 		TAG_DONE);
 }
 
@@ -1552,7 +1553,7 @@ void DBaseStatusBar::DrawGraphic(FTextureID texture, double x, double y, int fla
 //
 //============================================================================
 
-void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, double y, int flags, double Alpha, int translation, int spacing, EMonospacing monospacing, int shadowX, int shadowY, double scaleX, double scaleY)
+void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, double y, int flags, double Alpha, int translation, int spacing, EMonospacing monospacing, int shadowX, int shadowY, double scaleX, double scaleY, int style)
 {
 	bool monospaced = monospacing != EMonospacing::MOff;
 	double dx = 0;
@@ -1677,6 +1678,7 @@ void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, d
 			DTA_DestWidthF, rw,
 			DTA_DestHeightF, rh,
 			DTA_Alpha, Alpha,
+			DTA_LegacyRenderStyle, ERenderStyle(style),
 			TAG_DONE);
 
 		dx = monospaced 
@@ -1688,7 +1690,7 @@ void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, d
 	}
 }
 
-void SBar_DrawString(DBaseStatusBar *self, DHUDFont *font, const FString &string, double x, double y, int flags, int trans, double alpha, int wrapwidth, int linespacing, double scaleX, double scaleY)
+void SBar_DrawString(DBaseStatusBar *self, DHUDFont *font, const FString &string, double x, double y, int flags, int trans, double alpha, int wrapwidth, int linespacing, double scaleX, double scaleY, int style)
 {
 	if (font == nullptr) ThrowAbortException(X_READ_NIL, nullptr);
 	if (!screen->HasBegun2D()) ThrowAbortException(X_OTHER, "Attempt to draw to screen outside a draw function");
@@ -1707,13 +1709,13 @@ void SBar_DrawString(DBaseStatusBar *self, DHUDFont *font, const FString &string
 		auto brk = V_BreakLines(font->mFont, int(wrapwidth * scaleX), string, true);
 		for (auto &line : brk)
 		{
-			self->DrawString(font->mFont, line.Text, x, y, flags, alpha, trans, font->mSpacing, font->mMonospacing, font->mShadowX, font->mShadowY, scaleX, scaleY);
+			self->DrawString(font->mFont, line.Text, x, y, flags, alpha, trans, font->mSpacing, font->mMonospacing, font->mShadowX, font->mShadowY, scaleX, scaleY, style);
 			y += (font->mFont->GetHeight() + linespacing) * scaleY;
 		}
 	}
 	else
 	{
-		self->DrawString(font->mFont, string, x, y, flags, alpha, trans, font->mSpacing, font->mMonospacing, font->mShadowX, font->mShadowY, scaleX, scaleY);
+		self->DrawString(font->mFont, string, x, y, flags, alpha, trans, font->mSpacing, font->mMonospacing, font->mShadowX, font->mShadowY, scaleX, scaleY, style);
 	}
 }
 

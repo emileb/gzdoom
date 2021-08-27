@@ -64,6 +64,7 @@
 #include "g_levellocals.h"
 #include "vm.h"
 #include "p_destructible.h"
+#include "s_sndseq.h"
 
 // Remaps EE sector change types to Generic_Floor values. According to the Eternity Wiki:
 /*
@@ -239,6 +240,20 @@ FUNC(LS_Polyobj_Stop)
 // Polyobj_Stop (po)
 {
 	return EV_StopPoly (arg0);
+}
+
+FUNC(LS_Polyobj_StopSound)
+// Polyobj_StopSound (po)
+{
+	FPolyObj *poly;
+
+	poly = PO_GetPolyobj(arg0);
+	if (poly != nullptr)
+	{
+		SN_StopSequence(poly);
+	}
+
+	return true;
 }
 
 FUNC(LS_Door_Close)
@@ -3818,8 +3833,7 @@ static lnSpecFunc LineSpecials[] =
 	/* 280 */ LS_Ceiling_MoveToValueAndCrush,
 	/* 281 */ LS_Line_SetAutomapFlags,
 	/* 282 */ LS_Line_SetAutomapStyle,
-
-
+	/* 283 */ LS_Polyobj_StopSound,
 };
 
 #define DEFINE_SPECIAL(name, num, min, max, mmax) {#name, num, min, max, mmax},
@@ -3970,4 +3984,3 @@ DEFINE_ACTION_FUNCTION(FLevelLocals, ExecuteSpecial)
 
 	ACTION_RETURN_INT(P_ExecuteSpecial(special, linedef, activator, lineside, arg1, arg2, arg3, arg4, arg5));
 }
-

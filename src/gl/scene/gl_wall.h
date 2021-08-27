@@ -410,7 +410,7 @@ public:
 	}
 	void Draw(int pass);
 	void PutSprite(bool translucent);
-	void Process(AActor* thing,sector_t * sector, int thruportal = false);
+	void Process(AActor* thing,sector_t * sector, int thruportal = false, bool isSpriteShadow = false);
 	void ProcessParticle (particle_t *particle, sector_t *sector);//, int shade, int fakeside)
 	void SetThingColor(PalEntry);
 

@@ -186,7 +186,10 @@ void SoundEngine::CacheSound (sfxinfo_t *sfx)
 void SoundEngine::UnloadSound (sfxinfo_t *sfx)
 {
 	if (sfx->data.isValid())
+	{
 		GSnd->UnloadSound(sfx->data);
+		DPrintf(DMSG_NOTIFY, "Unloaded sound \"%s\" (%td)\n", sfx->name.GetChars(), sfx - &S_sfx[0]);
+	}
 	sfx->data.Clear();
 }
 
@@ -728,7 +731,7 @@ sfxinfo_t *SoundEngine::LoadSound(sfxinfo_t *sfx)
 			if (S_sfx[i].data.isValid() && S_sfx[i].link == sfxinfo_t::NO_LINK && S_sfx[i].lumpnum == sfx->lumpnum &&
 				(!sfx->bLoadRAW || (sfx->RawRate == S_sfx[i].RawRate)))	// Raw sounds with different sample rates may not share buffers, even if they use the same source data.
 			{
-				//DPrintf (DMSG_NOTIFY, "Linked %s to %s (%d)\n", sfx->name.GetChars(), S_sfx[i].name.GetChars(), i);
+				DPrintf (DMSG_NOTIFY, "Linked %s to %s (%d)\n", sfx->name.GetChars(), S_sfx[i].name.GetChars(), i);
 				sfx->link = i;
 				// This is necessary to avoid using the rolloff settings of the linked sound if its
 				// settings are different.
@@ -737,7 +740,7 @@ sfxinfo_t *SoundEngine::LoadSound(sfxinfo_t *sfx)
 			}
 		}
 
-		//DPrintf(DMSG_NOTIFY, "Loading sound \"%s\" (%td)\n", sfx->name.GetChars(), sfx - &S_sfx[0]);
+		DPrintf(DMSG_NOTIFY, "Loading sound \"%s\" (%td)\n", sfx->name.GetChars(), sfx - &S_sfx[0]);
 
 		auto sfxdata = ReadSound(sfx->lumpnum);
 		int size = sfxdata.Size();

@@ -373,6 +373,34 @@ void C_NameKeys (char *str, int first, int second)
 		*str = '\0';
 }
 
+//=============================================================================
+//
+//
+//
+//=============================================================================
+
+FString C_NameKeys (int *keys, int count, bool colors)
+{
+	FString result;
+	for (int i = 0; i < count; i++)
+	{
+		int key = keys[i];
+		if (key == 0) continue;
+		for (int j = 0; j < i; j++)
+		{
+			if (key == keys[j])
+			{
+				key = 0;
+				break;
+			}
+		}
+		if (key == 0) continue;
+		if (result.IsNotEmpty()) result += colors? TEXTCOLOR_BLACK ", " TEXTCOLOR_NORMAL : ", ";
+		result += KeyName(key);
+	}
+	return result;
+}
+
 DEFINE_ACTION_FUNCTION(FKeyBindings, NameKeys)
 {
 	PARAM_PROLOGUE;
@@ -380,6 +408,14 @@ DEFINE_ACTION_FUNCTION(FKeyBindings, NameKeys)
 	PARAM_INT(k2);
 	char buffer[120];
 	C_NameKeys(buffer, k1, k2);
+	ACTION_RETURN_STRING(buffer);
+}
+
+DEFINE_ACTION_FUNCTION(FKeyBindings, NameAllKeys)
+{
+	PARAM_PROLOGUE;
+	PARAM_POINTER(array, TArray<int>);
+	auto buffer = C_NameKeys(array->Data(), array->Size(), true);
 	ACTION_RETURN_STRING(buffer);
 }
 
@@ -530,6 +566,11 @@ int FKeyBindings::GetKeysForCommand (const char *cmd, int *first, int *second)
 
 	*first = *second = c = i = 0;
 
+	if (cmd[0] == '\0')
+	{
+		return 0;
+	}
+
 	while (i < NUM_KEYS && c < 2)
 	{
 		if (stricmp (cmd, Binds[i]) == 0)
@@ -544,6 +585,28 @@ int FKeyBindings::GetKeysForCommand (const char *cmd, int *first, int *second)
 	return c;
 }
 
+//=============================================================================
+//
+//
+//
+//=============================================================================
+
+TArray<int> FKeyBindings::GetKeysForCommand (const char *cmd)
+{
+	int i = 0;
+	TArray<int> result;
+
+	while (i < NUM_KEYS)
+	{
+		if (stricmp (cmd, Binds[i]) == 0)
+		{
+			result.Push(i);
+		}
+		i++;
+	}
+	return result;
+}
+
 DEFINE_ACTION_FUNCTION(FKeyBindings, GetKeysForCommand)
 {
 	PARAM_SELF_STRUCT_PROLOGUE(FKeyBindings);
@@ -553,6 +616,22 @@ DEFINE_ACTION_FUNCTION(FKeyBindings, GetKeysForCommand)
 	if (numret > 0) ret[0].SetInt(k1);
 	if (numret > 1) ret[1].SetInt(k2);
 	return MIN(numret, 2);
+}
+
+DEFINE_ACTION_FUNCTION(FKeyBindings, GetAllKeysForCommand)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FKeyBindings);
+	PARAM_POINTER(array, TArray<int>);
+	PARAM_STRING(cmd);
+	*array = self->GetKeysForCommand(cmd);
+	return 0;
+}
+
+DEFINE_ACTION_FUNCTION(FKeyBindings, GetBinding)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FKeyBindings);
+	PARAM_INT(key);
+	ACTION_RETURN_STRING(self->GetBinding(key));
 }
 
 //=============================================================================

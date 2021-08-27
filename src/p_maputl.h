@@ -314,7 +314,7 @@ public:
 	{
 		init(box);
 	}
-	void init(const FBoundingBox &box);
+	void init(const FBoundingBox &box, bool clearhash = true);
 	AActor *Next(bool centeronly = false);
 	void Reset() { StartBlock(minx, miny); }
 };

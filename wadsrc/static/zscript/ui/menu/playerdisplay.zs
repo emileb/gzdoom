@@ -228,7 +228,7 @@ class ListMenuItemPlayerDisplay : ListMenuItem
 	//
 	//=============================================================================
 
-	override void Drawer(bool selected)
+	override void Draw(bool selected, ListMenuDescriptor desc)
 	{
 		if (mMode == 0 && !UpdatePlayerClass())
 		{

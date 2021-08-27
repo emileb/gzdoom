@@ -80,6 +80,7 @@ class PlayerPawn : Actor
 	flagdef NoThrustWhenInvul: PlayerFlags, 0;
 	flagdef CanSuperMorph: PlayerFlags, 1;
 	flagdef CrouchableMorph: PlayerFlags, 2;
+	flagdef WeaponLevel2Ended: PlayerFlags, 3;
 	
 	Default
 	{
@@ -137,6 +138,21 @@ class PlayerPawn : Actor
 		else
 		{
 			if (health > 0) Height = FullHeight;
+		}
+
+		if (bWeaponLevel2Ended)
+		{
+			bWeaponLevel2Ended = false;
+			if (player.ReadyWeapon != NULL && player.ReadyWeapon.bPowered_Up)
+			{
+				player.ReadyWeapon.EndPowerup ();
+			}
+			if (player.PendingWeapon != NULL && player.PendingWeapon != WP_NOCHANGE &&
+				player.PendingWeapon.bPowered_Up &&
+				player.PendingWeapon.SisterWeapon != NULL)
+			{
+				player.PendingWeapon = player.PendingWeapon.SisterWeapon;
+			}
 		}
 		Super.Tick();
 	}
@@ -454,6 +470,7 @@ class PlayerPawn : Actor
 	virtual void CheckWeaponChange ()
 	{
 		let player = self.player;
+		if (!player) return;	
 		if ((player.WeaponState & WF_DISABLESWITCH) || // Weapon changing has been disabled.
 			player.morphTics != 0)					// Morphed classes cannot change weapons.
 		{ // ...so throw away any pending weapon requests.
@@ -941,6 +958,8 @@ class PlayerPawn : Actor
 	virtual void CheckFOV()
 	{
 		let player = self.player;
+
+		if (!player) return;
 
 		// [RH] Zoom the player's FOV
 		float desired = player.DesiredFOV;
@@ -1677,7 +1696,11 @@ class PlayerPawn : Actor
 			if (player.ReadyWeapon != null)
 			{
 				let psp = player.GetPSprite(PSP_WEAPON);
-				if (psp) psp.y = WEAPONTOP;
+				if (psp) 
+				{
+					psp.y = WEAPONTOP;
+					player.ReadyWeapon.ResetPSprite(psp);
+				}
 				player.SetPsprite(PSP_WEAPON, player.ReadyWeapon.GetReadyState());
 			}
 			return;
@@ -2031,7 +2054,7 @@ class PlayerPawn : Actor
 				next = item.Inv;
 				if (item.InterHubAmount < 1)
 				{
-					item.Destroy ();
+					item.DepleteOrDestroy ();
 				}
 				item = next;
 			}
@@ -2570,9 +2593,19 @@ class PSprite : Object native play
 	native double y;
 	native double oldx;
 	native double oldy;
+	native Vector2 pivot;
+	native Vector2 scale;
+	native double rotation;
+	native int HAlign, VAlign;
+	native Vector2 Coord0;		// [MC] Not the actual coordinates. Just the offsets by A_OverlayVertexOffset.
+	native Vector2 Coord1;
+	native Vector2 Coord2;
+	native Vector2 Coord3;
 	native double alpha;
 	native Bool firstTic;
+	native bool InterpolateTic;
 	native int Tics;
+	native uint Translation;
 	native bool bAddWeapon;
 	native bool bAddBob;
 	native bool bPowDouble;
@@ -2580,6 +2613,8 @@ class PSprite : Object native play
 	native bool bFlip;	
 	native bool bMirror;
 	native bool bPlayerTranslated;
+	native bool bPivotPercent;
+	native bool bInterpolate;
 
 	native void SetState(State newstate, bool pending = false);
 

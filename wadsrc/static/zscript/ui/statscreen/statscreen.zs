@@ -483,6 +483,17 @@ class StatusScreen abstract play version("2.5")
 	//
 	//====================================================================
 
+	bool autoSkip()
+	{
+		return wi_autoadvance > 0 && bcnt > (wi_autoadvance * Thinker.TICRATE);
+	}
+
+	//====================================================================
+	//
+	//
+	//
+	//====================================================================
+
 	protected virtual void initNoState ()
 	{
 		CurState = NoState;
@@ -751,6 +762,13 @@ class StatusScreen abstract play version("2.5")
 		cnt = bcnt = 0;
 		me = wbs.pnum;
 		for (int i = 0; i < MAXPLAYERS; i++) Plrs[i] = wbs.plyr[i];
+
+		if (gameinfo.mHideParTimes)
+		{
+			// par time and suck time are not displayed if zero.
+			wbs.partime = 0;
+			wbs.sucktime = 0;
+		}
 		
 		entering.Init(gameinfo.mStatscreenEnteringFont);
 		finished.Init(gameinfo.mStatscreenFinishedFont);

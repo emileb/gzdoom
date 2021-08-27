@@ -158,7 +158,7 @@ bool FShadowMap::ShadowTest(FDynamicLight *light, const DVector3 &pos)
 
 bool FShadowMap::IsEnabled() const
 {
-	return gl_renderbuffers && gl_light_shadowmap && !!(gl.flags & RFL_SHADER_STORAGE_BUFFER);
+	return gl_renderbuffers && gl_lights && gl_light_shadowmap && !!(gl.flags & RFL_SHADER_STORAGE_BUFFER);
 }
 
 void FShadowMap::UploadLights()

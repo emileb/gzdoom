@@ -35,7 +35,17 @@
 
 class ListMenuItem : MenuItemBase
 {
-	virtual void DrawSelector(double xofs, double yofs, TextureID tex)
+	protected void DrawText(ListMenuDescriptor desc, Font fnt, int color, double x, double y, String text, bool ontop = false) // hack
+	{
+		screen.DrawText(fnt, color, x, y, text, DTA_Clean, true);
+	}
+
+	protected void DrawTexture(ListMenuDescriptor desc, TextureID tex, double x, double y, bool ontop = false) // hack
+	{
+		screen.DrawTexture(tex, true, x, y, DTA_Clean, true);
+	}
+
+	virtual void DrawSelector(double xofs, double yofs, TextureID tex, ListMenuDescriptor desc = null)
 	{
 		if (tex.isNull())
 		{
@@ -54,6 +64,12 @@ class ListMenuItem : MenuItemBase
 		{
 			screen.DrawTexture (tex, true, mXpos + xofs, mYpos + yofs, DTA_Clean, true);
 		}
+	}
+
+	// We cannot extend Drawer here because it is inherited from the parent class.
+	virtual void Draw(bool selected, ListMenuDescriptor desc)
+	{
+		Drawer(selected);	// fall back to the legacy version, if not overridden
 	}
 }
 
@@ -75,7 +91,7 @@ class ListMenuItemStaticPatch : ListMenuItem
 		mCentered = centered;
 	}
 	
-	override void Drawer(bool selected)
+	override void Draw(bool selected, ListMenuDescriptor desc)
 	{
 		if (!mTexture.Exists())
 		{
@@ -137,7 +153,7 @@ class ListMenuItemStaticText : ListMenuItem
 		mCentered = centered;
 	}
 	
-	override void Drawer(bool selected)
+	override void Draw(bool selected, ListMenuDescriptor desc)
 	{
 		if (mText.Length() != 0)
 		{
@@ -261,7 +277,7 @@ class ListMenuItemTextItem : ListMenuItemSelectable
 		mHotkey = hotkey.GetNextCodePoint(0);
 	}
 	
-	override void Drawer(bool selected)
+	override void Draw(bool selected, ListMenuDescriptor desc)
 	{
 		screen.DrawText(mFont, selected ? mColorSelected : mColor, mXpos, mYpos, mText, DTA_Clean, true);
 	}
@@ -296,7 +312,7 @@ class ListMenuItemPatchItem : ListMenuItemSelectable
 		mTexture = patch;
 	}
 	
-	override void Drawer(bool selected)
+	override void Draw(bool selected, ListMenuDescriptor desc)
 	{
 		screen.DrawTexture (mTexture, true, mXpos, mYpos, DTA_Clean, true);
 	}

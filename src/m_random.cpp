@@ -170,7 +170,6 @@ static TDeletingArray<FRandom *> NewRNGs;
 
 // CODE --------------------------------------------------------------------
 
-// Which one is deterministic?
 unsigned int P_Random (void)
 {
 	prndindex = (prndindex+1)&0xff;
@@ -396,7 +395,6 @@ void FRandom::StaticReadRNGState(FSerializer &arc)
 
 	// Call StaticClearRandom in order to ensure that SFMT is initialized
 	FRandom::StaticClearRandom ();
-	M_ClearRandom();
 
 	if (arc.BeginArray("rngs"))
 	{

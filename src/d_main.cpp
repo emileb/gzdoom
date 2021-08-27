@@ -541,6 +541,7 @@ CVAR (Flag, sv_killbossmonst,		dmflags2, DF2_KILLBOSSMONST);
 CVAR (Flag, sv_nocountendmonst,		dmflags2, DF2_NOCOUNTENDMONST);
 CVAR (Flag, sv_respawnsuper,		dmflags2, DF2_RESPAWN_SUPER);
 CVAR (Flag, sv_nothingspawn,		dmflags2, DF2_NO_COOP_THING_SPAWN);
+CVAR (Flag, sv_doublespawn,			dmflags2, DF2_DOUBLESPAWN);
 
 //==========================================================================
 //
@@ -582,20 +583,21 @@ CUSTOM_CVAR (Int, compatflags2, 0, CVAR_ARCHIVE|CVAR_SERVERINFO)
 
 CUSTOM_CVAR(Int, compatmode, 0, CVAR_ARCHIVE|CVAR_NOINITCALL)
 {
-	int v, w = 0;
+	int v, w;
 
 	switch (self)
 	{
 	default:
 	case 0:
 		v = 0;
+		w = 0;
 		break;
 
 	case 1:	// Doom2.exe compatible with a few relaxed settings
 		v = COMPATF_SHORTTEX | COMPATF_STAIRINDEX | COMPATF_USEBLOCKING | COMPATF_NODOORLIGHT | COMPATF_SPRITESORT |
 			COMPATF_TRACE | COMPATF_MISSILECLIP | COMPATF_SOUNDTARGET | COMPATF_DEHHEALTH | COMPATF_CROSSDROPOFF |
 			COMPATF_LIGHT | COMPATF_MASKEDMIDTEX;
-		w = COMPATF2_FLOORMOVE | COMPATF2_EXPLODE1;
+		w = COMPATF2_FLOORMOVE | COMPATF2_EXPLODE1 | COMPATF2_OLD_RANDOM_GENERATOR;
 		break;
 
 	case 2:	// same as 1 but stricter (NO_PASSMOBJ and INVISIBILITY are also set)
@@ -2547,6 +2549,19 @@ static int D_DoomMain_Internal (void)
 	// Now that we have the IWADINFO, initialize the autoload ini sections.
 	GameConfig->DoAutoloadSetup(iwad_man);
 
+	// Prevent the game from starting if the savegame passed to -loadgame is invalid
+	v = Args->CheckValue("-loadgame");
+	if (v)
+	{
+		FString file(v);
+		FixPathSeperator(file);
+		DefaultExtension(file, "." SAVEGAME_EXT);
+		if (!FileExists(file))
+		{
+			I_FatalError("Cannot find savegame %s", file.GetChars());
+		}
+	}
+
 	// reinit from here
 
 	do
@@ -2595,7 +2610,8 @@ static int D_DoomMain_Internal (void)
 		// Process automatically executed files
 		FExecList *exec;
 		FArgs *execFiles = new FArgs;
-		GameConfig->AddAutoexec(execFiles, gameinfo.ConfigName);
+		if (!(Args->CheckParm("-noautoexec")))
+			GameConfig->AddAutoexec(execFiles, gameinfo.ConfigName);
 		exec = D_MultiExec(execFiles, NULL);
 		delete execFiles;
 
@@ -3018,7 +3034,6 @@ void D_Cleanup()
 #endif
 
 	// clean up game state
-	ST_Clear();
 	D_ErrorCleanup ();
 	P_Shutdown();
 

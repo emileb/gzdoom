@@ -401,7 +401,7 @@ SDLGLFB::SDLGLFB (void *, int width, int height, int, int, bool fullscreen, bool
 	}
 
 	FString caption;
-	caption.Format(GAMESIG " %s (%s)", GetVersionString(), GetGitTime());
+	caption.Format(GAMENAME " %s (%s)", GetVersionString(), GetGitTime());
 
 	for ( ; glvers[glveridx][0] > 0; ++glveridx)
 	{

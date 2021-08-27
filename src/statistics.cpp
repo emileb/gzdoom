@@ -206,14 +206,6 @@ int compare_episode_names(const void *a, const void *b)
 	return strnatcasecmp(A->epi_header, B->epi_header);
 }
 
-int compare_level_names(const void *a, const void *b)
-{
-	FLevelStatistics *A = (FLevelStatistics*)a;
-	FLevelStatistics *B = (FLevelStatistics*)b;
-
-	return strnatcasecmp(A->name, B->name);
-}
-
 int compare_dates(const void *a, const void *b)
 {
 	FLevelStatistics *A = (FLevelStatistics*)a;
@@ -249,7 +241,11 @@ static void SaveStatistics(const char *fn, TArray<FStatistics> &statlist)
 	unsigned int j;
 
 	FileWriter *fw = FileWriter::Open(fn);
-	if (fw == nullptr) return;
+	if (fw == nullptr)
+	{
+		Printf(PRINT_HIGH, "Unable to save statistics to %s\n", fn);
+		return;
+	}
 
 	qsort(&statlist[0], statlist.Size(), sizeof(statlist[0]), compare_episode_names);
 	for(unsigned i=0;i<statlist.Size ();i++)
@@ -271,8 +267,6 @@ static void SaveStatistics(const char *fn, TArray<FStatistics> &statlist)
 				if (ls.Size() > 0)
 				{
 					fw->Printf("\t{\n");
-
-					qsort(&ls[0], ls.Size(), sizeof(ls[0]), compare_level_names);
 
 					for(unsigned k=0;k<ls.Size ();k++)
 					{
@@ -387,6 +381,15 @@ void STAT_StartNewGame(const char *mapname)
 //
 //==========================================================================
 
+int compare_level_names(const void* a, const void* b)
+{
+	OneLevel* A = (OneLevel*)a;
+	OneLevel* B = (OneLevel*)b;
+
+	return strnatcasecmp(A->Levelname, B->Levelname);
+}
+
+
 static void StoreLevelStats()
 {
 	unsigned int i;
@@ -424,6 +427,8 @@ static void StoreLevelStats()
 		}
 		if (mc == 0) LevelData[i].killcount = LevelData[i].totalkills;
 	}
+	// sort level names alphabetically to bring the newly added level to its proper place when playing a hub.
+	qsort(&LevelData[0], LevelData.Size(), sizeof(LevelData[0]), compare_level_names);
 }
 
 //==========================================================================

@@ -2,8 +2,12 @@
 struct KeyBindings native version("2.4")
 {
 	native static String NameKeys(int k1, int k2);
+	native static String NameAllKeys(array<int> list);
 
 	native int, int GetKeysForCommand(String cmd);
+	native void GetAllKeysForCommand(out array<int> list, String cmd);
+	native String GetBinding(int key);
+
 	native void SetBind(int key, String cmd);
 	native void UnbindACommand (String str);
 }
@@ -326,7 +330,7 @@ class Menu : Object native ui version("2.4")
 	{
 		String label = Stringtable.Localize(text);
 		int overlay = grayed? Color(96,48,0,0) : 0;
-		screen.DrawText (OptionFont(), color, x, y, text, DTA_CleanNoMove_1, true, DTA_ColorOverlay, overlay);
+		screen.DrawText (OptionFont(), OptionColor(color), x, y, text, DTA_CleanNoMove_1, true, DTA_ColorOverlay, overlay);
 	}
 
 	private static bool uiKeyIsInputKey(UiEvent ev, int inputKey)

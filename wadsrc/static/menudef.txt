@@ -362,6 +362,11 @@ OptionMenu "OptionsMenu" protected
 	StaticText " "
 }
 
+// Fake simplified menu
+OptionMenu "OptionsMenuSimple" protected
+{
+}
+
 //-------------------------------------------------------------------------------------------
 //
 // The player menu
@@ -642,6 +647,7 @@ OptionMenu "OtherControlsMenu" protected
 	Control    "$CNTRLMNU_ADJUST_GAMMA"    , "bumpgamma"
 
 	StaticText ""
+	Control    "$CNTRLMNU_OPEN_MAIN"       , "menu_main"
 	Control    "$CNTRLMNU_OPEN_HELP"       , "menu_help"
 	Control    "$CNTRLMNU_OPEN_SAVE"       , "menu_save"
 	Control    "$CNTRLMNU_OPEN_LOAD"       , "menu_load"
@@ -858,6 +864,13 @@ OptionValue VanillaTrans
 	3.0, "$OPTVAL_VTAVANILLA"
 }
 
+OptionValue "SpriteShadowModes"
+{
+	0, "$OPTVAL_OFF"
+	1, "$OPTVAL_DEFAULT"
+	2, "$OPTVAL_SPRSHADALWAYS"
+}
+
 OptionValue GPUSwitch
 {
 	0.0, "$OPTVAL_DEFAULT"
@@ -887,6 +900,7 @@ OptionMenu "SWROptions" protected
 	Option "$DSPLYMNU_GZDFULLBRIGHT",			"r_fullbrightignoresectorcolor", "OnOff"
 	Option "$DSPLYMNU_SCALEFUZZ",				"r_fuzzscale", "OnOff"
 	Option "$DSPLYMNU_MODELS",					"r_models", "OnOff"
+	Option "$DSPLYMNU_MODELSCARMACK",			"r_models_carmack", "OnOff"
 	StaticText " "
 	Slider "$DSPLYMNU_SPRITECULL",			"r_sprite_distance_cull",	2000.0, 8000.0, 500.0, 0
 	Slider "$DSPLYMNU_LINECULL",			"r_line_distance_cull",	4000.0, 16000.0, 1000.0, 0
@@ -909,6 +923,9 @@ OptionMenu "VideoOptions" protected
 	Slider "$DSPLYMNU_SATURATION",				"vid_saturation",  				-3.0, 3.0, 0.25, 2
 	Option "$DSPLYMNU_HWGAMMA",					"vid_hwgamma", "HWGammaModes"
 	StaticText " "
+	Slider "$DSPLYMNU_FOV",						"fov",							75.0, 120.0, 0.1, 1
+	StaticText " "
+	Option "$DSPLYMNU_SPRITESHADOW",			"r_actorspriteshadow", "SpriteShadowModes"
 	Option "$DSPLYMNU_CUSTOMINVERTMAP",			"cl_customizeinvulmap", "OnOff"
 	ColorPicker "$DSPLYMNU_CUSTOMINVERTC1",		"cl_custominvulmapcolor1"
 	ColorPicker "$DSPLYMNU_CUSTOMINVERTC2",		"cl_custominvulmapcolor2"
@@ -1202,7 +1219,7 @@ OptionMenu "MiscOptions" protected
 	{
 		Option	"$DSPLYMNU_SHOWENDOOM",			"showendoom", "Endoom"
 	}
-
+	Option "$MISCMNU_HIDEEXTREME",				"menu_hideextreme", "OnOff"
 	StaticText " "
 	Option "$MISCMNU_ALWAYSTALLY",				"sv_alwaystally", "AlwaysTally"
 
@@ -1593,6 +1610,7 @@ OptionMenu GameplayOptions protected
 	Option "$GMPLYMNU_DONTCHECKAMMO",			"sv_dontcheckammo", "NoYes"
 	Option "$GMPLYMNU_KILLBOSSSPAWNS",			"sv_killbossmonst", "YesNo"
 	Option "$GMPLYMNU_NOCOUNTENDMONSTER",		"sv_nocountendmonst", "NoYes"
+	Option "$GMPLYMNU_DOUBLESPAWN",				"sv_doublespawn", "YesNo"
 	Class "GameplayMenu"
 }
 

@@ -1,5 +1,9 @@
-cmake_minimum_required( VERSION 2.8.7 )
+cmake_minimum_required( VERSION 3.1.0 )
 project(LZDoom)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) 
 
 if( COMMAND cmake_policy )
 	if( POLICY CMP0011 )
@@ -142,13 +146,13 @@ else()
 endif()
 
 # Replacement variables for a possible long list of C/C++ compilers compatible with GCC
-if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" )
+if( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" MATCHES "Clang" )
 	set( ZD_CMAKE_COMPILER_IS_GNUC_COMPATIBLE TRUE )
 else()
 	set( ZD_CMAKE_COMPILER_IS_GNUC_COMPATIBLE FALSE )
 endif()
 
-if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
 	set( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE TRUE )
 else()
 	set( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE FALSE )
@@ -156,6 +160,13 @@ endif()
 
 if( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
 	set( PROFILE 0 CACHE BOOL "Enable profiling with gprof for Debug and RelWithDebInfo build types." )
+
+	if( CMAKE_CXX_STANDARD )
+		# By default, try_compile() invocations ignore CXX_STANDARD value
+		# CMake 3.8 and newer have CMP0067 policy that fixes the issue, but it should be enabled explicitly
+		# Older versions require manual specification of the corresponding command line option
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++${CMAKE_CXX_STANDARD}" )
+	endif()
 endif()
 
 # Fast math flags, required by some subprojects
@@ -294,12 +305,7 @@ else()
 
 
 	if( APPLE )
-		if( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
-			# With standard Apple tools -stdlib=libc++ needs to be specified in order to get
-			# C++11 support using SDKs 10.7 and 10.8.
-			set( CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}" )
-			set( CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++ ${CMAKE_EXE_LINKER_FLAGS}" )
-		elseif( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+		if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
 			# If we're compiling with a custom GCC on the Mac (which we know since g++-4.2 doesn't support C++11) statically link libgcc.
 			set( ALL_C_FLAGS "-static-libgcc" )
 		endif()

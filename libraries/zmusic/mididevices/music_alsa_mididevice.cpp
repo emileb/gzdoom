@@ -49,7 +49,6 @@ namespace {
 
 enum class EventType {
 	Null,
-	Delay,
 	Action
 };
 
@@ -160,7 +159,7 @@ int AlsaMIDIDevice::Open()
 		snd_seq_port_info_set_port(pinfo, IntendedPortId);
 		snd_seq_port_info_set_port_specified(pinfo, 1);
 
-		snd_seq_port_info_set_name(pinfo, "GZDoom Music");
+		snd_seq_port_info_set_name(pinfo, "LZDoom Music");
 
 		snd_seq_port_info_set_capability(pinfo, 0);
 		snd_seq_port_info_set_type(pinfo, SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
@@ -172,7 +171,7 @@ int AlsaMIDIDevice::Open()
 
 	if (QueueId < 0)
 	{
-		QueueId = snd_seq_alloc_named_queue(sequencer.handle, "GZDoom Queue");
+		QueueId = snd_seq_alloc_named_queue(sequencer.handle, "LZDoom Queue");
 	}
 
 	if (!Connected) {
@@ -290,8 +289,8 @@ EventType AlsaMIDIDevice::PullEvent(EventState & state) {
 			return EventType::Action;
 
 		case MIDI_POLYPRESS:
-			// FIXME: Seems to be missing in the Alsa sequencer implementation
-			break;
+			snd_seq_ev_set_keypress(&state.data, channel, parm1, parm2);
+			return EventType::Action;
 
 		case MIDI_CTRLCHANGE:
 			snd_seq_ev_set_controller(&state.data, channel, parm1, parm2);
@@ -315,8 +314,10 @@ EventType AlsaMIDIDevice::PullEvent(EventState & state) {
 			break;
 		}
 	}
-	// We didn't really recognize the event, treat it as a delay
-	return EventType::Delay;
+	// We didn't really recognize the event, treat it as a NOP
+	state.data.type = SND_SEQ_EVENT_NONE;
+	snd_seq_ev_set_fixed(&state.data);
+	return EventType::Action;
 }
 
 void AlsaMIDIDevice::SetExit(bool exit) {
@@ -371,13 +372,6 @@ void AlsaMIDIDevice::PumpEvents() {
 			if(WaitForExit(pump_step, status)) {
 				break;
 			}
-			continue;
-		}
-
-		// chomp delays as they come...
-		if(type == EventType::Delay) {
-			buffer_ticks += event.ticks;
-			Position += event.size_of;
 			continue;
 		}
 
@@ -437,7 +431,6 @@ void AlsaMIDIDevice::PumpEvents() {
 		snd_seq_drain_output(sequencer.handle);
 		snd_seq_sync_output_queue(sequencer.handle);
 	}
-	snd_seq_sync_output_queue(sequencer.handle);
 	snd_seq_stop_queue(sequencer.handle, QueueId, NULL);
 	snd_seq_drain_output(sequencer.handle);
 }
@@ -503,6 +496,6 @@ bool AlsaMIDIDevice::Update()
 
 MIDIDevice *CreateAlsaMIDIDevice(int mididevice)
 {
-	return new AlsaMIDIDevice(mididevice, musicCallbacks.Alsa_MessageFunc);
+	return new AlsaMIDIDevice(mididevice);
 }
 #endif

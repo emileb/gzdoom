@@ -349,9 +349,9 @@ class BaseStatusBar native ui
 	
 	// These functions are kept native solely for performance reasons. They get called repeatedly and can drag down performance easily if they get too slow.
 	native static TextureID, bool GetInventoryIcon(Inventory item, int flags);
-	native void DrawTexture(TextureID texture, Vector2 pos, int flags = 0, double Alpha = 1., Vector2 box = (-1, -1), Vector2 scale = (1, 1));
-	native void DrawImage(String texture, Vector2 pos, int flags = 0, double Alpha = 1., Vector2 box = (-1, -1), Vector2 scale = (1, 1));
-	native void DrawString(HUDFont font, String string, Vector2 pos, int flags = 0, int translation = Font.CR_UNTRANSLATED, double Alpha = 1., int wrapwidth = -1, int linespacing = 4, Vector2 scale = (1, 1));
+	native void DrawTexture(TextureID texture, Vector2 pos, int flags = 0, double Alpha = 1., Vector2 box = (-1, -1), Vector2 scale = (1, 1), ERenderStyle style = STYLE_Translucent);
+	native void DrawImage(String texture, Vector2 pos, int flags = 0, double Alpha = 1., Vector2 box = (-1, -1), Vector2 scale = (1, 1), ERenderStyle style = STYLE_Translucent);
+	native void DrawString(HUDFont font, String string, Vector2 pos, int flags = 0, int translation = Font.CR_UNTRANSLATED, double Alpha = 1., int wrapwidth = -1, int linespacing = 4, Vector2 scale = (1, 1), ERenderStyle style = STYLE_Translucent);
 	native double, double, double, double TransformRect(double x, double y, double w, double h, int flags = 0);
 	native void Fill(Color col, double x, double y, double w, double h, int flags = 0);
 	native static String FormatNumber(int number, int minsize = 0, int maxsize = 0, int format = 0, String prefix = "");
@@ -1187,7 +1187,7 @@ class BaseStatusBar native ui
 				}
 				else
 				{
-					DrawInventoryIcon(item, itempos + (boxsize.X * i, 0), flags | DI_ITEM_CENTER );
+					DrawInventoryIcon(item, itempos + (boxsize.X * i, 0), flags | DI_ITEM_CENTER | DI_DIMDEPLETED );
 				}
 			}
 			

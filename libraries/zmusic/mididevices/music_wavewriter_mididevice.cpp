@@ -86,7 +86,7 @@ struct FmtChunk
 MIDIWaveWriter::MIDIWaveWriter(const char *filename, SoftSynthMIDIDevice *playdevice)
 	: SoftSynthMIDIDevice(playdevice->GetSampleRate())
 {
-	File = MusicIO::utf8_fopen(filename, "wt");
+	File = MusicIO::utf8_fopen(filename, "wb");
 	playDevice = playdevice;
 	if (File != nullptr)
 	{ // Write wave header
@@ -150,7 +150,7 @@ bool MIDIWaveWriter::CloseFile()
 			if (4 == fwrite(&size, 1, 4, File))
 			{
 				size = LittleLong(uint32_t(pos - 12 - sizeof(FmtChunk) - 8));
-				if (0 == fseek(File, 4 + sizeof(FmtChunk) + 4, SEEK_CUR))
+				if (0 == fseek(File, 4 + sizeof(FmtChunk) + 8, SEEK_CUR))
 				{
 					if (4 == fwrite(&size, 1, 4, File))
 					{

@@ -227,6 +227,7 @@ CUSTOM_CVAR(Bool, vid_hw2d, true, CVAR_NOINITCALL)
 
 CVAR(Bool, d3d_antilag, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 CVAR(Int, d3d_showpacks, 0, 0)
+CVAR(Bool, d3d_nogammaramp, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 CVAR(Bool, vid_hwaalines, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 
 // CODE --------------------------------------------------------------------
@@ -299,6 +300,10 @@ D3DFB::D3DFB (UINT adapter, int width, int height, bool bgra, bool fullscreen)
 		return;
 	}
 
+	for (int i = 0; i < 256; i++)
+	{
+		GammaTable[i] = (BYTE)i;
+	}
 	memcpy(SourcePalette, GPalette.BaseColors, sizeof(PalEntry)*256);
 
 	Windowed = !(static_cast<Win32Video *>(Video)->GoFullscreen(fullscreen));
@@ -1121,14 +1126,21 @@ void D3DFB::Update ()
 		igamma = 1 / Gamma;
 		if (!Windowed)
 		{
-			D3DGAMMARAMP ramp;
-
-			for (int i = 0; i < 256; ++i)
+			if (!d3d_nogammaramp || SM14)
 			{
-				ramp.blue[i] = ramp.green[i] = ramp.red[i] = WORD(65535.f * powf(i / 255.f, igamma));
+				D3DGAMMARAMP ramp;
+
+				for (int i = 0; i < 256; ++i)
+				{
+					ramp.blue[i] = ramp.green[i] = ramp.red[i] = WORD(65535.f * powf(i / 255.f, igamma));
+				}
+				LOG("SetGammaRamp\n");
+				D3DDevice->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
 			}
-			LOG("SetGammaRamp\n");
-			D3DDevice->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
+			else
+			{
+				CalcGamma (Gamma, GammaTable);
+			}
 		}
 		else
 		{
@@ -1648,13 +1660,26 @@ void D3DFB::UploadPalette ()
 		uint8_t *pix = (uint8_t *)lockrect.pBits;
 		int i;
 
-		for (i = 0; i < SkipAt; ++i, pix += 4)
+		if (!d3d_nogammaramp || SM14)
 		{
-			pix[0] = SourcePalette[i].b;
-			pix[1] = SourcePalette[i].g;
-			pix[2] = SourcePalette[i].r;
-			pix[3] = (i == 0 ? 0 : 255);
-			// To let masked textures work, the first palette entry's alpha is 0.
+			for (i = 0; i < SkipAt; ++i, pix += 4)
+			{
+				pix[0] = SourcePalette[i].b;
+				pix[1] = SourcePalette[i].g;
+				pix[2] = SourcePalette[i].r;
+				pix[3] = (i == 0 ? 0 : 255);
+				// To let masked textures work, the first palette entry's alpha is 0.
+			}
+		}
+		else
+		{
+			for (i = 0; i < SkipAt; ++i, pix += 4)
+			{
+				pix[0] = GammaTable[SourcePalette[i].b];
+				pix[1] = GammaTable[SourcePalette[i].g];
+				pix[2] = GammaTable[SourcePalette[i].r];
+				pix[3] = (i == 0 ? 0 : 255);
+			}
 		}
 		pix += 4;
 		for (; i < 255; ++i, pix += 4)

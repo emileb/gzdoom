@@ -103,6 +103,21 @@ CUSTOM_CVAR(Float, r_quakeintensity, 1.0f, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 	else if (self > 1.f) self = 1.f;
 }
 
+CUSTOM_CVAR(Int, r_actorspriteshadow, 1, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+{
+	if (self < 0)
+		self = 0;
+	else if (self > 2)
+		self = 2;
+}
+CUSTOM_CVAR(Float, r_actorspriteshadowdist, 1500.0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+{
+	if (self < 0.f)
+		self = 0.f;
+	else if (self > 8192.f)
+		self = 8192.f;
+}
+
 int 			viewwindowx;
 int 			viewwindowy;
 int				viewwidth;
@@ -1239,4 +1254,47 @@ CUSTOM_CVAR(Float, maxviewpitch, 90.f, CVAR_ARCHIVE | CVAR_SERVERINFO)
 		// [SP] Update pitch limits to the netgame/gamesim.
 		players[consoleplayer].SendPitchLimits();
 	}
+}
+
+//==========================================================================
+//
+// R_ShouldDrawSpriteShadow
+//
+//==========================================================================
+
+bool R_ShouldDrawSpriteShadow(AActor *thing)
+{
+	int rf = thing->renderflags;
+	// for wall and flat sprites the shadow math does not work so these must be unconditionally skipped.
+	if (rf & (RF_FLATSPRITE | RF_WALLSPRITE)) return false;	
+
+	bool doit = false;
+	switch (r_actorspriteshadow)
+	{
+	case 1:
+		doit = (rf & RF_CASTSPRITESHADOW);
+		break;
+
+	case 2:
+		doit = (rf & RF_CASTSPRITESHADOW) || (!(rf & RF_NOSPRITESHADOW) && ((thing->flags3 & MF3_ISMONSTER) || thing->player != nullptr));
+		break;
+
+	default:
+		break;
+	}
+
+	if (doit)
+	{
+		auto rs = thing->RenderStyle;
+		rs.CheckFuzz();
+		// For non-standard render styles, draw no shadows. This will always look weird. However, if the sprite forces shadows, render them anyway.
+		if (!(rf & RF_CASTSPRITESHADOW))
+		{
+			if (rs.BlendOp != STYLEOP_Add && rs.BlendOp != STYLEOP_Shadow) return false;
+			if (rs.DestAlpha != STYLEALPHA_Zero && rs.DestAlpha != STYLEALPHA_InvSrc) return false;
+		}
+	}
+	return doit;
+
+
 }

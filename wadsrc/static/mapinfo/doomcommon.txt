@@ -40,6 +40,7 @@ gameinfo
 	dimamount = 0.5
 	bluramount = 0.0
 	menuslidercolor = "Orange"
+	menusliderbackcolor = "White"
 	definventorymaxamount = 25
 	defaultrespawntime = 12
 	defaultdropstyle = 1
@@ -219,4 +220,15 @@ skill nightmare
 	Name = "$SKILL_NIGHTMARE"
 	MustConfirm
 	Key = "n"
+}
+
+skill extreme_lzd
+{
+	DoubleSpawn
+	HealthFactor = 0.6
+	DisableCheats
+	SpawnFilter = Hard
+	PicName = "M_EXTR"
+	Name = "$SKILL_EXTREME"
+	MustConfirm
 }

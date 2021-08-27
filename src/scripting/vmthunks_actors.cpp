@@ -814,6 +814,19 @@ DEFINE_ACTION_FUNCTION_NATIVE(AActor, GetTag, GetTag)
 	ACTION_RETURN_STRING(res);
 }
 
+static void GetCharacterName(AActor *self, FString *result)
+{
+	*result = self->GetCharacterName();
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(AActor, GetCharacterName, GetCharacterName)
+{
+	PARAM_SELF_PROLOGUE(AActor);
+	FString res;
+	GetCharacterName(self, &res);
+	ACTION_RETURN_STRING(res);
+}
+
 static void SetTag(AActor *self, const FString &def)
 {
 	if (def.IsEmpty()) self->Tag = nullptr;
@@ -1771,6 +1784,7 @@ DEFINE_FIELD_NAMED(AActor, __Pos, pos)
 DEFINE_FIELD_NAMED(AActor, __Pos.X, x)
 DEFINE_FIELD_NAMED(AActor, __Pos.Y, y)
 DEFINE_FIELD_NAMED(AActor, __Pos.Z, z)
+DEFINE_FIELD(AActor, SpriteOffset)
 DEFINE_FIELD(AActor, Prev)
 DEFINE_FIELD(AActor, SpriteAngle)
 DEFINE_FIELD(AActor, SpriteRotation)
@@ -1939,6 +1953,7 @@ DEFINE_FIELD(AActor, RenderRequired)
 DEFINE_FIELD(AActor, friendlyseeblocks)
 DEFINE_FIELD(AActor, SpawnTime)
 DEFINE_FIELD(AActor, InventoryID)
+DEFINE_FIELD(AActor, ThruBits)
 DEFINE_FIELD_NAMED(AActor, ViewAngles.Yaw, viewangle)
 DEFINE_FIELD_NAMED(AActor, ViewAngles.Pitch, viewpitch)
 DEFINE_FIELD_NAMED(AActor, ViewAngles.Roll, viewroll)

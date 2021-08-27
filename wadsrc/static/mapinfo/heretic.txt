@@ -40,6 +40,7 @@ gameinfo
 	dimamount = 0.5
 	bluramount = 0
 	menuslidercolor = "Orange"
+	menusliderbackcolor = "White"
 	definventorymaxamount = 16
 	defaultrespawntime = 12
 	defaultdropstyle = 1
@@ -313,6 +314,17 @@ skill nightmare
 	DisableCheats
 	SpawnFilter = Nightmare
 	Name = "$MNU_BLACKPLAGUE"
+}
+
+skill extreme_lzd
+{
+	DoubleSpawn
+	DamageFactor = 1.4
+	MonsterHealth = 0.6
+	HealthFactor = 0.6
+	DisableCheats
+	SpawnFilter = Hard
+	Name = "$MNU_EXTREME"
 }
 
 clearepisodes

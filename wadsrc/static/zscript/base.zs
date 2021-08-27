@@ -52,8 +52,10 @@ struct _ native	// These are the global variables, the struct is only here to av
 	native int LocalViewPitch;
 	native readonly @MusPlayingInfo musplaying;
 	native readonly bool generic_ui;
-	// __MOBILE__
-	native bool g_bindingbutton;
+
+	native readonly int GameTicRate;
+    // __MOBILE__
+    native bool g_bindingbutton;
 }
 
 struct MusPlayingInfo native
@@ -106,7 +108,7 @@ struct TexMan
 		NOT_FLAT			= 24
 	};
 
-	native static TextureID CheckForTexture(String name, int usetype, int flags = TryAny);
+	native static TextureID CheckForTexture(String name, int usetype = Type_Any, int flags = TryAny);
 	native static void ReplaceTextures(String from, String to, int flags);
 	native static String GetName(TextureID tex);
 	native static int, int GetSize(TextureID tex);
@@ -188,6 +190,8 @@ enum DrawTextureTags
 
 	DTA_FullscreenEx,		// advanced fullscreen control.
 	DTA_FullscreenScale,	// enable DTA_Fullscreen coordinate calculation for placed overlays.
+
+	DTA_CleanTop,			// Like DTA_Clean but aligns to the top of the screen instead of the center.
 
 };
 
@@ -406,6 +410,7 @@ struct GameInfoStruct native
 	native double gibfactor;
 	native bool intermissioncounter;
 	native Name mSliderColor;
+	native Name mSliderBackColor;
 	native Color defaultbloodcolor;
 	native double telefogheight;
 	native int defKickback;
@@ -414,6 +419,7 @@ struct GameInfoStruct native
 	native TextureID berserkpic;
 	native double normforwardmove[2];
 	native double normsidemove[2];
+	native bool mHideParTimes;
 }
 
 struct SystemTime
@@ -647,6 +653,53 @@ struct DropItem native
 	native readonly int Amount;
 }
 
+struct LevelInfo native
+{
+	native readonly int levelnum;
+	native readonly String MapName;
+	native readonly String NextMap;
+	native readonly String NextSecretMap;
+	native readonly String SkyPic1;
+	native readonly String SkyPic2;
+	native readonly String F1Pic;
+	native readonly int cluster;
+	native readonly int partime;
+	native readonly int sucktime;
+	native readonly int flags;
+	native readonly int flags2;
+	native readonly int flags3;
+	native readonly String Music;
+	native readonly String LevelName;
+	native readonly String AuthorName;
+	native readonly int musicorder;
+	native readonly float skyspeed1;
+	native readonly float skyspeed2;
+	native readonly int cdtrack;
+	native readonly double gravity;
+	native readonly double aircontrol;
+	native readonly int airsupply;
+	native readonly int compatflags;
+	native readonly int compatflags2;
+	native readonly name deathsequence;
+	native readonly int fogdensity;
+	native readonly int outsidefogdensity;
+	native readonly int skyfog;
+	native readonly float pixelstretch;
+	native readonly name RedirectType;
+	native readonly String RedirectMapName;
+	native readonly double teamdamage;
+
+	native bool isValid() const;
+	native String LookupLevelName() const;
+
+	native static int GetLevelInfoCount();
+	native static LevelInfo GetLevelInfo(int index);
+	native static LevelInfo FindLevelInfo(String mapname);
+	native static LevelInfo FindLevelByNum(int num);
+	native static bool MapExists(String mapname);
+	native static String MapChecksum(String mapname);
+}
+
 struct LevelLocals native
 {
 	enum EUDMF
@@ -723,7 +776,7 @@ struct LevelLocals native
 	native name deathsequence;
 	native readonly int compatflags;
 	native readonly int compatflags2;
-// level_info_t *info cannot be done yet.
+	native readonly LevelInfo info;
 
 	native String GetUDMFString(int type, int index, Name key);
 	native int GetUDMFInt(int type, int index, Name key);
@@ -943,6 +996,7 @@ struct StringStruct native
 	native void DeleteLastCharacter();
 	native int CodePointCount() const;
 	native int, int GetNextCodePoint(int position) const;
+	native void Substitute(String str, String replace);
 }
 
 class SectorEffect : Thinker native

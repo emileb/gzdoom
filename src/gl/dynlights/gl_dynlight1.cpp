@@ -35,6 +35,7 @@
 #include "a_dynlight.h"
 
 #include "gl/system/gl_interface.h"
+#include "gl/system/gl_cvars.h"
 #include "gl/renderer/gl_renderer.h"
 #include "gl/renderer/gl_lightdata.h"
 #include "gl/data/gl_data.h"
@@ -117,9 +118,13 @@ void gl_AddLightToList(int group, FDynamicLight * light, FDynLightData &ldata)
 		i = 1;
 	}
 
-	float shadowIndex = light->mShadowmapIndex + 1.0f;
-
-    // Store attenuate flag in the sign bit of the float.
+	float shadowIndex;
+	if (gl_light_shadowmap) // note: with gl_light_shadowmap switched off, we cannot rely on properly set indices anymore.
+	{
+		shadowIndex = light->mShadowmapIndex + 1.0f;
+	}
+	else shadowIndex = 1025.f;
+	// Store attenuate flag in the sign bit of the float.
 	if (light->IsAttenuated()) shadowIndex = -shadowIndex;
 
 	float lightType = 0.0f;

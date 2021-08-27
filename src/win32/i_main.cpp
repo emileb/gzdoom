@@ -906,7 +906,7 @@ int DoMain (HINSTANCE hInstance)
 	}
 	
 	/* create window */
-	FStringf caption("" GAMESIG " %s " X64 " (%s)", GetVersionString(), GetGitTime());
+	FStringf caption("" GAMENAME " %s " X64 " (%s)", GetVersionString(), GetGitTime());
 	std::wstring wcaption = caption.WideString();
 	Window = CreateWindowExW(
 							 WS_EX_APPWINDOW,

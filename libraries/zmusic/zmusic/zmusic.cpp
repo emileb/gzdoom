@@ -435,6 +435,12 @@ DLL_EXPORT bool ZMusic_IsLooping(MusInfo *song)
 	return song->m_Looping;
 }
 
+DLL_EXPORT int ZMusic_GetDeviceType(MusInfo* song)
+{
+	if (!song) return false;
+	return song->GetDeviceType();
+}
+
 DLL_EXPORT bool ZMusic_IsMIDI(MusInfo *song)
 {
 	if (!song) return false;
@@ -492,6 +498,6 @@ DLL_EXPORT bool ZMusic_WriteSMF(MIDISource* source, const char *fn, int looplimi
 	auto f = MusicIO::utf8_fopen(fn, "wt");
 	if (f == nullptr) return false;
 	success = (fwrite(&midi[0], 1, midi.size(), f) == midi.size());
-	delete f;
+	fclose(f);
 	return success;
 }

@@ -64,13 +64,13 @@ void Mac_I_FatalError(const char* errortext);
 void Linux_I_FatalError(const char* errortext)
 {
 	// Close window or exit fullscreen and release mouse capture
-	SDL_Quit();
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
 	const char *str;
 	if((str=getenv("KDE_FULL_SESSION")) && strcmp(str, "true") == 0)
 	{
 		FString cmd;
-		cmd << "kdialog --title \"" GAMESIG " " << GetVersionString()
+		cmd << "kdialog --title \"" GAMENAME " " << GetVersionString()
 			<< "\" --msgbox \"" << errortext << "\"";
 		popen(cmd, "r");
 	}
@@ -83,7 +83,7 @@ void Linux_I_FatalError(const char* errortext)
 	else
 	{
 		FString title;
-		title << GAMESIG " " << GetVersionString();
+		title << GAMENAME " " << GetVersionString();
 
 #ifdef __ANDROID__
         LOGI("FATAL ERROR: %s", errortext);
@@ -161,7 +161,7 @@ int I_PickIWad (WadStuff *wads, int numwads, bool showwin, int defaultiwad)
 	const char *str;
 	if((str=getenv("KDE_FULL_SESSION")) && strcmp(str, "true") == 0)
 	{
-		FString cmd("kdialog --title \"" GAMESIG " ");
+		FString cmd("kdialog --title \"" GAMENAME " ");
 		cmd << GetVersionString() << ": Select an IWAD to use\""
 					" --menu \"" GAMENAME " found more than one IWAD\n"
 					"Select from the list below to determine which one to use:\"";

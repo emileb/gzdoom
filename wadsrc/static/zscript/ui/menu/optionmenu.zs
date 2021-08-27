@@ -239,14 +239,7 @@ class OptionMenu : Menu
 
 					if (y <= 0)
 					{
-						if (mDesc.mFont && mDesc.mTitle.Length() > 0)
-						{
-							y = -y + mDesc.mFont.GetHeight();
-						}
-						else
-						{
-							y = -y;
-						}
+						y = DrawCaption(mDesc.mTitle, -y, false);
 					}
 					y *= CleanYfac_1;
 					int	rowheight = OptionMenuSettings.mLinespacing * CleanYfac_1;
@@ -445,24 +438,46 @@ class OptionMenu : Menu
 		return indent;
 	}
 
+	//=============================================================================
+	//
+	// draws and/or measures the caption. 
+	//
+	//=============================================================================
+
+	virtual int DrawCaption(String title, int y, bool drawit)
+	{
+		let font = !mDesc.mFont ? SmallFont : mDesc.mFont;
+		if (font && mDesc.mTitle.Length() > 0)
+		{
+			if (drawit)
+			{
+				let tt = Stringtable.Localize(title);
+				screen.DrawText(font, OptionMenuSettings.mTitleColor,
+					(screen.GetWidth() - font.StringWidth(tt) * CleanXfac_1) / 2, 10 * CleanYfac_1,
+					tt, DTA_CleanNoMove_1, true);
+			}
+			return y + font.GetHeight();
+		}
+		else
+		{
+			return y;
+		}
+
+	}
+
+	//=============================================================================
+	//
+	//
+	//
+	//=============================================================================
+
 	override void Drawer ()
 	{
 		int y = mDesc.mPosition;
 
 		if (y <= 0)
 		{
-			if (mDesc.mFont && mDesc.mTitle.Length() > 0)
-			{
-				let tt = Stringtable.Localize(mDesc.mTitle);
-				screen.DrawText (mDesc.mFont, OptionMenuSettings.mTitleColor,
-					(screen.GetWidth() - mDesc.mFont.StringWidth(tt) * CleanXfac_1) / 2, 10*CleanYfac_1,
-					tt, DTA_CleanNoMove_1, true);
-				y = -y + mDesc.mFont.GetHeight();
-			}
-			else
-			{
-				y = -y;
-			}
+			y = DrawCaption(mDesc.mTitle, -y, true);
 		}
 		mDesc.mDrawTop = y;
 		int fontheight = OptionMenuSettings.mLinespacing * CleanYfac_1;

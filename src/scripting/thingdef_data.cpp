@@ -334,6 +334,7 @@ static FFlagDef ActorFlagDefs[]=
 	DEFINE_FLAG(MF8, STOPRAILS, AActor, flags8),
 	DEFINE_FLAG(MF8, FALLDAMAGE, AActor, flags8),
 	DEFINE_FLAG(MF8, ABSVIEWANGLES, AActor, flags8),
+	DEFINE_FLAG(MF8, ALLOWTHRUBITS, AActor, flags8),
 
 	// Effect flags
 	DEFINE_FLAG(FX, VISIBILITYPULSE, AActor, effects),
@@ -357,6 +358,8 @@ static FFlagDef ActorFlagDefs[]=
 	DEFINE_FLAG(RF, DONTINTERPOLATE, AActor, renderflags),
 	DEFINE_FLAG(RF, SPRITEFLIP, AActor, renderflags),
 	DEFINE_FLAG(RF, ZDOOMTRANS, AActor, renderflags),
+	DEFINE_FLAG(RF, CASTSPRITESHADOW, AActor, renderflags),
+	DEFINE_FLAG(RF, NOSPRITESHADOW, AActor, renderflags),
 
 	// Bounce flags
 	DEFINE_FLAG2(BOUNCE_Walls, BOUNCEONWALLS, AActor, BounceFlags),

@@ -944,13 +944,13 @@ FBlockThingsIterator::FBlockThingsIterator(int _minx, int _miny, int _maxx, int 
 	Reset();
 }
 
-void FBlockThingsIterator::init(const FBoundingBox &box)
+void FBlockThingsIterator::init(const FBoundingBox &box, bool clearhash)
 {
 	maxy = level.blockmap.GetBlockY(box.Top());
 	miny = level.blockmap.GetBlockY(box.Bottom());
 	maxx = level.blockmap.GetBlockX(box.Right());
 	minx = level.blockmap.GetBlockX(box.Left());
-	ClearHash();
+	if (clearhash) ClearHash();
 	Reset();
 }
 
@@ -1173,7 +1173,7 @@ void FMultiBlockThingsIterator::startIteratorForGroup(int group)
 	offset.X += checkpoint.X;
 	offset.Y += checkpoint.Y;
 	bbox.setBox(offset.X, offset.Y, checkpoint.Z);
-	blockIterator.init(bbox);
+	blockIterator.init(bbox, false);
 }
 
 //===========================================================================
@@ -1187,6 +1187,7 @@ void FMultiBlockThingsIterator::Reset()
 	index = -1;
 	portalflags = 0;
 	startIteratorForGroup(basegroup);
+	blockIterator.ClearHash();
 }
 
 //===========================================================================

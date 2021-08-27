@@ -460,7 +460,7 @@ DObject *PClass::CreateNew()
 	else
 		memset (mem, 0, Size);
 
-	if (ConstructNative == nullptr)
+	if (ConstructNative == nullptr || bAbstract)
 	{
 		M_Free(mem);
 		I_Error("Attempt to instantiate abstract class %s.", TypeName.GetChars());
@@ -826,13 +826,17 @@ int PClass::FindVirtualIndex(FName name, PFunction::Variant *variant, PFunction 
 						if (!(parentfunc->Variants[0].ArgFlags[a] & VARF_Optional)) return -1;
 					}
 
-					// Todo: extend the prototype
+					// Extend the prototype
+					TArray<PType*> argumentTypes = proto->ArgumentTypes;
+
 					for (unsigned a = proto->ArgumentTypes.Size(); a < vproto->ArgumentTypes.Size(); a++)
 					{
-						proto->ArgumentTypes.Push(vproto->ArgumentTypes[a]);
+						argumentTypes.Push(vproto->ArgumentTypes[a]);
 						variant->ArgFlags.Push(parentfunc->Variants[0].ArgFlags[a]);
 						variant->ArgNames.Push(NAME_None);
 					}
+
+					variant->Proto = NewPrototype(proto->ReturnTypes, argumentTypes);
 				}
 				return i;
 			}

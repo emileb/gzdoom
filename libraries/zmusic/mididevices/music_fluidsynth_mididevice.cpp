@@ -117,7 +117,6 @@ protected:
 	static TReqProc<FluidSynthModule, int (*)(fluid_synth_t *, const char *, int, char *, int *, int *, int)> fluid_synth_sysex;
 	
 	bool LoadFluidSynth(const char *fluid_lib);
-	void UnloadFluidSynth();
 #endif
 };
 
@@ -128,21 +127,16 @@ protected:
 #ifdef _WIN32
 
 #ifndef _M_X64
-#define FLUIDSYNTHLIB1	"fluidsynth.dll"
-#define FLUIDSYNTHLIB2	"libfluidsynth.dll"
+#define FLUIDSYNTHLIBS { "fluidsynth.dll", "libfluidsynth.dll" }
 #else
-#define FLUIDSYNTHLIB1	"fluidsynth64.dll"
-#define FLUIDSYNTHLIB2	"libfluidsynth64.dll"
+#define FLUIDSYNTHLIBS { "fluidsynth64.dll", "libfluidsynth64.dll" }
 #endif
 #else
-#include <dlfcn.h>
 
 #ifdef __APPLE__
-#define FLUIDSYNTHLIB1	"libfluidsynth.1.dylib"
-#define FLUIDSYNTHLIB2	"libfluidsynth.2.dylib"
+#define FLUIDSYNTHLIBS { "libfluidsynth.1.dylib", "libfluidsynth.2.dylib", "libfluidsynth.3.dylib" }
 #else // !__APPLE__
-#define FLUIDSYNTHLIB1	"libfluidsynth.so.1"
-#define FLUIDSYNTHLIB2	"libfluidsynth.so.2"
+#define FLUIDSYNTHLIBS { "libfluidsynth.so.1", "libfluidsynth.so.2", "libfluidsynth.so.3" }
 #endif // __APPLE__
 #endif
 
@@ -253,9 +247,6 @@ FluidSynthMIDIDevice::~FluidSynthMIDIDevice()
 	{
 		delete_fluid_settings(FluidSettings);
 	}
-#ifdef DYN_FLUIDSYNTH
-	UnloadFluidSynth();
-#endif
 }
 
 //==========================================================================
@@ -538,35 +529,43 @@ DYN_FLUID_SYM(fluid_synth_sysex);
 
 bool FluidSynthMIDIDevice::LoadFluidSynth(const char *fluid_lib)
 {
-	if (fluid_lib && strlen(fluid_lib) > 0)
+    static bool is_loaded = false;
+    static bool is_checked = false;
+
+	if (!is_checked)
 	{
-		if(!FluidSynthModule.Load({fluid_lib}))
+		if (fluid_lib && strlen(fluid_lib) > 0)
 		{
-			const char* libname = fluid_lib;
-			if (printfunc) printfunc("Could not load %s\n", libname);
+			is_loaded = FluidSynthModule.Load({ fluid_lib });
+			if (!is_loaded)
+				if (printfunc) printfunc("Could not load %s\n", fluid_lib);
 		}
-		else
-			return true;
+
+		if (!is_loaded)
+		{
+			is_loaded = FluidSynthModule.Load(FLUIDSYNTHLIBS);
+			if (!is_loaded)
+			{
+				std::string error = "Could not load ";
+				bool need_or = false;
+
+				for (const char *library : FLUIDSYNTHLIBS)
+				{
+					if (need_or)
+						error += " or ";
+					else
+						need_or = true;
+					error += library;
+				}
+
+				if (printfunc) printfunc("%s\n", error.c_str());
+			}
+		}
+
+		is_checked = true;
 	}
 
-	if(!FluidSynthModule.Load({FLUIDSYNTHLIB1, FLUIDSYNTHLIB2}))
-	{
-		if (printfunc) printfunc("Could not load " FLUIDSYNTHLIB1 " or " FLUIDSYNTHLIB2 "\n");
-		return false;
-	}
-
-	return true;
-}
-
-//==========================================================================
-//
-// FluidSynthMIDIDevice :: UnloadFluidSynth
-//
-//==========================================================================
-
-void FluidSynthMIDIDevice::UnloadFluidSynth()
-{
-	FluidSynthModule.Unload();
+	return is_loaded;
 }
 
 #endif

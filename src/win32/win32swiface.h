@@ -280,6 +280,7 @@ private:
 	IDirect3DPixelShader9 *CurPixelShader;
 	IDirect3DTexture9 *Texture[5];
 
+	BYTE GammaTable[256];
 	PalEntry SourcePalette[256];
 	D3DCOLOR BorderColor;
 	D3DCOLOR FlashColor0, FlashColor1;

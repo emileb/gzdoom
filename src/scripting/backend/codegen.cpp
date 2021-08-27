@@ -949,7 +949,7 @@ FxExpression *FxIntCast::Resolve(FCompileContext &ctx)
 		{
 			ExpVal constval = static_cast<FxConstant *>(basex)->GetValue();
 			FxExpression *x = new FxConstant(constval.GetInt(), ScriptPosition);
-			if (constval.GetInt() != constval.GetFloat())
+			if (constval.GetInt() != constval.GetFloat() && !Explicit)
 			{
 				ScriptPosition.Message(MSG_WARNING, "Truncation of floating point constant %f", constval.GetFloat());
 			}
@@ -1466,7 +1466,7 @@ FxFontCast::FxFontCast(FxExpression *x)
 	: FxExpression(EFX_FontCast, x->ScriptPosition)
 {
 	basex = x;
-	ValueType = TypeSound;
+	ValueType = TypeFont;
 }
 
 //==========================================================================
@@ -2245,7 +2245,6 @@ FxExpression *FxPreIncrDecr::Resolve(FCompileContext &ctx)
 ExpEmit FxPreIncrDecr::Emit(VMFunctionBuilder *build)
 {
 	assert(Token == TK_Incr || Token == TK_Decr);
-	assert(ValueType == Base->ValueType && IsNumeric());
 
 	int zero = build->GetConstantInt(0);
 	int regtype = ValueType->GetRegType();
@@ -2332,7 +2331,6 @@ FxExpression *FxPostIncrDecr::Resolve(FCompileContext &ctx)
 ExpEmit FxPostIncrDecr::Emit(VMFunctionBuilder *build)
 {
 	assert(Token == TK_Incr || Token == TK_Decr);
-	assert(ValueType == Base->ValueType && IsNumeric());
 
 	int zero = build->GetConstantInt(0);
 	int regtype = ValueType->GetRegType();
@@ -5351,7 +5349,6 @@ FxExpression *FxMinMax::Resolve(FCompileContext &ctx)
 				else
 				{
 					ExpVal value = static_cast<FxConstant *>(choices[j])->GetValue();
-					assert(value.Type == ValueType);
 					if (Type == NAME_Min)
 					{
 						if (value.Type->GetRegType() == REGT_FLOAT)
@@ -8435,6 +8432,14 @@ FxExpression *FxMemberFunctionCall::Resolve(FCompileContext& ctx)
 			return x->Resolve(ctx);
 		}
 	}
+	if (MethodName == NAME_IsAbstract && Self->ValueType->isClassPointer())
+	{
+		if (CheckArgSize(NAME_IsAbstract, ArgList, 0, 0, ScriptPosition))
+		{
+			auto x = new FxIsAbstract(Self);
+			return x->Resolve(ctx);
+		}
+	}
 
 	if (Self->ValueType->isRealPointer())
 	{
@@ -8937,6 +8942,14 @@ FxExpression *FxVMFunctionCall::Resolve(FCompileContext& ctx)
 				return nullptr;
 			}
 		}
+	}
+
+	// [Player701] Catch attempts to call abstract functions directly at compile time
+	if (NoVirtual && Function->Variants[0].Implementation->VarFlags & VARF_Abstract)
+	{
+		ScriptPosition.Message(MSG_ERROR, "Cannot call abstract function %s", Function->Variants[0].Implementation->PrintableName.GetChars());
+		delete this;
+		return nullptr;
 	}
 
 	CallingFunction = ctx.Function;
@@ -9708,6 +9721,47 @@ ExpEmit FxGetDefaultByType::Emit(VMFunctionBuilder *build)
 //
 //==========================================================================
 
+FxIsAbstract::FxIsAbstract(FxExpression *self)
+	:FxExpression(EFX_IsAbstract, self->ScriptPosition)
+{
+	Self = self;
+}
+
+FxIsAbstract::~FxIsAbstract()
+{
+	SAFE_DELETE(Self);
+}
+
+FxExpression *FxIsAbstract::Resolve(FCompileContext &ctx)
+{
+	SAFE_RESOLVE(Self, ctx);
+
+	if (!Self->ValueType->isClassPointer())
+	{
+		ScriptPosition.Message(MSG_ERROR, "IsAbstract() requires a class pointer");
+		delete this;
+		return nullptr;
+	}
+	ValueType = TypeBool;
+	return this;
+}
+
+ExpEmit FxIsAbstract::Emit(VMFunctionBuilder *build)
+{
+	ExpEmit op = Self->Emit(build);
+	op.Free(build);
+
+	ExpEmit to(build, REGT_INT);
+	build->Emit(OP_LBU, to.RegNum, op.RegNum, build->GetConstantInt(myoffsetof(PClass, bAbstract)));
+
+	return to;
+}
+
+//==========================================================================
+//
+//
+//==========================================================================
+
 FxColorLiteral::FxColorLiteral(FArgumentList &args, FScriptPosition &sc)
 	:FxExpression(EFX_ColorLiteral, sc)
 {
@@ -10233,14 +10287,14 @@ FxExpression *FxIfStatement::Resolve(FCompileContext &ctx)
 {
 	CHECKRESOLVED();
 
+	SAFE_RESOLVE(Condition, ctx);
+
 	if (WhenTrue == nullptr && WhenFalse == nullptr)
 	{ // We don't do anything either way, so disappear
 		delete this;
 		ScriptPosition.Message(MSG_WARNING, "empty if statement");
 		return new FxNop(ScriptPosition);
 	}
-
-	SAFE_RESOLVE(Condition, ctx);
 
 	if (Condition->ValueType != TypeBool)
 	{

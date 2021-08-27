@@ -214,7 +214,9 @@ void FModelRenderer::RenderHUDModel(DPSprite *psp, float ofsX, float ofsY)
 	float orientation = smf->xscale * smf->yscale * smf->zscale;
 
 	BeginDrawHUDModel(playermo, objectToWorldMatrix, orientation < 0);
-	RenderFrameModels(smf, psp->GetState(), psp->GetTics(), playermo->player->ReadyWeapon->GetClass(), psp->Flags & PSPF_PLAYERTRANSLATED ? psp->Owner->mo->Translation : 0);
+	uint32_t trans = psp->GetTranslation() != 0 ? psp->GetTranslation() : 0;
+	if ((psp->Flags & PSPF_PLAYERTRANSLATED)) trans = psp->Owner->mo->Translation;
+	RenderFrameModels(smf, psp->GetState(), psp->GetTics(), playermo->player->ReadyWeapon->GetClass(), trans);
 	EndDrawHUDModel(playermo);
 }
 

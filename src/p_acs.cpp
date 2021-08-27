@@ -576,6 +576,8 @@ FRandom pr_acs ("ACS", false);
 // SpawnDecal flags
 #define SDF_ABSANGLE		1
 #define SDF_PERMANENT		2
+#define SDF_FIXED_ZOFF		4
+#define SDF_FIXED_DISTANCE	8
 
 // GetArmorInfo
 enum
@@ -4165,6 +4167,7 @@ enum
 	APROP_MaxStepHeight	= 44,
 	APROP_MaxDropOffHeight= 45,
 	APROP_DamageType	= 46,
+	APROP_SoundClass	= 47,
 };
 
 // These are needed for ACS's APROP_RenderStyle
@@ -4428,6 +4431,16 @@ void DLevelScript::DoSetActorProperty (AActor *actor, int property, int value)
 		actor->DamageType = FBehavior::StaticLookupString(value);
 		break;
 
+	case APROP_SoundClass:
+		if (actor->IsKindOf(NAME_PlayerPawn))
+		{
+			if (actor->player != nullptr)
+			{
+				actor->player->SoundClass = FBehavior::StaticLookupString(value);
+			}
+		}
+		break;
+
 	default:
 		// do nothing.
 		break;
@@ -4525,6 +4538,7 @@ int DLevelScript::GetActorProperty (int tid, int property)
 	case APROP_MaxStepHeight: return DoubleToACS(actor->MaxStepHeight);
 	case APROP_MaxDropOffHeight: return DoubleToACS(actor->MaxDropOffHeight);
 	case APROP_DamageType:	return GlobalACSStrings.AddString(actor->DamageType);
+	case APROP_SoundClass:	return GlobalACSStrings.AddString(S_GetSoundClass(actor));
 
 	default:				return 0;
 	}
@@ -4598,6 +4612,7 @@ int DLevelScript::CheckActorProperty (int tid, int property, int value)
 		case APROP_Species:		string = actor->GetSpecies(); break;
 		case APROP_NameTag:		string = actor->GetTag(); break;
 		case APROP_DamageType:	string = actor->DamageType; break;
+		case APROP_SoundClass:  string = S_GetSoundClass(actor); break;
 	}
 	if (string == NULL) string = "";
 	return (!stricmp(string, FBehavior::StaticLookupString(value)));
@@ -4902,6 +4917,7 @@ enum EACSFunctions
 	ACSF_StartSlideshow,
 	ACSF_GetSectorHealth,
 	ACSF_GetLineHealth,
+	ACSF_SetSubtitleNumber,
 
 		// Eternity's
 	ACSF_GetLineX = 300,
@@ -6174,7 +6190,7 @@ doplaysound:			if (funcIndex == ACSF_PlayActorSound)
             }
 
 		case ACSF_SpawnDecal:
-			// int SpawnDecal(int tid, str decalname, int flags, fixed angle, int zoffset, int distance)
+			// int SpawnDecal(int tid, str decalname, int flags, fixed angle, int|fixed zoffset, int|fixed distance)
 			// Returns number of decals spawned (not including spreading)
 			{
 				int count = 0;
@@ -6183,8 +6199,8 @@ doplaysound:			if (funcIndex == ACSF_PlayActorSound)
 				{
 					int flags = (argCount > 2) ? args[2] : 0;
 					DAngle angle = ACSToAngle((argCount > 3) ? args[3] : 0);
-					int zoffset = (argCount > 4) ? args[4]: 0;
-					int distance = (argCount > 5) ? args[5] : 64;
+					double zoffset = (argCount > 4) ? ((flags & SDF_FIXED_ZOFF) ? ACSToDouble(args[4]) : args[4]) : 0;
+					double distance = (argCount > 5) ? ((flags & SDF_FIXED_DISTANCE) ? ACSToDouble(args[5]) : args[5]) : 64;
 
 					if (args[0] == 0)
 					{
@@ -6818,6 +6834,27 @@ doplaysound:			if (funcIndex == ACSF_PlayActorSound)
 			}
 			return DoubleToACS(result);
 		}
+
+		case ACSF_SetSubtitleNumber:
+			if (argCount >= 2)
+			{
+				// only players allowed as activator
+				if (activator != nullptr && activator->player != nullptr)
+				{
+					int logNum = args[0];
+					FSoundID sid = 0;
+
+					const char* lookup = FBehavior::StaticLookupString(args[1]);
+					if (lookup != nullptr)
+					{
+						sid = lookup;
+					}
+
+					activator->player->SetSubtitle(logNum, sid);
+				}
+			}
+			break;
+
 		default:
 			break;
 	}

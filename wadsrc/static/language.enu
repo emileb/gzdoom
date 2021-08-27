@@ -1783,6 +1783,7 @@ CNTRLMNU_POPUPS_TITLE				= "Strife Popup Screens Controls";
 CNTRLMNU_PAUSE					= "Pause";
 CNTRLMNU_DISPLAY_INC				= "Increase Display Size";
 CNTRLMNU_DISPLAY_DEC				= "Decrease Display Size";
+CNTRLMNU_OPEN_MAIN				= "Open Menu with Controller";
 CNTRLMNU_OPEN_HELP				= "Open Help";
 CNTRLMNU_OPEN_SAVE				= "Open Save Menu";
 CNTRLMNU_OPEN_LOAD				= "Open Load Menu";
@@ -1892,12 +1893,14 @@ DSPLYMNU_SKYMODE				= "Sky render mode";
 DSPLYMNU_LINEARSKY				= "Linear skies";
 DSPLYMNU_GZDFULLBRIGHT			= "Fullbright overrides sector color";
 DSPLYMNU_MODELS					= "Models";
+DSPLYMNU_MODELSCARMACK			= "Models (Carmack)";
 DSPLYMNU_SCALEFUZZ				= "Scale fuzz effect";
 DSPLYMNU_SPRITECULL				= "Sprite Cull Distance";
 DSPLYMNU_LINECULL				= "Wall Cull Distance";
 DSPLYMNU_DISABLERENDERCULL		= "Disable Render Culling";
 DSPLYMNU_DRAWFUZZ				= "Use fuzz effect";
 DSPLYMNU_OLDTRANS				= "Classic Transparency";
+DSPLYMNU_SPRITESHADOW			= "Sprite shadows";
 DSPLYMNU_TRANSSOUL				= "Lost Soul translucency";
 DSPLYMNU_FAKECONTRAST			= "Use fake contrast";
 DSPLYMNU_ROCKETTRAILS			= "Rocket Trails";
@@ -2010,6 +2013,7 @@ MISCMNU_QUICKEXIT				= "Allow quick exit";
 MISCMNU_NOCHEATS				= "Disable classic keyboard cheats";
 MISCMNU_ALWAYSTALLY				= "Show Tally Screen On Level Exit";
 MISCMNU_SETSLOTSTRICT			= "Strict KEYCONF Weapons/Players";
+MISCMNU_HIDEEXTREME				= "Hide extreme skill level";
 
 // Automap Options
 AUTOMAPMNU_TITLE				= "AUTOMAP OPTIONS";
@@ -2171,6 +2175,7 @@ GMPLYMNU_KEEPPOWERUPS		= "Keep powerups";
 GMPLYMNU_KEEPAMMO			= "Keep ammo";
 GMPLYMNU_LOSEHALFAMMO		= "Lose half ammo";
 GMPLYMNU_SPAWNWHEREDIED		= "Spawn where died";
+GMPLYMNU_DOUBLESPAWN		= "Spawn double the monsters";
 
 // Compatibility Options
 CMPTMNU_TITLE				= "COMPATIBILITY OPTIONS";
@@ -2535,6 +2540,7 @@ OPTVAL_VTFZDOOM				= "ZDoom (Forced)";
 OPTVAL_VTFVANILLA			= "Vanilla (Forced)";
 OPTVAL_VTAZDOOM				= "Auto (ZDoom Preferred)";
 OPTVAL_VTAVANILLA			= "Auto (Vanilla Preferred)";
+OPTVAL_SPRSHADALWAYS		= "Monsters and players";
 OPTVAL_SCALENEAREST			= "Scaled (Nearest)";
 OPTVAL_SCALELINEAR			= "Scaled (Linear)";
 OPTVAL_LOWEST				= "Lowest Possible Scale";
@@ -2745,6 +2751,7 @@ DSPLYMNU_GAMMA		= "Gamma correction";
 DSPLYMNU_CONTRAST 	= "Contrast";
 DSPLYMNU_SATURATION = "Saturation";
 DSPLYMNU_HWGAMMA	= "Hardware Gamma";
+DSPLYMNU_FOV		= "Field of view";
 
 // OpenGL Options
 GLMNU_TITLE			= "OpenGL Options";

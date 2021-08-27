@@ -440,8 +440,8 @@ public:
 	void CreateAltHUD();
 	void DrawAltHUD();
 
-	void DrawGraphic(FTextureID texture, double x, double y, int flags, double Alpha, double boxwidth, double boxheight, double scaleX, double scaleY);
-	void DrawString(FFont *font, const FString &cstring, double x, double y, int flags, double Alpha, int translation, int spacing, EMonospacing monospacing, int shadowX, int shadowY, double scaleX, double scaleY);
+	void DrawGraphic(FTextureID texture, double x, double y, int flags, double Alpha, double boxwidth, double boxheight, double scaleX, double scaleY, ERenderStyle style = STYLE_Translucent);
+	void DrawString(FFont *font, const FString &cstring, double x, double y, int flags, double Alpha, int translation, int spacing, EMonospacing monospacing, int shadowX, int shadowY, double scaleX, double scaleY, int style);
 	void TransformRect(double &x, double &y, double &w, double &h, int flags = 0);
 	void Fill(PalEntry color, double x, double y, double w, double h, int flags = 0);
 	void SetClipRect(double x, double y, double w, double h, int flags = 0);

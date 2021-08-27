@@ -690,6 +690,13 @@ DEFINE_ACTION_FUNCTION(DOptionMenuItemCommand, DoCommand)
 	PARAM_PROLOGUE;
 	PARAM_STRING(cmd);
 	PARAM_BOOL(unsafe);
+
+	// Only menus are allowed to execute CCMDs.
+	if (DMenu::InMenu == 0)
+	{
+		I_FatalError("Attempt to execute CCMD '%s' outside of menu code", cmd.GetChars());
+	}
+
 	UnsafeExecutionScope scope(unsafe);
 	C_DoCommand(cmd);
 	return 0;

@@ -487,6 +487,10 @@ void M_SetMenu(FName menu, int param)
 	case NAME_Playermenu:
 		menu = NAME_NewPlayerMenu;	// redirect the old player menu to the new one.
 		break;
+
+	case NAME_OptionsmenuFull:
+		menu = NAME_Optionsmenu;
+		break;
 	}
 
 	// End of special checks

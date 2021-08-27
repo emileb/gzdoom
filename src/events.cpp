@@ -381,13 +381,13 @@ void E_WorldThingDied(AActor* actor, AActor* inflictor)
 		handler->WorldThingDied(actor, inflictor);
 }
 
-void E_WorldThingGround(AActor* actor)
+void E_WorldThingGround(AActor* actor, FState* st)
 {
 	// don't call anything if actor was destroyed on PostBeginPlay/BeginPlay/whatever.
 	if (actor->ObjectFlags & OF_EuthanizeMe)
 		return;
 	for (DStaticEventHandler* handler = E_FirstEventHandler; handler; handler = handler->next)
-		handler->WorldThingGround(actor);
+		handler->WorldThingGround(actor, st);
 }
 
 void E_WorldThingRevived(AActor* actor)
@@ -649,6 +649,7 @@ DEFINE_FIELD_X(WorldEvent, FWorldEvent, DamageLineSide);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, DamagePosition);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, DamageIsRadius);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, NewDamage);
+DEFINE_FIELD_X(WorldEvent, FWorldEvent, CrushedState);
 
 DEFINE_FIELD_X(PlayerEvent, FPlayerEvent, PlayerNumber);
 DEFINE_FIELD_X(PlayerEvent, FPlayerEvent, IsReturn);
@@ -829,7 +830,7 @@ void DStaticEventHandler::WorldThingDied(AActor* actor, AActor* inflictor)
 	}
 }
 
-void DStaticEventHandler::WorldThingGround(AActor* actor)
+void DStaticEventHandler::WorldThingGround(AActor* actor, FState* st)
 {
 	IFVIRTUAL(DStaticEventHandler, WorldThingGround)
 	{
@@ -837,6 +838,7 @@ void DStaticEventHandler::WorldThingGround(AActor* actor)
 		if (isEmpty(func)) return;
 		FWorldEvent e = E_SetupWorldEvent();
 		e.Thing = actor;
+		e.CrushedState = st;
 		VMValue params[2] = { (DStaticEventHandler*)this, &e };
 		VMCall(func, params, 2, nullptr, 0);
 	}

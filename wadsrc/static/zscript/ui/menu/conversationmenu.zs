@@ -93,7 +93,7 @@ class ConversationMenu : Menu
 	int fontScale;
 	int refwidth;
 	int refheight;
-	double fontfactor;
+	Array<double> ypositions;
 
 	int SpeechWidth;
 	int ReplyWidth;
@@ -125,7 +125,6 @@ class ConversationMenu : Menu
 		displayWidth = CleanWidth;
 		displayHeight = CleanHeight;
 		fontScale = CleanXfac;
-		fontFactor = 1;
 		refwidth = 320;
 		refheight = 200;
 		ReplyWidth = 320-50-10;
@@ -133,7 +132,6 @@ class ConversationMenu : Menu
 		ReplyLineHeight = LineHeight = displayFont.GetHeight();
 		mConfineTextToBackdrop = false; // hack hack
 		speechDisplayWidth = displayWidth;
-		LineHeight = SmallFont.GetHeight();
 
 		FormatSpeakerMessage();
 		return FormatReplies(activereply);
@@ -335,16 +333,14 @@ class ConversationMenu : Menu
 
 		// convert x/y from screen to virtual coordinates, according to CleanX/Yfac use in DrawTexture
 		x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + 160;
-		y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 100;
 
-		if (x >= 24 && x <= 320-24 && y >= mYpos && y < mYpos + fh * mResponseLines.Size())
+		if (x >= 24 && x <= refWidth-24)
 		{
-			sel = (y - mYpos) / fh;
-			for(int i = 0; i < mResponses.Size(); i++)
+			for (int i = 0; i < ypositions.Size()-1; i++)
 			{
-				if (mResponses[i] > sel)
+				if (y > ypositions[i] && y <= ypositions[i+1])
 				{
-					sel = i-1;
+					sel = i;
 					break;
 				}
 			}
@@ -466,11 +462,16 @@ class ConversationMenu : Menu
 		int fontheight = LineHeight;
 
 		int response = 0;
+		ypositions.Clear();
 		for (int i = 0; i < mResponseLines.Size(); i++)
 		{
 			int width = SmallFont.StringWidth(mResponseLines[i]);
 			int x = 64;
 
+			double sx = (x - 160.0) * CleanXfac + (screen.GetWidth() * 0.5);
+			double sy = (y - 100.0) * CleanYfac + (screen.GetHeight() * 0.5);
+
+			ypositions.Push(sy);
 			screen.DrawText(SmallFont, Font.CR_GREEN, x, y, mResponseLines[i], DTA_Clean, true);
 
 			if (i == mResponses[response])
@@ -509,6 +510,8 @@ class ConversationMenu : Menu
 			}
 			y += fontheight;
 		}
+		double sy = (y - 100.0) * CleanYfac + (screen.GetHeight() * 0.5);
+		ypositions.Push(sy);
 	}
 
 	virtual void DrawGold()

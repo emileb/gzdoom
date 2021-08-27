@@ -50,10 +50,11 @@
 static uint64_t FirstFrameStartTime;
 static uint64_t CurrentFrameStartTime;
 static uint64_t FreezeTime;
+int GameTicRate = 35;
 
 static double TimeScale = 1.0;
 
-CUSTOM_CVAR(Float, i_timescale, 1.0f, CVAR_NOINITCALL)
+CUSTOM_CVAR(Float, i_timescale, 1.0f, CVAR_NOINITCALL | CVAR_VIRTUAL)
 {
 	if (netgame)
 	{

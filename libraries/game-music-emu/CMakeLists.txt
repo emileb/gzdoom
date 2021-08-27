@@ -9,7 +9,7 @@ set(GME_VERSION 0.6.2 CACHE INTERNAL "libgme Version")
 # 2.6+ always assumes FATAL_ERROR, but 2.4 and below don't.
 # Of course, 2.4 might work, in which case you're welcome to drop
 # down the requirement, but I can't test that.
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0)
 
 # I don't plan on debugging this, so make it a release build.
 if( NOT CMAKE_BUILD_TYPE MATCHES "Release" )

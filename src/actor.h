@@ -413,7 +413,7 @@ enum ActorFlag8
 	MF8_STOPRAILS		= 0x00000200,	// [MC] Prevent rails from going further if an actor has this flag.
 	MF8_ABSVIEWANGLES	= 0x00000400,	// [MC] By default view angle/pitch/roll is an offset. This will make it absolute instead.
 	MF8_FALLDAMAGE		= 0x00000800,	// Monster will take fall damage regardless of map settings.
-
+	MF8_ALLOWTHRUBITS		= 0x00008000,	// [MC] Enable ThruBits property
 };
 
 // --- mobj.renderflags ---
@@ -458,6 +458,9 @@ enum ActorRenderFlag
 
 	RF_SPRITEFLIP		= 0x08000000,	// sprite flipped on x-axis
 	RF_ZDOOMTRANS		= 0x10000000,	// is not normally transparent in Vanilla Doom
+	RF_CASTSPRITESHADOW = 0x20000000,	// actor will cast a sprite shadow
+	RF_NOINTERPOLATEVIEW = 0x40000000,	// don't interpolate the view next frame if this actor is a camera. NO-OP
+	RF_NOSPRITESHADOW = 0x80000000,		// actor will not cast a sprite shadow
 };
 
 // This translucency value produces the closest match to Heretic's TINTTAB.
@@ -1005,6 +1008,7 @@ public:
 	bool IsSentient() const;
 	const char *GetTag(const char *def = NULL) const;
 	void SetTag(const char *def);
+	const char *GetCharacterName() const;
 
 	// Triggers SECSPAC_Exit/SECSPAC_Enter and related events if oldsec != current sector
 	void CheckSectorTransition(sector_t *oldsec);
@@ -1058,6 +1062,7 @@ public:
 
 	DVector3		OldRenderPos;
 	DVector3		Vel;
+	DVector2		SpriteOffset;
 	double			Speed;
 	double			FloatSpeed;
 
@@ -1068,11 +1073,13 @@ public:
 	double			floorz, ceilingz;	// closest together of contacted secs
 	double			dropoffz;		// killough 11/98: the lowest floor over all contacted Sectors.
 
-	struct sector_t	*floorsector;
+	uint32_t		ThruBits;
 	FTextureID		floorpic;			// contacted sec floorpic
 	int				floorterrain;
-	struct sector_t	*ceilingsector;
 	FTextureID		ceilingpic;			// contacted sec ceilingpic
+
+	struct sector_t	*floorsector;
+	struct sector_t	*ceilingsector;
 	double			renderradius;
 
 	double			projectilepassheight;	// height for clipping projectile movement against this actor

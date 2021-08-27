@@ -90,6 +90,8 @@ class Actor : Thinker native
 	native PlayerInfo Player;
 	native readonly vector3 Pos;
 	native vector3 Prev;
+	native uint ThruBits;
+	native vector2 SpriteOffset;
 	native double spriteAngle;
 	native double spriteRotation;
 	native float VisibleStartAngle;
@@ -336,6 +338,7 @@ class Actor : Thinker native
 	property RenderHidden: RenderHidden;
 	property RenderRequired: RenderRequired;
 	property FriendlySeeBlocks: FriendlySeeBlocks;
+	property ThruBits: ThruBits;
 	
 	// need some definition work first
 	//FRenderStyle RenderStyle;
@@ -611,6 +614,7 @@ class Actor : Thinker native
 	protected native void CheckPortalTransition(bool linked = true);
 		
 	native clearscope string GetTag(string defstr = "") const;
+	native clearscope string GetCharacterName() const;
 	native void SetTag(string defstr = "");
 	native clearscope double GetBobOffset(double frac = 0) const;
 	native void ClearCounters();
@@ -742,7 +746,7 @@ class Actor : Thinker native
 	native clearscope vector2 Vec2Angle(double length, double angle, bool absolute = false) const;
 	native clearscope vector2 Vec2Offset(double x, double y, bool absolute = false) const;
 	native clearscope vector3 Vec2OffsetZ(double x, double y, double atz, bool absolute = false) const;
-	native void VelIntercept(Actor targ, double speed = -1, bool aimpitch = true, bool oldvel = false);
+	native void VelIntercept(Actor targ, double speed = -1, bool aimpitch = true, bool oldvel = false, bool resetvel = false);
 	native void VelFromAngle(double speed = 1e37, double angle = 1e37);
 	native void Vel3DFromAngle(double speed, double angle, double pitch);
 	native void Thrust(double speed = 1e37, double angle = 1e37);
@@ -812,7 +816,7 @@ class Actor : Thinker native
 	native clearscope int GetSpawnHealth() const;
 	native double GetCrouchFactor(int ptr = AAPTR_PLAYER1);
 	native double GetCVar(string cvar);
-	native double GetCVarString(string cvar);
+	native string GetCVarString(string cvar);
 	native int GetPlayerInput(int inputnum, int ptr = AAPTR_DEFAULT);
 	native int CountProximity(class<Actor> classname, double distance, int flags = 0, int ptr = AAPTR_DEFAULT);
 	native int GetMissileDamage(int mask, int add, int ptr = AAPTR_DEFAULT);
@@ -1092,6 +1096,14 @@ class Actor : Thinker native
 	native void A_SetBlend(color color1, double alpha, int tics, color color2 = 0, double alpha2 = 0.);
 	deprecated("2.3", "Use 'b<FlagName> = [true/false]' instead") native void A_ChangeFlag(string flagname, bool value);
 	native void A_ChangeCountFlags(int kill = FLAG_NO_CHANGE, int item = FLAG_NO_CHANGE, int secret = FLAG_NO_CHANGE);
+
+	void A_SetFriendly (bool set)
+	{
+		if (CountsAsKill() && health > 0) level.total_monsters--;
+		bFriendly = set;
+		if (CountsAsKill() && health > 0) level.total_monsters++;
+	}
+
 	native void A_RaiseMaster(int flags = 0);
 	native void A_RaiseChildren(int flags = 0);
 	native void A_RaiseSiblings(int flags = 0);
@@ -1165,7 +1177,7 @@ class Actor : Thinker native
 	native bool A_SetVisibleRotation(double anglestart = 0, double angleend = 0, double pitchstart = 0, double pitchend = 0, int flags = 0, int ptr = AAPTR_DEFAULT);
 	native void A_SetTranslation(name transname);
 	native bool A_SetSize(double newradius = -1, double newheight = -1, bool testpos = false);
-	native void A_SprayDecal(String name, double dist = 172, vector3 offset = (0, 0, 0), vector3 direction = (0, 0, 0) );
+	native void A_SprayDecal(String name, double dist = 172, vector3 offset = (0, 0, 0), vector3 direction = (0, 0, 0), bool useBloodColor = false, color decalColor = 0);
 	native void A_SetMugshotState(String name);
 	native void CopyBloodColor(Actor other);
 
@@ -1175,10 +1187,16 @@ class Actor : Thinker native
 
 	action native bool A_Overlay(int layer, statelabel start = null, bool nooverride = false);
 	native void A_WeaponOffset(double wx = 0, double wy = 32, int flags = 0);
+	action native void A_OverlayScale(int layer, double wx = 1, double wy = 0, int flags = 0);
+	action native void A_OverlayRotate(int layer, double degrees = 0, int flags = 0);
+	action native void A_OverlayPivot(int layer, double wx = 0.5, double wy = 0.5, int flags = 0);
+	action native void A_OverlayPivotAlign(int layer, int halign, int valign);
+	action native void A_OverlayVertexOffset(int layer, int index, double x, double y, int flags = 0);
 	action native void A_OverlayOffset(int layer = PSP_WEAPON, double wx = 0, double wy = 32, int flags = 0);
 	action native void A_OverlayFlags(int layer, int flags, bool set);
 	action native void A_OverlayAlpha(int layer, double alph);
 	action native void A_OverlayRenderStyle(int layer, int style);
+	action native void A_OverlayTranslation(int layer, name trname);
 	
 	native bool A_AttachLightDef(Name lightid, Name lightdef);
 	native bool A_AttachLight(Name lightid, int type, Color lightcolor, int radius1, int radius2, int flags = 0, Vector3 ofs = (0,0,0), double param = 0, double spoti = 10, double spoto = 25, double spotp = 0);
