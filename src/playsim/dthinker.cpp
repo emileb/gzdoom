@@ -43,7 +43,8 @@
 #include "g_levellocals.h"
 #include "a_dynlight.h"
 #include "v_video.h"
-
+#include "g_cvars.h"
+#include "d_main.h"
 
 static int ThinkCount;
 static cycle_t ThinkCycles;
@@ -107,6 +108,18 @@ void FThinkerCollection::RunThinkers(FLevelLocals *Level)
 
 	ThinkCycles.Clock();
 
+	bool dolights;
+	if ((gl_lights && vid_rendermode == 4) || (r_dynlights && vid_rendermode != 4))
+	{
+		dolights = Level->lights || (Level->flags3 & LEVEL3_LIGHTCREATED);
+	}
+	else
+	{
+		dolights = false;
+	}
+	Level->flags3 &= ~LEVEL3_LIGHTCREATED;
+
+
 	auto recreateLights = [=]() {
 		auto it = Level->GetThinkerIterator<AActor>();
 
@@ -116,7 +129,7 @@ void FThinkerCollection::RunThinkers(FLevelLocals *Level)
 			if (ac->flags8 & MF8_RECREATELIGHTS)
 			{
 				ac->flags8 &= ~MF8_RECREATELIGHTS;
-				ac->SetDynamicLights();
+				if (dolights) ac->SetDynamicLights();
 			}
 			// This was merged from P_RunEffects to eliminate the costly duplicate ThinkerIterator loop.
 			if ((ac->effects || ac->fountaincolor) && !Level->isFrozen())
@@ -144,9 +157,9 @@ void FThinkerCollection::RunThinkers(FLevelLocals *Level)
 			}
 		} while (count != 0);
 
-		if (Level->HasDynamicLights)
+		recreateLights();
+		if (dolights)
 		{
-			recreateLights();
 			for (auto light = Level->lights; light;)
 			{
 				auto next = light->next;
@@ -174,9 +187,9 @@ void FThinkerCollection::RunThinkers(FLevelLocals *Level)
 			}
 		} while (count != 0);
 
-		if (Level->lights && Level->HasDynamicLights)
+		recreateLights();
+		if (dolights)
 		{
-			recreateLights();
 			// Also profile the internal dynamic lights, even though they are not implemented as thinkers.
 			auto &prof = Profiles[NAME_InternalDynamicLight];
 			prof.timer.Clock();
