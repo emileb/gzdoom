@@ -1,4 +1,7 @@
 
+
+#define TEST_NO_BRANCH 1
+
 vec3 lightContribution(int i, vec3 normal)
 {
 	vec4 lightpos = lights[i];
@@ -7,48 +10,43 @@ vec3 lightContribution(int i, vec3 normal)
 	vec4 lightspot2 = lights[i+3];
 
 	float lightdistance = distance(lightpos.xyz, pixelpos.xyz);
-	
-	//if (lightpos.w < lightdistance)
-	//	return vec3(0.0); // Early out lights touching surface but not this fragment
 
 	vec3 lightdir = normalize(lightpos.xyz - pixelpos.xyz);
 	float dotprod = dot(normal, lightdir);
 
-	//if (dotprod < -0.0001) return vec3(0.0);	// light hits from the backside. This can happen with full sector light lists and must be rejected for all cases. Note that this can cause precision issues.
-	
-	float attenuation = clamp((lightpos.w - lightdistance) / lightpos.w, 0.0, 1.0);
+	float frontside = 1.0;
 
-
-#if (DEF_HAS_SPOTLIGHT == 1) // Only perform test below if there are ANY spot lights on this surface.
-
-	if (lightspot1.w == 1.0)
-		attenuation *= spotLightAttenuation(lightpos, lightspot1.xyz, lightspot2.x, lightspot2.y);
-
+#if (TEST_NO_BRANCH == 1)
+	frontside = step(-0.0001, dotprod); // frontside = 1 when lit from the front, otherwise its 0
+#else
+	if (dotprod < -0.0001)
+	{
+		frontside = 0.0;	// light hits from the backside. This can happen with full sector light lists and must be rejected for all cases. Note that this can cause precision issues.
+	}
 #endif
 
-	return lightcolor.rgb * attenuation;
+	float attenuation = clamp((lightpos.w - lightdistance) / lightpos.w, 0.0, 1.0);
 
-/* 
+#if (DEF_HAS_SPOTLIGHT == 1) // Only perform test below if there are ANY spot lights on this surface.
 	if (lightspot1.w == 1.0)
 		attenuation *= spotLightAttenuation(lightpos, lightspot1.xyz, lightspot2.x, lightspot2.y);
+#endif
 
+#if (TEST_NO_BRANCH == 1)
+ 	// lightcolor.a = -1025 when attenuation is enabled, otherwise its 1025
+ 	// Therefore when enabled dotprod = dotprod, when disabled dotprod = 1025, which gets clamped to 1 below to make effective nop
+	dotprod = max(dotprod, lightcolor.a);
+	attenuation *= clamp(dotprod, 0.0, 1.0);
+#else
 	if (lightcolor.a < 0.0) // Sign bit is the attenuated light flag
 	{
 		attenuation *= clamp(dotprod, 0.0, 1.0);
 	}
+#endif
 
-	
+	attenuation *= frontside;
 
-	if (attenuation > 0.0) // Skip shadow map test if possible
-	{
-		attenuation *= shadowAttenuation(lightpos, lightcolor.a);
-		return lightcolor.rgb * attenuation;
-	}
-	else
-	{
-		return vec3(0.0);
-	}
-*/
+	return lightcolor.rgb * attenuation;
 }
 
 
