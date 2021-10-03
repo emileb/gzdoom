@@ -134,6 +134,22 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 #if USE_GLES2
 	sourcetype = GL_BGRA;
 	texformat = GL_BGRA;
+
+	// Only GLES3 device will work with palleted SW mode
+#define GL_RED 0x1903
+#define GL_R8 0x8229
+
+	if (glTextureBytes == 1)
+	{
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		sourcetype = GL_RED;
+		texformat = GL_R8;
+	}
+	else
+	{
+		sourcetype = GL_BGRA;
+		texformat = GL_BGRA;
+	}
 #else
 	if (glTextureBytes == 1)
 	{
