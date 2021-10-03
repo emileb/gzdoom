@@ -13,7 +13,7 @@ LOCAL_CFLAGS   := -DHAVE_SOFTPOLY -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisib
 #-DHAVE_VULKAN
 #-DUSE_GL_HW_BUFFERS
 
-LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
 LOCAL_CFLAGS  += -DNO_SEND_STATS
 
@@ -185,6 +185,7 @@ PCH_SOURCES = \
 	ct_chat.cpp \
 	d_iwad.cpp \
 	d_main.cpp \
+	d_defcvars.cpp \
 	d_anonstats.cpp \
 	d_net.cpp \
 	d_netinfo.cpp \
