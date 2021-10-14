@@ -3217,7 +3217,8 @@ void DAutomap::Drawer (int bottom)
 	Mobile_AM_controls(&zoom, &xInc, &yInc);
 	m_paninc.x += xInc;
 	m_paninc.y += yInc;
-
+	m_paninc.x *= scale_ftom * 0.8;
+	m_paninc.y *= scale_ftom * 0.8;
 	am_zoomdir = zoom;
 #endif
 
