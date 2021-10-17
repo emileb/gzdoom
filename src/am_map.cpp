@@ -1666,8 +1666,9 @@ void AM_Ticker ()
 
 #ifdef __MOBILE__
 	Mobile_AM_controls(&am_zoomdir,&m_paninc.x,&m_paninc.y);
+	m_paninc.x *= scale_ftom * 0.8;
+	m_paninc.y *= scale_ftom * 0.8;
 #endif
-
 	// Change the zoom if necessary
 	if (Button_AM_ZoomIn.bDown || Button_AM_ZoomOut.bDown || am_zoomdir != 0)
 		AM_changeWindowScale();
