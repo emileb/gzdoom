@@ -126,7 +126,7 @@ FString M_GetCajunPath(const char *botfilename)
 	FString path = NicePath("./user_files/bots/");
 
 	path << botfilename;
-	if (FileExists(path))
+	if (!FileExists(path))
 	{
 		path = "";
 	}
