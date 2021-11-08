@@ -6,6 +6,35 @@ vec3 lightContribution(int i, vec3 normal)
 	vec4 lightspot1 = lights[i+2];
 	vec4 lightspot2 = lights[i+3];
 
+#ifdef SHADER_LITE
+
+	float lightdistance = distance(lightpos.xyz, pixelpos.xyz);
+
+	vec3 lightdir = normalize(lightpos.xyz - pixelpos.xyz);
+	float dotprod = dot(normal, lightdir);
+
+    float frontside = 1.0;
+
+    frontside = step(-0.0001, dotprod); // frontside = 1 when lit from the front, otherwise its 0
+
+    float attenuation = clamp((lightpos.w - lightdistance) / lightpos.w, 0.0, 1.0);
+    
+	//if (lightspot1.w == 1.0)
+	//	attenuation *= spotLightAttenuation(lightpos, lightspot1.xyz, lightspot2.x, lightspot2.y);
+
+
+	// lightcolor.a = -1025 when attenuation is enabled, otherwise its 1025
+	// -1 <= dotprod <= 1
+	// Therefore when attenuation enabled: dotprod = dotprod, when disabled dotprod = 1025, which gets clamped to 1 below to make effective nop
+	dotprod = max(dotprod, lightcolor.a);
+	attenuation *= clamp(dotprod, 0.0, 1.0);
+
+	attenuation *= frontside;
+
+    return lightcolor.rgb * attenuation;
+
+#else
+
 	float lightdistance = distance(lightpos.xyz, pixelpos.xyz);
 	if (lightpos.w < lightdistance)
 		return vec3(0.0); // Early out lights touching surface but not this fragment
@@ -33,6 +62,8 @@ vec3 lightContribution(int i, vec3 normal)
 	{
 		return vec3(0.0);
 	}
+
+#endif
 }
 
 vec3 ProcessMaterialLight(Material material, vec3 color)
