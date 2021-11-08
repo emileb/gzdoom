@@ -51,6 +51,7 @@
 
 #ifdef __MOBILE__
 EXTERN_CVAR(Bool, gl_customshader)
+CVAR(Bool, gl_lite_shader, false, 0);
 #endif
 
 namespace OpenGLRenderer
@@ -689,6 +690,11 @@ FShader *FShaderCollection::Compile (const char *ShaderName, const char *ShaderP
 	// this can't be in the shader code due to ATI strangeness.
 	if (!usediscard) defines += "#define NO_ALPHATEST\n";
 	if (passType == GBUFFER_PASS) defines += "#define GBUFFER_PASS\n";
+
+#ifdef __MOBILE__
+	if(gl_lite_shader)
+		defines += "#define SHADER_LITE\n";
+#endif
 
 	FShader *shader = NULL;
 	try
