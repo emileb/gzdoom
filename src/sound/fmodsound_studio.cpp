@@ -176,15 +176,15 @@ static const FEnumList OutputNames[] =
 {
 	{ "Auto",					FMOD_OUTPUTTYPE_AUTODETECT },
 	{ "Default",				FMOD_OUTPUTTYPE_AUTODETECT },
-	{ "No sound",				FMOD_OUTPUTTYPE_NOSOUND },
+	//{ "No sound",				FMOD_OUTPUTTYPE_NOSOUND },
 
 	// Windows
-	{ "DirectSound",			FMOD_OUTPUTTYPE_DSOUND },
-	{ "DSound",					FMOD_OUTPUTTYPE_DSOUND },
-	{ "Windows Multimedia",		FMOD_OUTPUTTYPE_WINMM },
-	{ "WinMM",					FMOD_OUTPUTTYPE_WINMM },
-	{ "WaveOut",				FMOD_OUTPUTTYPE_WINMM },
-	{ "WASAPI",					FMOD_OUTPUTTYPE_WASAPI },
+	//{ "DirectSound",			FMOD_OUTPUTTYPE_DSOUND },
+	//{ "DSound",					FMOD_OUTPUTTYPE_DSOUND },
+	//{ "Windows Multimedia",		FMOD_OUTPUTTYPE_WINMM },
+	//{ "WinMM",					FMOD_OUTPUTTYPE_WINMM },
+	//{ "WaveOut",				FMOD_OUTPUTTYPE_WINMM },
+	//{ "WASAPI",					FMOD_OUTPUTTYPE_WASAPI },
 	{ "ASIO",					FMOD_OUTPUTTYPE_ASIO },
 
 #if FMOD_STUDIO
@@ -938,10 +938,10 @@ bool FMODSoundRenderer::Init()
 	{
 		// PCM-8 sounds like garbage with anything but DirectSound.
 		FMOD_OUTPUTTYPE output;
-		if (FMOD_OK != Sys->getOutput(&output) || output != FMOD_OUTPUTTYPE_DSOUND)
-		{
-			format = FMOD_SOUND_FORMAT_PCM16;
-		}
+//		if (FMOD_OK != Sys->getOutput(&output) || output != FMOD_OUTPUTTYPE_DSOUND)
+//		{
+//			format = FMOD_SOUND_FORMAT_PCM16;
+//		}
 	}
 	eval = Enum_NumForName(ResamplerNames, snd_resampler);
 	resampler = eval >= 0 ? FMOD_DSP_RESAMPLER(eval) : FMOD_DSP_RESAMPLER_LINEAR;
@@ -1510,7 +1510,7 @@ FString FMODSoundRenderer::GatherStats()
 	// We were built with an FMOD with the geometry parameter.
 	if (ActiveFMODVersion >= 0x42501)
 	{ // And we are running with an FMOD that includes it.
-		FMOD_System_GetCPUUsage((FMOD_SYSTEM *)Sys, &dsp, &stream, &geometry, &update, &total);
+//		FMOD_System_GetCPUUsage((FMOD_SYSTEM *)Sys, &dsp, &stream, &geometry, &update, &total);
 	}
 	else
 	{ // And we are running with an FMOD that does not include it.
