@@ -1,19 +1,13 @@
 
 LOCAL_PATH := $(call my-dir)/../zlib
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE    := zlib_3.2
 
 LOCAL_CFLAGS = -Wall
 
-
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=
-
 
 LOCAL_SRC_FILES =  \
     adler32.c \
@@ -27,8 +21,6 @@ LOCAL_SRC_FILES =  \
     trees.c \
     uncompr.c \
     zutil.c \
-
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

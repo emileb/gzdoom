@@ -4,16 +4,9 @@ LOCAL_PATH := $(call my-dir)/../bzip2
 
 include $(CLEAR_VARS)
 
-
 LOCAL_MODULE    := bzip2_3.2
 
-LOCAL_CFLAGS :=
-
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=   $(LOCAL_PATH)/include/
-
-
 
 LOCAL_SRC_FILES =  	\
 	  blocksort.c \
@@ -23,8 +16,6 @@ LOCAL_SRC_FILES =  	\
     decompress.c \
     huffman.c \
     randtable.c \
-
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

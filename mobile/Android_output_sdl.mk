@@ -1,18 +1,9 @@
 LOCAL_PATH := $(call my-dir)/../output_sdl
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE    := output_sdl
 
-
-LOCAL_CPPFLAGS :=  
-
-LOCAL_LDLIBS += -llog
-
-
-	
 LOCAL_C_INCLUDES := \
 $(TOP_DIR)/ \
 $(TOP_DIR)/SDL/include  \
