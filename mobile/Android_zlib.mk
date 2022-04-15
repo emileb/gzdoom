@@ -1,19 +1,13 @@
 
 LOCAL_PATH := $(call my-dir)/../libraries/zlib
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE  := zlib_gl3
 
 LOCAL_CFLAGS = -Wall
 
-
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=
-
 
 LOCAL_SRC_FILES =  \
     adler32.c \
