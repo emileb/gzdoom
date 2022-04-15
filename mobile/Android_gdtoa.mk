@@ -4,15 +4,9 @@ LOCAL_PATH := $(call my-dir)/../libraries/gdtoa
 
 include $(CLEAR_VARS)
 
-
 LOCAL_MODULE    := gdtoa_lz
 
-LOCAL_CFLAGS :=
-
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=   . $(GZDOOM_TOP_PATH)/mobile/src/extrafiles
-
 
 LOCAL_SRC_FILES =  	\
 	dmisc.c \

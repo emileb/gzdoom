@@ -1,18 +1,13 @@
 
 LOCAL_PATH := $(call my-dir)/../libraries/dumb
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE    := dumb_lz
 
 LOCAL_CFLAGS := -DNEED_ITOA  -Wno-pointer-sign -Wno-uninitialized -fsigned-char
 
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=   $(LOCAL_PATH)/include/
-
 
 LOCAL_SRC_FILES =  	\
 	  src/core/atexit.c \

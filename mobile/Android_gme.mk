@@ -1,22 +1,16 @@
 
 LOCAL_PATH := $(call my-dir)/../libraries/game-music-emu
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE    := gme_lz
 
 LOCAL_CPPFLAGS := -DVGM_YM2612_GENS -std=c++14 -fexceptions
 
-LOCAL_LDLIBS += -llog
-
-
 LOCAL_C_INCLUDES :=  $(LOCAL_PATH)/gme/
 
-
 LOCAL_SRC_FILES =  	\
-   gme/Blip_Buffer.cpp \ \
+   gme/Blip_Buffer.cpp \
     gme/Classic_Emu.cpp \
     gme/Data_Reader.cpp \
     gme/Dual_Resampler.cpp \

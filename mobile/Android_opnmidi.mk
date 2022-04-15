@@ -1,19 +1,15 @@
 
 LOCAL_PATH := $(call my-dir)/../libraries/opnmidi
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE    := opnmidi_lz
 
 LOCAL_CFLAGS :=  -DOPNMIDI_DISABLE_MIDI_SEQUENCER -DOPNMIDI_DISABLE_GX_EMULATOR -fsigned-char
+
 LOCAL_CPPFLAGS :=  -fexceptions
 
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=
-
 
 LOCAL_SRC_FILES =  	\
 	chips/gens_opn2.cpp \

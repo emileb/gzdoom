@@ -1,18 +1,13 @@
 
 LOCAL_PATH := $(call my-dir)/../libraries/timidityplus
 
-
 include $(CLEAR_VARS)
-
 
 LOCAL_MODULE    := timidityplus_lz
 
 LOCAL_CFLAGS :=  -std=c++11 -fsigned-char
 
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/timiditypp
-
 
 LOCAL_SRC_FILES =  	\
 			fft4g.cpp \
