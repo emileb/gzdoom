@@ -9,11 +9,7 @@ LOCAL_MODULE    := bzip2_dev
 
 LOCAL_CFLAGS :=
 
-LOCAL_LDLIBS += -llog
-
 LOCAL_C_INCLUDES :=   $(LOCAL_PATH)/include/
-
-
 
 LOCAL_SRC_FILES =  	\
 	  blocksort.c \
@@ -23,8 +19,6 @@ LOCAL_SRC_FILES =  	\
     decompress.c \
     huffman.c \
     randtable.c \
-
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 

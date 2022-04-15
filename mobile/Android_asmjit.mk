@@ -3,18 +3,13 @@ LOCAL_PATH := $(call my-dir)/../asmjit
 
 include $(CLEAR_VARS)
 
-
 LOCAL_MODULE    := asmjit_dev
 
 LOCAL_CFLAGS := -frtti -DASMJIT_BUILD_EMBED -DASMJIT_STATIC -DASMJIT_BUILD_X86 #-DASMJIT_ARCH_X86=1
 
-LOCAL_LDLIBS += -llog
-
-
 LOCAL_C_INCLUDES :=  $(LOCAL_PATH)/asmjit/
 
-
-LOCAL_SRC_FILES =  	\ \
+LOCAL_SRC_FILES =  	\
    asmjit/base/arch.cpp \
     asmjit/base/assembler.cpp \
     asmjit/base/codebuilder.cpp \
@@ -45,9 +40,6 @@ LOCAL_SRC_FILES =  	\ \
     asmjit/x86/x86operand.cpp \
     asmjit/x86/x86operand_regs.cpp \
     asmjit/x86/x86regalloc.cpp \
-
-
-LOCAL_LDLIBS :=  -ldl -llog
 
 include $(BUILD_STATIC_LIBRARY)
 
