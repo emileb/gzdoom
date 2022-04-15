@@ -4,16 +4,11 @@ LOCAL_PATH := $(call my-dir)/../lzma
 
 include $(CLEAR_VARS)
 
-
 LOCAL_MODULE    := lzma_1.9
 
-LOCAL_CFLAGS =  -O2 -Wall -fomit-frame-pointer -D_7ZIP_ST
-
-
-LOCAL_LDLIBS += -llog
+LOCAL_CFLAGS =  -Wall -fomit-frame-pointer -D_7ZIP_ST
 
 LOCAL_C_INCLUDES :=
-
 
 LOCAL_SRC_FILES =  \
 	C/7zBuf.c \
@@ -22,7 +17,6 @@ LOCAL_SRC_FILES =  \
 	C/7zDec.c \
     C/7zArcIn.c \
 	C/7zStream.c \
-	C/7zDec.c \
 	C/Delta.c \
 	C/Bcj2.c \
 	C/Bra.c \
@@ -32,9 +26,7 @@ LOCAL_SRC_FILES =  \
 	C/LzFind.c \
 	C/Lzma2Dec.c \
 	C/LzmaDec.c \
-	C/LzmaEnc.c \ 
-
-LOCAL_LDLIBS :=  -ldl -llog
+	C/LzmaEnc.c
 
 include $(BUILD_STATIC_LIBRARY)
 

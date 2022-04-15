@@ -511,6 +511,7 @@ LOCAL_SRC_FILES = \
 # Turn down optimisation of this file so clang doesnt produce ldrd instructions which are missaligned
 p_acs.cpp_CFLAGS := -O1
 
+LOCAL_LDFLAGS := -Wl,--no-fatal-warnings
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 LOCAL_LDLIBS +=  -lEGL
