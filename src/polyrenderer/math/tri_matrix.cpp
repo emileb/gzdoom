@@ -115,12 +115,12 @@ TriMatrix TriMatrix::perspective(float fovy, float aspect, float z_near, float z
 	return m;
 }
 
-TriMatrix TriMatrix::frustum(float left, float right, float bottom, float top, float near, float far)
+TriMatrix TriMatrix::frustum(float left, float right, float bottom, float top, float near, float farX)
 {
 	float a = (right + left) / (right - left);
 	float b = (top + bottom) / (top - bottom);
-	float c = -(far + near) / (far - near);
-	float d = -(2.0f * far) / (far - near);
+	float c = -(farX + near) / (far - near);
+	float d = -(2.0f * farX) / (far - near);
 	TriMatrix m = null();
 	m.matrix[0 + 0 * 4] = 2.0f * near / (right - left);
 	m.matrix[1 + 1 * 4] = 2.0f * near / (top - bottom);
@@ -147,11 +147,11 @@ TriMatrix TriMatrix::worldToView(const FRenderViewpoint &viewpoint)
 TriMatrix TriMatrix::viewToClip(double focalTangent, double centerY, double YaspectMul)
 {
 	float near = 5.0f;
-	float far = 65536.0f;
+	float farX = 65536.0f;
 	float width = (float)(focalTangent * near);
 	float top = (float)(centerY / viewheight * YaspectMul * near);
 	float bottom = (float)(top - YaspectMul * near);
-	return frustum(-width, width, bottom, top, near, far);
+	return frustum(-width, width, bottom, top, near, farX);
 }
 
 TriMatrix TriMatrix::operator*(const TriMatrix &mult) const
