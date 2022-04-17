@@ -422,6 +422,14 @@ void FIWadManager::CollectSearchPaths()
 	mSearchPaths.Append(I_GetSteamPath());
 	mSearchPaths.Append(I_GetBethesdaPath());
 
+#ifdef __MOBILE__
+	const char *searchPathCmd = Args->CheckValue("-searchpath");
+	if(searchPathCmd)
+	{
+		mSearchPaths.Push(searchPathCmd);
+	}
+#endif
+
 	// Unify and remove trailing slashes
 	for (auto &str : mSearchPaths)
 	{
