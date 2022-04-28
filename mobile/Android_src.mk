@@ -11,11 +11,6 @@ LOCAL_CFLAGS   :=   -DNO_CLOCK_GETTIME  -DNO_VBO -D__MOBILE__ -DGZDOOM -D__STDIN
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES  -Wno-incompatible-pointer-types -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
 
-ifeq ($(BUILD_SERIAL),1)
-LOCAL_CPPFLAGS += -DANTI_HACK 
-endif
-
-	
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
   $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
