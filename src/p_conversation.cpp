@@ -374,7 +374,7 @@ static FStrifeDialogueNode *ReadRetailNode (FileReader *lump, uint32_t &prevSpea
 	for (j = 0; j < 3; ++j)
 	{
 		auto inv = GetStrifeType(speech.ItemCheck[j]);
-		if (!inv->IsDescendantOf(RUNTIME_CLASS(AInventory))) inv = nullptr;
+		if (inv == NULL || !inv->IsDescendantOf(RUNTIME_CLASS(AInventory))) inv = nullptr;
 		node->ItemCheck[j].Item = inv;
 		node->ItemCheck[j].Amount = -1;
 	}
@@ -520,7 +520,7 @@ static void ParseReplies (FStrifeDialogueReply **replyptr, Response *responses)
 		for (k = 0; k < 3; ++k)
 		{
 			auto inv = GetStrifeType(rsp->Item[k]);
-			if (!inv->IsDescendantOf(RUNTIME_CLASS(AInventory))) inv = nullptr;
+			if (inv == NULL || !inv->IsDescendantOf(RUNTIME_CLASS(AInventory))) inv = nullptr;
 			reply->ItemCheck[k].Item = inv;
 			reply->ItemCheck[k].Amount = rsp->Count[k];
 		}
