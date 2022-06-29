@@ -35,12 +35,15 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/models \
     	$(GZDOOM_TOP_PATH)/src/common/filesystem \
     	$(GZDOOM_TOP_PATH)/src/common/utility \
+    	$(GZDOOM_TOP_PATH)/src/common/cutscenes \
+    	$(GZDOOM_TOP_PATH)/src/common/startscreen \
     	$(GZDOOM_TOP_PATH)/src/common/console \
     	$(GZDOOM_TOP_PATH)/src/common/engine \
     	$(GZDOOM_TOP_PATH)/src/common/menu \
     	$(GZDOOM_TOP_PATH)/src/common/fonts \
     	$(GZDOOM_TOP_PATH)/src/common/objects \
     	$(GZDOOM_TOP_PATH)/src/common/rendering \
+    	$(GZDOOM_TOP_PATH)/src/common/thirdparty/libsmackerdec/include \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/hwrenderer/data \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl_load \
     	$(GZDOOM_TOP_PATH)/src/common/rendering/gl \
@@ -84,12 +87,14 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/platform/posix/sdl \
     	$(GZDOOM_TOP_PATH)/libraries/lzma/C \
         $(GZDOOM_TOP_PATH)/libraries/bzip2 \
+        $(GZDOOM_TOP_PATH)/libraries/discordrpc/include \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/jpeg8d \
  $(TOP_DIR)/Clibs_OpenTouch \
  $(TOP_DIR)/Clibs_OpenTouch\idtech1 \
+  $(TOP_DIR)/Clibs_OpenTouch\libvpx\include \
  $(TOP_DIR)/jwzgles \
  $(TOP_DIR)/MobileTouchControls  \
  $(TOP_DIR)/Doom/ZMusic/include  \
@@ -167,6 +172,7 @@ POLYBACKEND_SOURCES = \
 
 
 PCH_SOURCES = \
+	common/thirdparty/richpresence.cpp \ \
 	am_map.cpp \
 	playsim/bots/b_bot.cpp \
 	playsim/bots/b_func.cpp \
@@ -175,8 +181,8 @@ PCH_SOURCES = \
 	playsim/bots/b_think.cpp \
 	bbannouncer.cpp \
 	console/c_cmds.cpp \
-	console/c_functions.cpp \
 	console/c_notifybuffer.cpp \
+	console/c_functions.cpp \
 	ct_chat.cpp \
 	d_iwad.cpp \
 	d_main.cpp \
@@ -279,13 +285,11 @@ PCH_SOURCES = \
 	g_statusbar/sbarinfo.cpp \
 	g_statusbar/sbar_mugshot.cpp \
 	g_statusbar/shared_sbar.cpp \
-	rendering/2d/f_wipe.cpp \
 	rendering/2d/v_blend.cpp \
 	rendering/hwrenderer/hw_entrypoint.cpp \
 	rendering/hwrenderer/hw_vertexbuilder.cpp \
 	rendering/hwrenderer/doom_aabbtree.cpp \
 	rendering/hwrenderer/hw_models.cpp \
-	rendering/hwrenderer/hw_postprocessshader.cpp \
 	rendering/hwrenderer/hw_precache.cpp \
 	rendering/hwrenderer/scene/hw_lighting.cpp \
 	rendering/hwrenderer/scene/hw_drawlistadd.cpp \
@@ -363,7 +367,15 @@ PCH_SOURCES = \
 	common/2d/v_2ddrawer.cpp \
 	common/2d/v_drawtext.cpp \
 	common/2d/v_draw.cpp \
+	common/2d/wipe.cpp \
+	common/thirdparty/gain_analysis.cpp \
 	common/thirdparty/sfmt/SFMT.cpp \
+	common/startscreen/startscreen.cpp \
+	common/startscreen/startscreen_heretic.cpp \
+	common/startscreen/startscreen_hexen.cpp \
+	common/startscreen/startscreen_strife.cpp \
+	common/startscreen/startscreen_generic.cpp \
+	common/startscreen/endoom.cpp \
 	common/fonts/singlelumpfont.cpp \
 	common/fonts/singlepicfont.cpp \
 	common/fonts/specialfont.cpp \
@@ -399,11 +411,13 @@ PCH_SOURCES = \
 	common/textures/formats/pcxtexture.cpp \
 	common/textures/formats/pngtexture.cpp \
 	common/textures/formats/rawpagetexture.cpp \
+	common/textures/formats/startuptexture.cpp \
 	common/textures/formats/emptytexture.cpp \
 	common/textures/formats/shadertexture.cpp \
 	common/textures/formats/tgatexture.cpp \
 	common/textures/formats/stbtexture.cpp \
 	common/textures/formats/anmtexture.cpp \
+	common/textures/formats/startscreentexture.cpp \
 	common/textures/hires/hqresize.cpp \
 	common/models/models_md3.cpp \
 	common/models/models_md2.cpp \
@@ -420,10 +434,13 @@ PCH_SOURCES = \
 	common/console/c_cvars.cpp \
 	common/console/c_dispatch.cpp \
 	common/console/c_commandbuffer.cpp \
-	common/console/c_tabcomplete.cpp \
-	common/console/c_expr.cpp \
 	common/console/c_console.cpp \
 	common/console/c_notifybufferbase.cpp \
+	common/console/c_tabcomplete.cpp \
+	common/console/c_expr.cpp \
+	common/cutscenes/playmve.cpp \
+	common/cutscenes/movieplayer.cpp \
+	common/cutscenes/screenjob.cpp \
 	common/utility/engineerrors.cpp \
 	common/utility/i_module.cpp \
 	common/utility/m_alloc.cpp \
@@ -443,7 +460,11 @@ PCH_SOURCES = \
 	common/thirdparty/base64.cpp \
 	common/thirdparty/md5.cpp \
  	common/thirdparty/superfasthash.cpp \
- 	common/thirdparty/gain_analysis.cpp \
+	common/thirdparty/libsmackerdec/src/BitReader.cpp \
+	common/thirdparty/libsmackerdec/src/FileStream.cpp \
+	common/thirdparty/libsmackerdec/src/HuffmanVLC.cpp \
+	common/thirdparty/libsmackerdec/src/LogError.cpp \
+	common/thirdparty/libsmackerdec/src/SmackerDecoder.cpp \
 	common/filesystem/filesystem.cpp \
 	common/filesystem/ancientzip.cpp \
 	common/filesystem/file_7z.cpp \
@@ -482,6 +503,7 @@ PCH_SOURCES = \
 	common/menu/resolutionmenu.cpp \
 	common/menu/menudef.cpp \
 	common/menu/savegamemanager.cpp \
+	common/statusbar/base_sbar.cpp \
 	common/rendering/v_framebuffer.cpp \
 	common/rendering/v_video.cpp \
 	common/rendering/r_thread.cpp \
@@ -498,8 +520,10 @@ PCH_SOURCES = \
 	common/rendering/hwrenderer/data/hw_aabbtree.cpp \
 	common/rendering/hwrenderer/data/hw_shadowmap.cpp \
 	common/rendering/hwrenderer/data/hw_shaderpatcher.cpp \
+	common/rendering/hwrenderer/postprocessing/hw_postprocessshader.cpp \
 	common/rendering/hwrenderer/postprocessing/hw_postprocess.cpp \
 	common/rendering/hwrenderer/postprocessing/hw_postprocess_cvars.cpp \
+	common/rendering/hwrenderer/postprocessing/hw_postprocessshader_ccmds.cpp \
 	common/rendering/gl_load/gl_interface.cpp \
 	common/rendering/gl/gl_renderer.cpp \
 	common/rendering/gl/gl_stereo3d.cpp \
@@ -514,19 +538,6 @@ PCH_SOURCES = \
 	common/rendering/gl/gl_samplers.cpp \
 	common/rendering/gl/gl_shader.cpp \
 	common/rendering/gl/gl_shaderprogram.cpp \
-	common/rendering/gles/glad/src/glad.c \
-    common/rendering/gles/gles_renderer.cpp \
-    common/rendering/gles/gles_framebuffer.cpp \
-    common/rendering/gles/gles_renderstate.cpp \
-    common/rendering/gles/gles_renderbuffers.cpp \
-    common/rendering/gles/gles_postprocess.cpp \
-    common/rendering/gles/gles_postprocessstate.cpp \
-    common/rendering/gles/gles_buffers.cpp \
-    common/rendering/gles/gles_hwtexture.cpp \
-    common/rendering/gles/gles_shader.cpp \
-    common/rendering/gles/gles_samplers.cpp \
-    common/rendering/gles/gles_shaderprogram.cpp \
-    common/rendering/gles/gles_system.cpp \
 	common/scripting/core/dictionary.cpp \
 	common/scripting/core/dynarrays.cpp \
 	common/scripting/core/symbols.cpp \
@@ -543,14 +554,25 @@ PCH_SOURCES = \
 	common/scripting/frontend/zcc_parser.cpp \
 	common/scripting/backend/vmbuilder.cpp \
 	common/scripting/backend/codegen.cpp \
-	common/statusbar/base_sbar.cpp \
 	utility/nodebuilder/nodebuild.cpp \
 	utility/nodebuilder/nodebuild_classify_nosse2.cpp \
 	utility/nodebuilder/nodebuild_events.cpp \
 	utility/nodebuilder/nodebuild_extract.cpp \
 	utility/nodebuilder/nodebuild_gl.cpp \
 	utility/nodebuilder/nodebuild_utility.cpp \
-
+		common/rendering/gles/gles_system.cpp \
+		common/rendering/gles/gles_renderer.cpp \
+		common/rendering/gles/gles_framebuffer.cpp \
+		common/rendering/gles/gles_renderstate.cpp \
+		common/rendering/gles/gles_renderbuffers.cpp \
+		common/rendering/gles/gles_postprocess.cpp \
+		common/rendering/gles/gles_postprocessstate.cpp \
+		common/rendering/gles/gles_buffers.cpp \
+		common/rendering/gles/gles_hwtexture.cpp \
+		common/rendering/gles/gles_shader.cpp \
+		common/rendering/gles/gles_shaderprogram.cpp \
+		common/rendering/gles/gles_samplers.cpp \
+		common/rendering/gles/glad/src/glad.c \
 
 
 SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES}
@@ -591,7 +613,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter vpx
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
 include $(BUILD_SHARED_LIBRARY)
