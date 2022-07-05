@@ -280,6 +280,7 @@ FString FShaderProgram::PatchShader(ShaderType type, const FString &code, const 
 	patchedCode << "precision highp int;\n";
 	patchedCode << "precision highp float;\n";
 	patchedCode << "precision highp sampler2D;\n";
+	patchedCode << "precision highp sampler2DArray;\n";
 	patchedCode << "precision highp samplerCube;\n";
 	patchedCode << "precision highp sampler2DMS;\n";
 #endif
