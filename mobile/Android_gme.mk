@@ -55,6 +55,7 @@ LOCAL_SRC_FILES =  	\
     gme/Ym2413_Emu.cpp \
     gme/Ym2612_Emu.cpp \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

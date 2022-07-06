@@ -60,11 +60,11 @@ void *YRegTail = 0;
 
 #include "doomtype.h"
 
-void *ARegTail __attribute__((section(SECTION_AREG))) = 0;
-void *CRegTail __attribute__((section(SECTION_CREG))) = 0;
-void *GRegTail __attribute__((section(SECTION_GREG))) = 0;
-void *MRegTail __attribute__((section(SECTION_MREG))) = 0;
-void *YRegTail __attribute__((section(SECTION_YREG))) = 0;
+void *ARegTail __attribute__((section(SECTION_AREG))) __attribute__((visibility("default"))) = 0;
+void *CRegTail __attribute__((section(SECTION_CREG))) __attribute__((visibility("default"))) = 0;
+void *GRegTail __attribute__((section(SECTION_GREG))) __attribute__((visibility("default"))) = 0;
+void *MRegTail __attribute__((section(SECTION_MREG))) __attribute__((visibility("default"))) = 0;
+void *YRegTail __attribute__((section(SECTION_YREG))) __attribute__((visibility("default"))) = 0;
 
 #else
 
