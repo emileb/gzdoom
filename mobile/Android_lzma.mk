@@ -27,6 +27,7 @@ LOCAL_SRC_FILES =  \
 	C/LzmaDec.c \
 	C/LzmaEnc.c \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

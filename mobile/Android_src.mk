@@ -7,13 +7,13 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g4
 
-LOCAL_CFLAGS   := -DHAVE_SOFTPOLY -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden -frtti  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   := -DHAVE_SOFTPOLY -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 #-DNO_PIX_BUFF
 #-DUSE_GL_HW_BUFFERS
 #-DHAVE_VULKAN
 #-DUSE_GL_HW_BUFFERS
 
-LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
 LOCAL_CFLAGS  += -DNO_SEND_STATS
 
@@ -616,8 +616,8 @@ LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter vpx
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
+#Strip unused functions/data
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections  -fPIC
+LOCAL_LDFLAGS += -Wl,--gc-sections -flto
+
 include $(BUILD_SHARED_LIBRARY)
-
-
-
-

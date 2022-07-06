@@ -49,6 +49,7 @@ LOCAL_SRC_FILES =  	\
 	sum.c \
 	ulp.c \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 
