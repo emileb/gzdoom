@@ -22,6 +22,8 @@ LOCAL_SRC_FILES =  \
     uncompr.c \
     zutil.c \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
+
 include $(BUILD_STATIC_LIBRARY)
 
 
