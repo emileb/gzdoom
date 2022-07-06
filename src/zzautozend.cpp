@@ -57,11 +57,11 @@ __declspec(allocate(".yreg$z")) void *const YRegTail = 0;
 
 #include "doomtype.h"
 
-void *const ARegTail __attribute__((section(SECTION_AREG))) = 0;
-void *const CRegTail __attribute__((section(SECTION_CREG))) = 0;
-void *const FRegTail __attribute__((section(SECTION_FREG))) = 0;
-void *const GRegTail __attribute__((section(SECTION_GREG))) = 0;
-void *const YRegTail __attribute__((section(SECTION_YREG))) = 0;
+void *const ARegTail __attribute__((section(SECTION_AREG))) __attribute__((visibility("default"))) = 0;
+void *const CRegTail __attribute__((section(SECTION_CREG))) __attribute__((visibility("default"))) = 0;
+void *const FRegTail __attribute__((section(SECTION_FREG))) __attribute__((visibility("default"))) = 0;
+void *const GRegTail __attribute__((section(SECTION_GREG))) __attribute__((visibility("default"))) = 0;
+void *const YRegTail __attribute__((section(SECTION_YREG))) __attribute__((visibility("default"))) = 0;
 
 #else
 

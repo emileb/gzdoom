@@ -41,6 +41,8 @@ LOCAL_SRC_FILES =  	\
     asmjit/x86/x86operand_regs.cpp \
     asmjit/x86/x86regalloc.cpp \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
+
 include $(BUILD_STATIC_LIBRARY)
 
 

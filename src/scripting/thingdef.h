@@ -250,7 +250,7 @@ enum EDefinitionType
 #define GCC_PSEG
 #else
 #define MSVC_PSEG
-#define GCC_PSEG __attribute__((section(SECTION_GREG))) __attribute__((used))
+#define GCC_PSEG __attribute__((section(SECTION_GREG))) __attribute__((visibility("default"))) __attribute__((used))
 #endif
 
 
