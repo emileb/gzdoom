@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := asmjit_lz
 
-LOCAL_CFLAGS := -frtti -DASMJIT_BUILD_EMBED -DASMJIT_STATIC -DASMJIT_BUILD_X86 #-DASMJIT_ARCH_X86=1
+LOCAL_CFLAGS := -DASMJIT_BUILD_EMBED -DASMJIT_STATIC -DASMJIT_BUILD_X86 #-DASMJIT_ARCH_X86=1
 
 LOCAL_C_INCLUDES :=  $(LOCAL_PATH)/asmjit/
 
@@ -53,6 +53,7 @@ LOCAL_SRC_FILES =  	\
  	asmjit/x86/x86operand.cpp \
  	asmjit/x86/x86rapass.cpp \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

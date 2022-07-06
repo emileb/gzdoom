@@ -55,7 +55,9 @@ i_module.cpp \
 	zmusic/configuration.cpp \
 	zmusic/zmusic.cpp \
 
-LOCAL_STATIC_LIBRARIES := oplsynth_lz  opnmidi_lz timidity_lz timidityplus_lz wildmidi_lz adlmidi_lz gme_lz dumb_lz  sndfile mpg123 fluidsynth-static
+LOCAL_STATIC_LIBRARIES := oplsynth_lz  opnmidi_lz timidity_lz timidityplus_lz wildmidi_lz adlmidi_lz gme_lz dumb_lz sndfile mpg123 fluidsynth-static
+
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

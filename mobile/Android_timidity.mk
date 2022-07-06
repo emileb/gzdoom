@@ -21,6 +21,7 @@ LOCAL_SRC_FILES =  	\
         	resample.cpp \
         	timidity.cpp \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

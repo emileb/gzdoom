@@ -87,6 +87,7 @@ LOCAL_SRC_FILES =  	\
     src/it/readxm2.c \
     src/it/xmeffect.c \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

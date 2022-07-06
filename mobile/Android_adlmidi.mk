@@ -27,6 +27,7 @@ LOCAL_SRC_FILES =  	\
 	chips/nuked/nukedopl3.c \
 	wopl/wopl_file.c \
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

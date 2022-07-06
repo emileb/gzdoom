@@ -32,7 +32,7 @@ LOCAL_SRC_FILES =  	\
         	sndfont.cpp \
         	tables.cpp \
 
-
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
 include $(BUILD_STATIC_LIBRARY)
 

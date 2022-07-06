@@ -17,6 +17,8 @@ LOCAL_SRC_FILES =  	\
     	wildmidi_lib.cpp \
     	wm_error.cpp
 
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
+
 include $(BUILD_STATIC_LIBRARY)
 
 

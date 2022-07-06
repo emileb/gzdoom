@@ -7,18 +7,13 @@ LOCAL_MODULE    := lzdoom
 
 LOCAL_CFLAGS   :=   -DNO_CLOCK_GETTIME -D__MOBILE__ -DNO_PIX_BUFF  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DLZDOOM -DUSE_GL_HW_BUFFERS  -DNO_VBO -D__STDINT_LIMITS -DENGINE_NAME=\"lzdoom\"
 
-
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14 -DHAVE_JWZGLES -Wno-switch -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
-LOCAL_CFLAGS  += -DNO_SEND_STATS
-
-LOCAL_CFLAGS  += -DOPNMIDI_USE_LEGACY_EMULATOR
-LOCAL_CFLAGS  += -DADLMIDI_DISABLE_MUS_SUPPORT -DADLMIDI_DISABLE_XMI_SUPPORT -DADLMIDI_DISABLE_MIDI_SEQUENCER
-LOCAL_CFLAGS  += -DOPNMIDI_DISABLE_MUS_SUPPORT -DOPNMIDI_DISABLE_XMI_SUPPORT -DOPNMIDI_DISABLE_MIDI_SEQUENCER
+LOCAL_CFLAGS  += -DNO_SEND_STATS -DOPNMIDI_USE_LEGACY_EMULATOR -DADLMIDI_DISABLE_MUS_SUPPORT -DADLMIDI_DISABLE_XMI_SUPPORT -DADLMIDI_DISABLE_MIDI_SEQUENCER
 
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
-  $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
  $(GZDOOM_TOP_PATH)/src/  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/game-music-emu/ \
@@ -26,9 +21,9 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/lzma/C \
  $(GZDOOM_TOP_PATH)/bzip2 \
  $(GZDOOM_TOP_PATH)/asmjit \
-	$(GZDOOM_TOP_PATH)/src/sound \
-	$(GZDOOM_TOP_PATH)/src/sound/music \
-	$(GZDOOM_TOP_PATH)/src/sound/backend \
+ $(GZDOOM_TOP_PATH)/src/sound \
+ $(GZDOOM_TOP_PATH)/src/sound/music \
+ $(GZDOOM_TOP_PATH)/src/sound/backend \
  $(GZDOOM_TOP_PATH)/src/textures \
  $(GZDOOM_TOP_PATH)/src/thingdef \
  $(GZDOOM_TOP_PATH)/src/sdl \
@@ -39,15 +34,15 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/scripting \
  $(GZDOOM_TOP_PATH)/src/scripting/vm \
  $(GZDOOM_TOP_PATH)/src/posix \
-$(GZDOOM_TOP_PATH)/src/posix\sdl \
-$(GZDOOM_TOP_PATH)/src/../libraries/gdtoa \
-$(GZDOOM_TOP_PATH)/src/../libraries/bzip2 \
-$(GZDOOM_TOP_PATH)/src/../libraries/game-music-emu/ \
-$(GZDOOM_TOP_PATH)/src/../libraries/dumb/include \
-$(GZDOOM_TOP_PATH)/src/../libraries/glslang/glslang/Public \
-$(GZDOOM_TOP_PATH)/src/../libraries/glslang/spirv \
-$(GZDOOM_TOP_PATH)/src/../libraries/lzma/C \
-$(GZDOOM_TOP_PATH)/src/../libraries/zmusic \
+ $(GZDOOM_TOP_PATH)/src/posix\sdl \
+ $(GZDOOM_TOP_PATH)/src/../libraries/gdtoa \
+ $(GZDOOM_TOP_PATH)/src/../libraries/bzip2 \
+ $(GZDOOM_TOP_PATH)/src/../libraries/game-music-emu/ \
+ $(GZDOOM_TOP_PATH)/src/../libraries/dumb/include \
+ $(GZDOOM_TOP_PATH)/src/../libraries/glslang/glslang/Public \
+ $(GZDOOM_TOP_PATH)/src/../libraries/glslang/spirv \
+ $(GZDOOM_TOP_PATH)/src/../libraries/lzma/C \
+ $(GZDOOM_TOP_PATH)/src/../libraries/zmusic \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
@@ -479,22 +474,19 @@ LOCAL_SRC_FILES = \
 	math/fastsin.cpp \
 	zzautozend.cpp \
 
-# Turn down optimisation of this file so clang doesnt produce ldrd instructions which are missaligned
-p_acs.cpp_CFLAGS := -O1
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=-lGLESv1_CM
-#LOCAL_LDLIBS += -lGLESv3
-
+#
 LOCAL_LDLIBS +=  -lEGL
 
-# This is stop a linker warning for mp123 lib failing build
-#LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 
-LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_lz lzma_lz gdtoa_lz dumb_lz gme_lz bzip2_lz zmusic_lz logwritter
+LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static libjpeg zlib_lz lzma_lz gdtoa_lz dumb_lz gme_lz bzip2_lz zmusic_lz logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared core_shared saffal
 
-LOCAL_STATIC_LIBRARIES +=
+#Strip unused functions/data
+LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections -fPIC
+LOCAL_LDFLAGS += -Wl,--gc-sections -flto
 
 include $(BUILD_SHARED_LIBRARY)
 
