@@ -142,8 +142,13 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	if (glTextureBytes == 1)
 	{
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+#ifdef __MOBILE__
+        sourcetype = GL_ALPHA;
+		texformat = GL_ALPHA;
+#else
 		sourcetype = GL_RED;
 		texformat = GL_R8;
+#endif
 	}
 	else
 	{
