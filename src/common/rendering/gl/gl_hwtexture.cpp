@@ -150,7 +150,16 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	}
 
 #ifdef __MOBILE__
-	texformat = sourcetype = GL_BGRA;
+	if (glTextureBytes == 1)
+	{
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		sourcetype = GL_RED;
+		texformat = GL_R8;
+	}
+    else
+    {
+		texformat = sourcetype = GL_BGRA;
+    }
 #endif
 
 	if (!firstCall && glBufferID > 0)
