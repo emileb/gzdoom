@@ -841,7 +841,11 @@ bool FShaderCollection::CompileNextShader()
 		{
 			mCompileIndex = 0;
 			mCompileState++;
+#ifdef __MOBILE__
+			if (usershaders.Size() == 0 || !gl_customshader) mCompileState++;
+#else
 			if (usershaders.Size() == 0) mCompileState++;
+#endif
 		}
 	}
 	else if (mCompileState == 2)
