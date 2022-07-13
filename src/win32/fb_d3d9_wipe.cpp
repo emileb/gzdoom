@@ -108,6 +108,8 @@ private:
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+EXTERN_CVAR (Bool, d3d_nogammaramp)
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -164,7 +166,7 @@ bool D3DFB::WipeStartScreen(int type)
 	// Create another texture to copy the final wipe screen to so
 	// we can still gamma correct the wipe. Since this is just for
 	// gamma correction, it's okay to fail (though not desirable.)
-	if (PixelDoubling || Windowed)
+	if (PixelDoubling || Windowed || d3d_nogammaramp)
 	{
 		if (SUCCEEDED(TempRenderTexture->GetSurfaceLevel(0, &tsurf)))
 		{

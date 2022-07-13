@@ -113,6 +113,9 @@ struct FIWADInfo
 	TArray<FString> Load;	// Wads to be loaded with this one.
 	TArray<FString> Lumps;	// Lump names for identification
 	int flags = 0;
+	int LoadWidescreen = -1;
+	int LoadBrightmaps = -1;
+	int LoadLights = -1;
 };
 
 struct FFoundWadInfo

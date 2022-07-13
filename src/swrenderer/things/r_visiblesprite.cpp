@@ -290,6 +290,9 @@ namespace swrenderer
 			hzt = MIN(hzt, clip3DFloor.sclipTop);
 		}
 
+		// Make sure bottom clipping stays within the view size
+		botclip = MIN<short>(botclip, viewheight);
+
 		if (topclip >= botclip)
 		{
 			spr->Light.BaseColormap = colormap;

@@ -1080,6 +1080,8 @@ void G_DoLoadLevel (int position, bool autosave, bool newGame)
 
 	TThinkerIterator<AActor> it;
 	AActor* ac;
+
+	level.flags3 |= LEVEL3_LIGHTCREATED;
 	// Initial setup of the dynamic lights.
 	while ((ac = it.Next()))
 	{

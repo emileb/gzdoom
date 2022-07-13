@@ -59,6 +59,11 @@
 #include "w_wad.h"
 #include "version.h"
 
+#define SHOULD_BLACKLIST(name) \
+	if (#name[0]==CurrentFindCVar[0]) \
+		if (strcmp(CurrentFindCVar, #name) == 0) \
+			blacklisted = true;
+
 struct FLatchedValue
 {
 	FBaseCVar *Variable;
@@ -2099,8 +2104,28 @@ void C_GrabCVarDefaults ()
 			if (strcmp(CurrentFindCVar, "vid_allowtrueultrawide") == 0)
 				break;
 
-			var = FindCVar (sc.String, NULL);
-			if (var != NULL)
+			bool blacklisted = false;
+			SHOULD_BLACKLIST(disablecrashlog)
+			SHOULD_BLACKLIST(gl_control_tear)
+			SHOULD_BLACKLIST(in_mouse)
+			SHOULD_BLACKLIST(joy_dinput)
+			SHOULD_BLACKLIST(joy_ps2raw)
+			SHOULD_BLACKLIST(joy_xinput)
+			SHOULD_BLACKLIST(k_allowfullscreentoggle)
+			SHOULD_BLACKLIST(k_mergekeys)
+			SHOULD_BLACKLIST(m_swapbuttons)
+			SHOULD_BLACKLIST(queryiwad_key)
+			SHOULD_BLACKLIST(vid_gpuswitch)
+			SHOULD_BLACKLIST(vr_enable_quadbuffered)
+
+			var = FindCVar(CurrentFindCVar, NULL);
+
+			if (blacklisted)
+			{
+				sc.ScriptMessage("Cannot set cvar default for blacklisted cvar '%s'", sc.String);
+				sc.MustGetString(); // to ignore the value of the cvar
+			}
+			else if (var != NULL)
 			{
 				if (var->GetFlags() & CVAR_ARCHIVE)
 				{
@@ -2112,12 +2137,14 @@ void C_GrabCVarDefaults ()
 				}
 				else
 				{
-					sc.ScriptError("Cannot set cvar default for non-config cvar '%s'", sc.String);
+					sc.ScriptMessage("Cannot set cvar default for non-config cvar '%s'", sc.String);
+					sc.MustGetString(); // to ignore the value of the cvar
 				}
 			}
 			else
 			{
-				sc.ScriptError("Unknown cvar '%s'", sc.String);
+				sc.ScriptMessage("Unknown cvar '%s' in defcvars", sc.String);
+				sc.MustGetString(); // to ignore the value of the cvar
 			}
 		}
 	}

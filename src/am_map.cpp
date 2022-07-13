@@ -3239,7 +3239,16 @@ void AM_drawAuthorMarkers ()
 		FActorIterator it (mark->args[0]);
 		AActor *marked = mark->args[0] == 0 ? mark : it.Next();
 
-		while (marked != NULL)
+		double xscale = mark->Scale.X;
+		double yscale = mark->Scale.Y;
+		// [MK] scale with automap zoom if args[2] is 1, otherwise keep a constant scale
+		if (mark->args[2] == 1)
+		{
+			xscale = MTOF(xscale);
+			yscale = MTOF(yscale);
+		}
+
+		while (marked != nullptr)
 		{
 			// Use more correct info if we have GL nodes available
 			if (mark->args[1] == 0 ||
@@ -3247,7 +3256,7 @@ void AM_drawAuthorMarkers ()
 				 marked->subsector->flags & SSECMF_DRAWN :
 				 marked->Sector->MoreFlags & SECMF_DRAWN)))
 			{
-				DrawMarker (tex, marked->X(), marked->Y(), 0, flip, mark->Scale.X, mark->Scale.Y, mark->Translation,
+				DrawMarker (tex, marked->X(), marked->Y(), 0, flip, xscale, yscale, mark->Translation,
 					mark->Alpha, mark->fillcolor, mark->RenderStyle);
 			}
 			marked = mark->args[0] != 0 ? it.Next() : NULL;

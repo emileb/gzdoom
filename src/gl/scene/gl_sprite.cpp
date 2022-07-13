@@ -267,7 +267,7 @@ void GLSprite::Draw(int pass)
 
 	if (pass == GLPASS_LIGHTSONLY)
 	{
-		if (modelframe && !modelframe->isVoxel)
+		if (modelframe && !modelframe->isVoxel && !(modelframe->flags & MDL_NOPERPIXELLIGHTING))
 		{
 			if (RenderStyle.BlendOp != STYLEOP_Shadow)
 			{
@@ -980,6 +980,7 @@ void GLSprite::Process(AActor* thing, sector_t * sector, int thruportal, bool is
 	}
 
 	depth = (float)((x - r_viewpoint.Pos.X) * r_viewpoint.TanCos + (y - r_viewpoint.Pos.Y) * r_viewpoint.TanSin);
+	if (isSpriteShadow) depth += 1.f/65536.f; // always sort shadows behind the sprite.
 
 	// light calculation
 

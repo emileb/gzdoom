@@ -50,7 +50,7 @@
 EXTERN_CVAR (Bool, saveloadconfirmation) // [mxd]
 EXTERN_CVAR (Bool, quicksaverotation)
 
-CVAR(Bool, m_quickexit, false, CVAR_ARCHIVE)
+CVAR(Bool, m_quickexit, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 
 typedef void(*hfunc)();
 DEFINE_ACTION_FUNCTION(DMessageBoxMenu, CallHandler)

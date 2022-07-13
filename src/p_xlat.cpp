@@ -71,6 +71,7 @@ void P_TranslateLineDef (line_t *ld, maplinedef_t *mld, int lineindexforid)
 
 	uint32_t flags1 = flags;
 	uint32_t newflags = 0;
+	uint32_t newflags2 = 0;
 
 	for(int i=0;i<16;i++)
 	{
@@ -83,7 +84,8 @@ void P_TranslateLineDef (line_t *ld, maplinedef_t *mld, int lineindexforid)
 	{
 		if ((flags1 & (1<<i)) && !LineFlagTranslations[i].ismask)
 		{
-			switch (LineFlagTranslations[i].newvalue)
+			unsigned val = LineFlagTranslations[i].newvalue;
+			switch ((int)val)
 			{
 			case -1:
 				passthrough = true;
@@ -95,12 +97,14 @@ void P_TranslateLineDef (line_t *ld, maplinedef_t *mld, int lineindexforid)
 				ld->alpha = 0.25;
 				break;
 			default:
-				newflags |= LineFlagTranslations[i].newvalue;
+				if ((val & 0x80000000) && val != 0x80000000) newflags2 |= val;
+				else newflags |= val;
 				break;
 			}
 		}
 	}
 	flags = newflags;
+	ld->flags2 = newflags2;
 
 	if (lineindexforid >= 0)
 	{

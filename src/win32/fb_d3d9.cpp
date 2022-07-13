@@ -183,6 +183,7 @@ EXTERN_CVAR (Float, Gamma)
 EXTERN_CVAR (Bool, vid_vsync)
 EXTERN_CVAR (Float, transsouls)
 EXTERN_CVAR (Int, vid_refreshrate)
+EXTERN_CVAR (Bool, d3d_nogammaramp)
 
 extern IDirect3D9 *D3D;
 
@@ -227,7 +228,6 @@ CUSTOM_CVAR(Bool, vid_hw2d, true, CVAR_NOINITCALL)
 
 CVAR(Bool, d3d_antilag, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 CVAR(Int, d3d_showpacks, 0, 0)
-CVAR(Bool, d3d_nogammaramp, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 CVAR(Bool, vid_hwaalines, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 
 // CODE --------------------------------------------------------------------
@@ -300,10 +300,6 @@ D3DFB::D3DFB (UINT adapter, int width, int height, bool bgra, bool fullscreen)
 		return;
 	}
 
-	for (int i = 0; i < 256; i++)
-	{
-		GammaTable[i] = (BYTE)i;
-	}
 	memcpy(SourcePalette, GPalette.BaseColors, sizeof(PalEntry)*256);
 
 	Windowed = !(static_cast<Win32Video *>(Video)->GoFullscreen(fullscreen));
@@ -433,7 +429,7 @@ void D3DFB::SetInitialState()
 	NeedPalUpdate = true;
 	OldRenderTarget = NULL;
 
-	if (!Windowed && SM14)
+	if (!Windowed && SM14 && !d3d_nogammaramp)
 	{
 		// Fix for Radeon 9000, possibly other R200s: When the device is
 		// reset, it resets the gamma ramp, but the driver apparently keeps a
@@ -796,7 +792,7 @@ bool D3DFB::CreateFBTexture ()
 	{
 		return false;
 	}
-	if (Windowed || PixelDoubling)
+	if (Windowed || PixelDoubling || d3d_nogammaramp)
 	{
 		// Windowed or pixel doubling: Create another render texture so we can flip between them.
 		RenderTextureToggle = 1;
@@ -1124,23 +1120,16 @@ void D3DFB::Update ()
 
 		NeedGammaUpdate = false;
 		igamma = 1 / Gamma;
-		if (!Windowed)
+		if (!Windowed && !d3d_nogammaramp)
 		{
-			if (!d3d_nogammaramp || SM14)
-			{
-				D3DGAMMARAMP ramp;
+			D3DGAMMARAMP ramp;
 
-				for (int i = 0; i < 256; ++i)
-				{
-					ramp.blue[i] = ramp.green[i] = ramp.red[i] = WORD(65535.f * powf(i / 255.f, igamma));
-				}
-				LOG("SetGammaRamp\n");
-				D3DDevice->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
-			}
-			else
+			for (int i = 0; i < 256; ++i)
 			{
-				CalcGamma (Gamma, GammaTable);
+				ramp.blue[i] = ramp.green[i] = ramp.red[i] = WORD(65535.f * powf(i / 255.f, igamma));
 			}
+			LOG("SetGammaRamp\n");
+			D3DDevice->SetGammaRamp(0, D3DSGR_CALIBRATE, &ramp);
 		}
 		else
 		{
@@ -1261,7 +1250,7 @@ void D3DFB::CopyNextFrontBuffer()
 {
 	IDirect3DSurface9 *backbuff;
 
-	if (Windowed || PixelDoubling)
+	if (Windowed || PixelDoubling || d3d_nogammaramp)
 	{
 		// Windowed mode or pixel doubling: TempRenderTexture has what we want
 		SAFE_RELEASE( FrontCopySurface );
@@ -1377,7 +1366,7 @@ void D3DFB::Draw3DPart(bool copy3d)
 	D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, vid_hwaalines);
 	assert(OldRenderTarget == NULL);
 	if (TempRenderTexture != NULL &&
-		((Windowed && TempRenderTexture != FinalWipeScreen) || GatheringWipeScreen || PixelDoubling))
+		(((Windowed || d3d_nogammaramp) && TempRenderTexture != FinalWipeScreen) || GatheringWipeScreen || PixelDoubling))
 	{
 		IDirect3DSurface9 *targetsurf;
 		if (SUCCEEDED(TempRenderTexture->GetSurfaceLevel(0, &targetsurf)))
@@ -1476,7 +1465,7 @@ void D3DFB::DoWindowedGamma()
 		D3DDevice->SetRenderTarget(0, OldRenderTarget);
 		D3DDevice->SetFVF(D3DFVF_FBVERTEX);
 		SetTexture(0, TempRenderTexture);
-		SetPixelShader(Windowed && GammaShader ? GammaShader : Shaders[SHADER_NormalColor]);
+		SetPixelShader((Windowed || d3d_nogammaramp) && GammaShader ? GammaShader : Shaders[SHADER_NormalColor]);
 		if (SM14 && Windowed && GammaShader)
 		{
 			SetTexture(2, GammaTexture);
@@ -1660,26 +1649,13 @@ void D3DFB::UploadPalette ()
 		uint8_t *pix = (uint8_t *)lockrect.pBits;
 		int i;
 
-		if (!d3d_nogammaramp || SM14)
+		for (i = 0; i < SkipAt; ++i, pix += 4)
 		{
-			for (i = 0; i < SkipAt; ++i, pix += 4)
-			{
-				pix[0] = SourcePalette[i].b;
-				pix[1] = SourcePalette[i].g;
-				pix[2] = SourcePalette[i].r;
-				pix[3] = (i == 0 ? 0 : 255);
-				// To let masked textures work, the first palette entry's alpha is 0.
-			}
-		}
-		else
-		{
-			for (i = 0; i < SkipAt; ++i, pix += 4)
-			{
-				pix[0] = GammaTable[SourcePalette[i].b];
-				pix[1] = GammaTable[SourcePalette[i].g];
-				pix[2] = GammaTable[SourcePalette[i].r];
-				pix[3] = (i == 0 ? 0 : 255);
-			}
+			pix[0] = SourcePalette[i].b;
+			pix[1] = SourcePalette[i].g;
+			pix[2] = SourcePalette[i].r;
+			pix[3] = (i == 0 ? 0 : 255);
+			// To let masked textures work, the first palette entry's alpha is 0.
 		}
 		pix += 4;
 		for (; i < 255; ++i, pix += 4)
@@ -2338,7 +2314,7 @@ bool D3DTex::Update()
 
 	assert(Box != NULL);
 	assert(Box->Owner != NULL);
-	//assert(Box->Owner->Tex != NULL);
+	assert(Box->Owner->Tex != NULL);
 	assert(mGameTex != NULL);
 
 	if (Box->Owner->Tex == NULL)
@@ -2829,7 +2805,7 @@ void D3DFB::DrawTextureParms (FTexture *img, DrawParms &parms)
 
 	if (tex == NULL)
 	{
-		//assert(tex != NULL);
+		assert(tex != NULL);
 		return;
 	}
 

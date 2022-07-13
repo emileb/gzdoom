@@ -249,6 +249,7 @@ enum ELevelFlags : unsigned int
 	LEVEL3_FORCEWORLDPANNING	= 0x00000080,	// Forces the world panning flag for all textures, even those without it explicitly set.
 	LEVEL3_HIDEAUTHORNAME		= 0x00000100,
 	LEVEL3_PROPERMONSTERFALLINGDAMAGE	= 0x00000200,	// Properly apply falling damage to the monsters
+	LEVEL3_LIGHTCREATED			= 0x00080000,	// a light had been created in the last frame
 };
 
 

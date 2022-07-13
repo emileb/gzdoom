@@ -453,6 +453,14 @@ CUSTOM_CVAR (Bool, fullscreen, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITC
 	setmodeneeded = true;
 }
 
+CUSTOM_CVAR (Bool, d3d_nogammaramp, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
+{
+	NewWidth = screen->GetWidth();
+	NewHeight = screen->GetHeight();
+	NewBits = DisplayBits;
+	setmodeneeded = true;
+}
+
 CUSTOM_CVAR (Float, vid_winscale, 1.f, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 {
 	if (self < 1.f)

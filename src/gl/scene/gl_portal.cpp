@@ -1183,6 +1183,7 @@ void GLHorizonPortal::DrawContents()
 	}
 
 
+	gl_RenderState.EnableBrightmap(true);
 	gl_RenderState.SetMaterial(gltexture, CLAMP_NONE, 0, -1, false);
 	gl_RenderState.SetObjectColor(origin->specialcolor);
 

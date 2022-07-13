@@ -520,6 +520,9 @@ public:
 	// accelerated 2D mode.
 	virtual void DrawBlendingRect();
 
+	virtual int GetClientWidth();
+	virtual int GetClientHeight();
+
 	// Create a native texture from a game texture.
 	virtual FNativeTexture *CreateTexture(FTexture *gametex, FTextureFormat fmt, bool wrapping);
 

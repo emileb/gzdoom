@@ -88,6 +88,8 @@ namespace swrenderer
 			if (!(pl->sky & PL_SKYFLAT))
 			{	// use sky1
 			sky1:
+				if (!sky1tex.isValid())
+					sky1tex = TexMan.CheckForTexture("-noflat-", ETextureType::Any);
 				frontskytex = TexMan(sky1tex, true);
 				if (level.flags & LEVEL_DOUBLESKY)
 					backskytex = TexMan(sky2tex, true);

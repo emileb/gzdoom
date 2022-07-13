@@ -210,6 +210,12 @@ void Win32GLVideo::SetWindowedScale(float scale)
 //
 //==========================================================================
 
+HMONITOR GetPrimaryMonitorHandle()
+{
+	const POINT ptZero = { 0, 0 };
+	return MonitorFromPoint(ptZero, MONITOR_DEFAULTTOPRIMARY);
+}
+
 struct MonitorEnumState
 {
 	int curIdx;
@@ -257,22 +263,25 @@ void Win32GLVideo::GetDisplayDeviceName()
 	mes.curIdx = 1;
 	mes.hFoundMonitor = nullptr;
 
-	// Could also use EnumDisplayDevices, I guess. That might work.
-	if (EnumDisplayMonitors(0, 0, &GetDisplayDeviceNameMonitorEnumProc, LPARAM(&mes)))
+	if (vid_adapter == 0)
 	{
-		if (mes.hFoundMonitor)
+		mes.hFoundMonitor = GetPrimaryMonitorHandle();
+	}
+	// Could also use EnumDisplayDevices, I guess. That might work.
+	else EnumDisplayMonitors(0, 0, &GetDisplayDeviceNameMonitorEnumProc, LPARAM(&mes));
+
+	if (mes.hFoundMonitor)
+	{
+		MONITORINFOEXA mi;
+
+		mi.cbSize = sizeof mi;
+
+		if (GetMonitorInfoA(mes.hFoundMonitor, &mi))
 		{
-			MONITORINFOEXA mi;
+			strcpy(m_DisplayDeviceBuffer, mi.szDevice);
+			m_DisplayDeviceName = m_DisplayDeviceBuffer;
 
-			mi.cbSize = sizeof mi;
-
-			if (GetMonitorInfoA(mes.hFoundMonitor, &mi))
-			{
-				strcpy(m_DisplayDeviceBuffer, mi.szDevice);
-				m_DisplayDeviceName = m_DisplayDeviceBuffer;
-
-				m_hMonitor = mes.hFoundMonitor;
-			}
+			m_hMonitor = mes.hFoundMonitor;
 		}
 	}
 }

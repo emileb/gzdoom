@@ -1683,13 +1683,18 @@ static void G_QueueBody (AActor *body)
 //
 // G_DoReborn
 //
+CVAR (Bool, pistolstart, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 EXTERN_CVAR(Bool, sv_singleplayerrespawn)
 void G_DoReborn (int playernum, bool freshbot)
 {
+	cluster_info_t *cluster = FindClusterInfo (level.cluster);
+	bool ishub = (cluster != nullptr && (cluster->flags & CLUSTER_HUB));
+
 	if (!multiplayer && !(level.flags2 & LEVEL2_ALLOWRESPAWN) && !sv_singleplayerrespawn &&
 		!G_SkillProperty(SKILLP_PlayerRespawn))
 	{
-		if (BackupSaveName.Len() > 0 && FileExists (BackupSaveName.GetChars()))
+		if (BackupSaveName.Len() > 0 && FileExists (BackupSaveName.GetChars())
+			&& (ishub || !pistolstart || !gameinfo.gametype == GAME_Doom))
 		{ // Load game from the last point it was saved
 			savename = BackupSaveName;
 			gameaction = ga_autoloadgame;
@@ -3059,3 +3064,4 @@ DEFINE_GLOBAL(demoplayback)
 DEFINE_GLOBAL(automapactive);
 DEFINE_GLOBAL(Net_Arbitrator);
 DEFINE_GLOBAL(netgame);
+DEFINE_GLOBAL(paused);

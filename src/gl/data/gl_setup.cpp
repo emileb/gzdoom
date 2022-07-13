@@ -423,10 +423,13 @@ static void InitVertexData()
 
 				if (sec)
 				{
-					extsector_t::xfloor &x = sec->e->XFloor;
-
 					AddToVertex(sec, vt_sectorlists[v->Index()]);
 					if (sec->heightsec) AddToVertex(sec->heightsec, vt_sectorlists[v->Index()]);
+					extsector_t::xfloor& x = sec->e->XFloor;
+					for (auto& ff : x.ffloors)
+					{
+						AddToVertex(ff->model, vt_sectorlists[v->Index()]);
+					}
 				}
 			}
 		}

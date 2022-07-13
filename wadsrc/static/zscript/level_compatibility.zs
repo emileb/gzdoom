@@ -991,6 +991,15 @@ class LevelCompatibility : LevelPostProcessor
 				break;
 			}
 
+			case '6CDA2721AA1076F063557CF89D88E92B': // hexen.wad map08
+			{
+				// Amulet of warding accidentally shifted outside of map
+				SetThingXY(256,-1632,2352);
+				// Icon of the defender outside of map
+				SetThingSkills(261,0);
+				break;
+			}
+
 			case '39C594CAC07EE51C80F757DA465FCC94': // strife1.wad map10
 			{
 				// fix the shooting range by matching sector 138 and 145 properties together
@@ -1363,6 +1372,13 @@ class LevelCompatibility : LevelPostProcessor
 				// Fix the soulsphere in a secret area (sector 324)
 				// so that it doesn't end up in an unreachable position.
 				SetThingXY(516, -934, 48);
+				break;
+			}
+			
+			case '11EA5B8357DEB70A8F00900117831191': // kdizd_12.pk3 z1m3
+			{
+				// Fix incorrectly tagged underwater sector which causes render glitches.
+				AddSectorTag(7857, 82);
 				break;
 			}
 			

@@ -200,7 +200,12 @@ bool ViewportIsScaled43()
 
 void R_ShowCurrentScaling()
 {
-	int x1 = screen->GetWidth(), y1 = screen->GetHeight(), x2 = ViewportScaledWidth(x1, y1), y2 = ViewportScaledHeight(x1, y1);
+	if (isClassicSoftware())
+	{
+		Printf("This command is not available for the classic software renderer.\n");
+		return;
+	}
+	int x1 = screen->GetClientWidth(), y1 = screen->GetClientHeight(), x2 = ViewportScaledWidth(x1, y1), y2 = ViewportScaledHeight(x1, y1);
 	Printf("Current vid_scalefactor: %f\n", (float)(vid_scalefactor));
 	Printf("Real resolution: %i x %i\nEmulated resolution: %i x %i\n", x1, y1, x2, y2);
 }
@@ -239,7 +244,7 @@ CCMD (vid_scaletowidth)
 	{
 		// the following enables the use of ViewportScaledWidth to get the proper dimensions in custom scale modes
 		vid_scalefactor = 1;
-		vid_scalefactor = (float)((double)atof(argv[1]) / ViewportScaledWidth(screen->GetWidth(), screen->GetHeight()));
+		vid_scalefactor = (float)((double)atof(argv[1]) / ViewportScaledWidth(screen->GetClientWidth(), screen->GetClientHeight()));
 	}
 }
 
@@ -251,7 +256,7 @@ CCMD (vid_scaletoheight)
 	if (argv.argc() > 1)
 	{
 		vid_scalefactor = 1;
-		vid_scalefactor = (float)((double)atof(argv[1]) / ViewportScaledHeight(screen->GetWidth(), screen->GetHeight()));
+		vid_scalefactor = (float)((double)atof(argv[1]) / ViewportScaledHeight(screen->GetClientWidth(), screen->GetClientHeight()));
 	}
 }
 

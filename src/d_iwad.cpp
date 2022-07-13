@@ -221,6 +221,24 @@ void FIWadManager::ParseIWadInfo(const char *fn, const char *data, int datasize,
 					sc.MustGetString();
 					iwad->Song = sc.String;
 				}
+				else if (sc.Compare("LoadLights"))
+				{
+					sc.MustGetStringName("=");
+					sc.MustGetNumber();
+					iwad->LoadLights = sc.Number;
+				}
+				else if (sc.Compare("LoadBrightmaps"))
+				{
+					sc.MustGetStringName("=");
+					sc.MustGetNumber();
+					iwad->LoadBrightmaps = sc.Number;
+				}
+				else if (sc.Compare("LoadWidescreen"))
+				{
+					sc.MustGetStringName("=");
+					sc.MustGetNumber();
+					iwad->LoadWidescreen = sc.Number;
+				}
 				else
 				{
 					sc.ScriptError("Unknown keyword '%s'", sc.String);
@@ -427,6 +445,7 @@ void FIWadManager::CollectSearchPaths()
 	}
 	mSearchPaths.Append(I_GetGogPaths());
 	mSearchPaths.Append(I_GetSteamPath());
+	mSearchPaths.Append(I_GetBethesdaPath());
 
 	// Unify and remove trailing slashes
 	for (auto &str : mSearchPaths)
@@ -795,6 +814,12 @@ const FIWADInfo *FIWadManager::FindIWAD(TArray<FString> &wadfiles, const char *i
 		DoomStartupInfo.BkColor = iwad_info->BkColor;
 		DoomStartupInfo.FgColor = iwad_info->FgColor;
 	}
+	if (DoomStartupInfo.LoadWidescreen == -1)
+		DoomStartupInfo.LoadWidescreen = iwad_info->LoadWidescreen;
+	if (DoomStartupInfo.LoadLights == -1)
+		DoomStartupInfo.LoadLights = iwad_info->LoadLights;
+	if (DoomStartupInfo.LoadBrightmaps == -1)
+		DoomStartupInfo.LoadBrightmaps = iwad_info->LoadBrightmaps;
 	if (DoomStartupInfo.Type == 0) DoomStartupInfo.Type = iwad_info->StartupType;
 	if (DoomStartupInfo.Song.IsEmpty()) DoomStartupInfo.Song = iwad_info->Song;
 	I_SetIWADInfo();

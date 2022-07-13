@@ -223,7 +223,7 @@ void P_DelSeclist(portnode_t *node, portnode_t *FLinePortal::*sechead)
 //
 //=============================================================================
 
-msecnode_t *P_CreateSecNodeList(AActor *thing, double radius, msecnode_t *sector_list, msecnode_t *sector_t::*seclisthead)
+msecnode_t *P_CreateSecNodeList(AActor *thing, double radius, msecnode_t *sector_list, msecnode_t *sector_t::*seclisthead, bool restricted)
 {
 	msecnode_t *node;
 
@@ -243,7 +243,7 @@ msecnode_t *P_CreateSecNodeList(AActor *thing, double radius, msecnode_t *sector
 	FBlockLinesIterator it(box);
 	line_t *ld;
 
-	while ((ld = it.Next()))
+	while (!restricted && (ld = it.Next()))
 	{
 		if (!box.inRange(ld) || box.BoxOnLineSide(ld) != -1)
 			continue;

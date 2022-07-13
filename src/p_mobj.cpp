@@ -516,6 +516,8 @@ bool AActor::SetState (FState *newstate, bool nofunction)
 {
 	if (debugfile && player && (player->cheats & CF_PREDICTING))
 		fprintf (debugfile, "for pl %td: SetState while predicting!\n", player-players);
+	
+	auto oldstate = state;
 	do
 	{
 		if (newstate == NULL)
@@ -601,7 +603,11 @@ bool AActor::SetState (FState *newstate, bool nofunction)
 		newstate = newstate->GetNextState();
 	} while (tics == 0);
 
-	flags8 |= MF8_RECREATELIGHTS;
+	if (GetInfo()->LightAssociations.Size() || (state && state->Light > 0) || (oldstate && oldstate->Light > 0))
+	{
+		flags8 |= MF8_RECREATELIGHTS;
+		level.flags3 |= LEVEL3_LIGHTCREATED;
+	}
 	return true;
 }
 
@@ -4799,7 +4805,11 @@ void AActor::PostBeginPlay ()
 {
 	PrevAngles = Angles;
 	flags7 |= MF7_HANDLENODELAY;
-	flags8 |= MF8_RECREATELIGHTS;
+	if (GetInfo()->LightAssociations.Size() || (state && state->Light > 0))
+	{
+		flags8 |= MF8_RECREATELIGHTS;
+		level.flags3 |= LEVEL3_LIGHTCREATED;
+	}
 }
 
 void AActor::CallPostBeginPlay()
@@ -5762,7 +5772,7 @@ AActor *P_SpawnMapThing (FMapThing *mthing, int position)
 	}
 
 	if ((G_SkillProperty(SKILLP_DoubleSpawn) || (dmflags2 & DF2_DOUBLESPAWN)) && info->flags3 & MF3_ISMONSTER
-		&& i->TypeName != NAME_SpiderMastermind)
+		&& info->radius < 65)
 	{
 		spawned = CheckDoubleSpawn (mobj, info, mthing, sz, i, true); // previously double spawned monster might block
 		if (spawned)

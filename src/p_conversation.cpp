@@ -224,6 +224,10 @@ void P_LoadStrifeConversations (MapData *map, const char *mapname)
 		{
 			if (LoadScriptFile(gameinfo.Dialogue, false, 0))
 			{
+				if (addedDialogues)
+				{
+					Printf(TEXTCOLOR_RED "Warning! Dialogue was mixed with AddDialogues! Previous AddDialogues have been overwritten\n");
+				}
 				return;
 			}
 		}
