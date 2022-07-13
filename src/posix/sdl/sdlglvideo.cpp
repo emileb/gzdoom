@@ -112,6 +112,10 @@ CUSTOM_CVAR(Bool, gl_es, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCA
 }
 #endif
 
+static int requestedWidth;
+static int requestedHeight;
+
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // Dummy screen sizes to pass when windowed
@@ -412,6 +416,8 @@ void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int
 SDLGLFB::SDLGLFB (void *, int width, int height, int, int, bool fullscreen, bool bgra)
 	: SDLBaseFB (width, height, bgra)
 {
+	requestedWidth = width;
+	requestedHeight = height;
 	// NOTE: Core profiles were added with GL 3.2, so there's no sense trying
 	// to set core 3.1 or 3.0. We could try a forward-compatible context
 	// instead, but that would be too restrictive (w.r.t. shaders).
@@ -602,6 +608,8 @@ void SDLGLFB::SwapBuffers()
 
 int SDLGLFB::GetClientWidth()
 {
+	return requestedWidth;
+
 	int width = 0;
 	SDL_GL_GetDrawableSize(Screen, &width, nullptr);
 	return width;
@@ -609,6 +617,8 @@ int SDLGLFB::GetClientWidth()
 
 int SDLGLFB::GetClientHeight()
 {
+	return requestedHeight;
+
 	int height = 0;
 	SDL_GL_GetDrawableSize(Screen, nullptr, &height);
 	return height;
