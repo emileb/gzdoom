@@ -82,6 +82,11 @@ EXTERN_CVAR (Bool, cl_capfps)
 
 DFrameBuffer *CreateGLSWFrameBuffer(int width, int height, bool bgra, bool fullscreen);
 
+#ifdef __MOBILE__
+static int requestedWidth;
+static int requestedHeight;
+#endif
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 CUSTOM_CVAR(Bool, gl_debug, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
@@ -290,7 +295,7 @@ bool SDLGLVideo::SetResolution (int width, int height, int bits)
 //
 //==========================================================================
 #ifdef __MOBILE__
-extern "C" extern int glesLoad;
+extern "C" int glesLoad;
 #endif
 
 void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int *glver)
@@ -367,6 +372,10 @@ void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int
 SDLGLFB::SDLGLFB (void *, int width, int height, int, int, bool fullscreen, bool bgra)
 	: SDLBaseFB (width, height, bgra)
 {
+#ifdef __MOBILE__
+	requestedWidth = width;
+	requestedHeight = height;
+#endif
 	// NOTE: Core profiles were added with GL 3.2, so there's no sense trying
 	// to set core 3.1 or 3.0. We could try a forward-compatible context
 	// instead, but that would be too restrictive (w.r.t. shaders).
@@ -543,6 +552,10 @@ void SDLGLFB::SwapBuffers()
 
 int SDLGLFB::GetClientWidth()
 {
+#ifdef __MOBILE__
+	return requestedWidth;
+#endif
+
 	int width = 0;
 	SDL_GL_GetDrawableSize(Screen, &width, nullptr);
 	return width;
@@ -550,6 +563,10 @@ int SDLGLFB::GetClientWidth()
 
 int SDLGLFB::GetClientHeight()
 {
+#ifdef __MOBILE__
+	return requestedHeight;
+#endif
+
 	int height = 0;
 	SDL_GL_GetDrawableSize(Screen, nullptr, &height);
 	return height;
