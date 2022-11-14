@@ -172,7 +172,7 @@ POLYBACKEND_SOURCES = \
 
 
 PCH_SOURCES = \
-	common/thirdparty/richpresence.cpp \ \
+	common/thirdparty/richpresence.cpp \
 	am_map.cpp \
 	playsim/bots/b_bot.cpp \
 	playsim/bots/b_func.cpp \
@@ -614,7 +614,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter vpx
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3  bzip2_gl3 logwritter vpx_player
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
 #Strip unused functions/data
