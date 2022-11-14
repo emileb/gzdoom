@@ -59,6 +59,9 @@ static std::map<FString, std::unique_ptr<ProgramBinary>> ShaderCache; // Not a T
 
 bool IsShaderCacheActive()
 {
+#ifdef __MOBILE__
+	return false; // When enabled it can cause touch controls to be invisible
+#endif
 	static bool active = true;
 	static bool firstcall = true;
 
