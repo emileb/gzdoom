@@ -131,18 +131,9 @@ PLAT_SDL_SOURCES = \
     	common/platform/posix/i_system_posix.cpp
 
 
-POLYBACKEND_SOURCES = \
-	common/rendering/polyrenderer/backend/poly_framebuffer.cpp \
-	common/rendering/polyrenderer/backend/poly_buffers.cpp \
-	common/rendering/polyrenderer/backend/poly_hwtexture.cpp \
-	common/rendering/polyrenderer/backend/poly_renderstate.cpp
-
-
-
  FASTMATH_SOURCES = \
 	rendering/swrenderer/r_all.cpp \
 	rendering/swrenderer/r_swscene.cpp \
-	common/rendering/polyrenderer/poly_all.cpp \
 	common/textures/hires/hqnx/init.cpp \
 	common/textures/hires/hqnx/hq2x.cpp \
 	common/textures/hires/hqnx/hq3x.cpp \
@@ -198,7 +189,6 @@ PCH_SOURCES = \
 	g_hub.cpp \
 	g_level.cpp \
 	gameconfigfile.cpp \
-	gitinfo.cpp \
 	hu_scores.cpp \
 	m_cheat.cpp \
 	m_misc.cpp \
@@ -213,6 +203,7 @@ PCH_SOURCES = \
 	playsim/p_map.cpp \
 	playsim/p_maputl.cpp \
 	playsim/p_mobj.cpp \
+	playsim/a_corona.cpp \
 	p_openmap.cpp \
 	playsim/p_pspr.cpp \
 	p_saveg.cpp \
@@ -427,6 +418,8 @@ PCH_SOURCES = \
 	common/models/models_obj.cpp \
 	common/models/model.cpp \
 	common/models/voxels.cpp \
+	common/models/models_iqm.cpp \
+	common/utility/gitinfo.cpp \
 	common/console/c_commandline.cpp \
 	common/console/c_buttons.cpp \
 	common/console/c_bind.cpp \
@@ -525,6 +518,7 @@ PCH_SOURCES = \
 	common/rendering/hwrenderer/postprocessing/hw_postprocess.cpp \
 	common/rendering/hwrenderer/postprocessing/hw_postprocess_cvars.cpp \
 	common/rendering/hwrenderer/postprocessing/hw_postprocessshader_ccmds.cpp \
+	common/rendering/hwrenderer/data/hw_bonebuffer.cpp \
 	common/rendering/gl_load/gl_interface.cpp \
 	common/rendering/gl/gl_renderer.cpp \
 	common/rendering/gl/gl_stereo3d.cpp \
@@ -584,7 +578,6 @@ LOCAL_SRC_FILES = \
     $(ANDROID_SRC_FILES) \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
-	$(POLYBACKEND_SOURCES) \
 	${PCH_SOURCES} \
 	common/utility/x86.cpp \
 	common/thirdparty/strnatcmp.c \

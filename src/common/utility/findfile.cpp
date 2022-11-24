@@ -465,6 +465,7 @@ const char* BaseFileSearch(const char* file, const char* ext, bool lookfirstinpr
 	}
 
 #ifdef __MOBILE__
+	char wad[128];
 	mysnprintf(wad, countof(wad), "./res/%s", file);
 	if (DirEntryExists(wad))
 	{

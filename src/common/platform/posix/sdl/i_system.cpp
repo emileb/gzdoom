@@ -417,6 +417,12 @@ FString I_GetFromClipboard (bool use_primary_selection)
 	}
 	return "";
 }
+#ifdef __MOBILE__
+extern "C"
+{
+	char *get_current_dir_name(void);
+}
+#endif
 
 FString I_GetCWD()
 {
