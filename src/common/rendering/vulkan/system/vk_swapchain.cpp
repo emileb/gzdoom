@@ -61,7 +61,11 @@ uint32_t VulkanSwapChain::AcquireImage(int width, int height, bool vsync, Vulkan
 			break;
 		}
 
+#ifdef __MOBILE__
+		VkResult result = vkAcquireNextImageKHR(device->device, swapChain, UINT64_MAX, semaphore ? semaphore->semaphore : VK_NULL_HANDLE, fence ? fence->fence : VK_NULL_HANDLE, &imageIndex);
+#else
 		VkResult result = vkAcquireNextImageKHR(device->device, swapChain, 1'000'000'000, semaphore ? semaphore->semaphore : VK_NULL_HANDLE, fence ? fence->fence : VK_NULL_HANDLE, &imageIndex);
+#endif
 		if (result == VK_SUCCESS)
 		{
 			break;
@@ -203,7 +207,7 @@ bool VulkanSwapChain::CreateSwapChain(bool vsync, VkSwapchainKHR oldSwapChain)
 		swapChainCreateInfo.pQueueFamilyIndices = nullptr;
 	}
 
-	swapChainCreateInfo.preTransform = surfaceCapabilities.currentTransform;
+	//swapChainCreateInfo.preTransform = surfaceCapabilities.currentTransform;
 	swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // If alpha channel is passed on to the DWM or not
 	swapChainCreateInfo.presentMode = swapChainPresentMode;
 	swapChainCreateInfo.clipped = VK_TRUE;
