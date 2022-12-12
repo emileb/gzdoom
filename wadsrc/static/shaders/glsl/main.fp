@@ -230,6 +230,8 @@ vec4 getTexel(vec2 st)
 	texel.rgb += uAddColor.rgb;
 	if (uObjectColor2.a == 0.0) texel *= uObjectColor;
 	else texel *= mix(uObjectColor, uObjectColor2, gradientdist.z);
+#else
+	texel *= uObjectColor;
 #endif
 	// Last but not least apply the desaturation from the sector's light.
 	return desaturate(texel);
