@@ -86,6 +86,10 @@ public:
 		return Sec * 1e3;
 	}
 
+	void ResetAndClock()
+	{
+
+	}
 
 	double Sec;
 };

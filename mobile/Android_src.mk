@@ -564,6 +564,7 @@ PCH_SOURCES = \
 	common/scripting/core/scopebarrier.cpp \
 	common/scripting/core/vmdisasm.cpp \
 	common/scripting/core/imports.cpp \
+	common/scripting/core/maps.cpp \
 	common/scripting/vm/vmexec.cpp \
 	common/scripting/vm/vmframe.cpp \
 	common/scripting/interface/stringformat.cpp \
