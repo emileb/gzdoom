@@ -92,6 +92,7 @@ vec3 ProcessMaterialLight(Material material, vec3 color)
 
 	vec3 frag;
 
+#if 0 // disable this on mobile for now to avoid performance drop, fix later..
 	if ( uLightBlendMode == 1 )
 	{	// COLOR_CORRECT_CLAMPING 
 		vec3 lightcolor = color + desaturate(dynlight).rgb;
@@ -102,6 +103,7 @@ vec3 ProcessMaterialLight(Material material, vec3 color)
 		frag = material.Base.rgb * (color + desaturate(dynlight).rgb);
 	}
 	else
+#endif
 	{
 		frag = material.Base.rgb * clamp(color + desaturate(dynlight).rgb, 0.0, 1.4);
 	}
