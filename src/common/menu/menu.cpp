@@ -997,6 +997,10 @@ CCMD(undocolorpic)
 	}
 }
 
+#ifdef __MOBILE__ // This is so the vm can access this, but more complicated!
+extern bool g_bindingbutton;
+DEFINE_GLOBAL(g_bindingbutton);
+#endif
 
 DEFINE_GLOBAL(menuactive)
 DEFINE_GLOBAL(BackbuttonTime)

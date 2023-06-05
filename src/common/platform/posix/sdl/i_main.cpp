@@ -144,7 +144,11 @@ void I_DetectOS()
 
 void I_StartupJoysticks();
 
+#ifdef __ANDROID__
+int main_android (int argc, char **argv)
+#else
 int main (int argc, char **argv)
+#endif
 {
 #if !defined (__APPLE__)
 	{
@@ -197,6 +201,11 @@ int main (int argc, char **argv)
 	const int result = GameMain();
 
 	SDL_Quit();
+
+#ifdef __ANDROID__
+	usleep(500* 1000);
+	exit(0);
+#endif
 
 	return result;
 }
