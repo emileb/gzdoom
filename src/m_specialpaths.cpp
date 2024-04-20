@@ -467,13 +467,19 @@ FString M_GetSavegamesPath()
 
 #else // Linux, et al.
 
+#ifdef __ANDROID__
+extern "C" const char *userFilesPath_c;
+#endif
 
 FString GetUserFile (const char *file)
 {
 	FString path;
 	struct stat info;
 #ifdef __ANDROID__
-    path = "./user_files/gzdoom_1.9/";
+
+	path = userFilesPath_c;
+	path += "/gzdoom_1.9/";
+
     if (stat (path, &info) == -1)
     {
         if (mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
@@ -582,9 +588,10 @@ FString M_GetAutoexecPath()
 FString M_GetCajunPath(const char *botfilename)
 {
 #ifdef __ANDROID__
-	FString path = NicePath("./user_files/bots/");
-
+	FString path = userFilesPath_c;
+	path += "/bots/";
 	path << botfilename;
+
 	if (!FileExists(path))
 	{
 		path = "";
@@ -636,7 +643,10 @@ FString M_GetConfigPath(bool for_reading)
 FString M_GetScreenshotsPath()
 {
 #ifdef __ANDROID__
-	return NicePath("./user_files/gzdoom_1.9/screenshots/");
+	FString path = userFilesPath_c;
+    path += "/gzdoom_1.9/screenshots/";
+
+    return NicePath(path.GetChars());
 #else
 	return NicePath("~/" GAME_DIR "/screenshots/");
 #endif
@@ -653,7 +663,10 @@ FString M_GetScreenshotsPath()
 FString M_GetSavegamesPath()
 {
 #ifdef __ANDROID__
-    return NicePath("./user_files/gzdoom_1.9/saves");
+	FString path = userFilesPath_c;
+	path += "/gzdoom_1.9/saves/";
+
+	return NicePath(path.GetChars());
 #else
 	return NicePath("~/" GAME_DIR);
 #endif
