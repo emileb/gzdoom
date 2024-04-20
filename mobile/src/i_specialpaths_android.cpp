@@ -40,11 +40,13 @@
 
 #include "version.h"	// for GAMENAME
 
+extern "C" const char *userFilesPath_c;
+
 FString M_GetAppDataPath(bool create)
 {
-	// Don't use GAME_DIR and such so that ZDoom and its child ports can
-	// share the node cache.
-	FString path = NicePath("./user_files/gzdoom_dev/config/" GAMENAMELOWERCASE);
+    FString path =  userFilesPath_c;
+    path += "/gzdoom_dev/config/" GAMENAMELOWERCASE;
+
 	if (create)
 	{
 		CreatePath(path);
@@ -54,26 +56,16 @@ FString M_GetAppDataPath(bool create)
 
 FString GetUserFile (const char *file)
 {
-	FString path;
-	struct stat info;
+    struct stat info;
 
-	path = NicePath("./user_files/gzdoom_dev/config/");
+    FString path = userFilesPath_c;
+    path += "/gzdoom_dev/config/";
 
 	if (stat (path, &info) == -1)
 	{
-	/*
-		struct stat extrainfo;
-
-		if (stat (path, &extrainfo) == -1)
-		{
-			if (mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
-			{
-				//I_FatalError ("Failed to create ./gzdoom/ directory:\n%s", strerror(errno));
-			}
-		}
-		*/
 		CreatePath(path);
 	}
+
 	mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR);
 
 	path += file;
@@ -90,9 +82,8 @@ FString GetUserFile (const char *file)
 
 FString M_GetCachePath(bool create)
 {
-	// Don't use GAME_DIR and such so that ZDoom and its child ports can
-	// share the node cache.
 	FString path = NicePath("./user_files/gzdoom_dev/cache/");
+
 	if (create)
 	{
 		CreatePath(path);
@@ -123,9 +114,10 @@ FString M_GetAutoexecPath()
 
 FString M_GetCajunPath(const char *botfilename)
 {
-	FString path = NicePath("./user_files/bots/");
+    FString path = userFilesPath_c;
+    path += "/bots/";
+    path << botfilename;
 
-	path << botfilename;
 	if (!FileExists(path))
 	{
 		path = "";
@@ -159,7 +151,10 @@ FString M_GetConfigPath(bool for_reading)
 
 FString M_GetScreenshotsPath()
 {
-	return NicePath("./user_files/gzdoom_dev/screenshots/");
+    FString path = userFilesPath_c;
+    path += "/gzdoom_dev/screenshots/";
+
+    return NicePath(path.GetChars());
 }
 
 //===========================================================================
@@ -172,7 +167,10 @@ FString M_GetScreenshotsPath()
 
 FString M_GetSavegamesPath()
 {
-	return NicePath("./user_files/gzdoom_dev/saves/");
+    FString path = userFilesPath_c;
+    path += "/gzdoom_dev/saves/";
+
+    return NicePath(path.GetChars());
 }
 
 //===========================================================================
@@ -185,5 +183,8 @@ FString M_GetSavegamesPath()
 
 FString M_GetDocumentsPath()
 {
-	return NicePath("./user_files/gzdoom_dev/");
+    FString path = userFilesPath_c;
+    path += "/gzdoom_dev/";
+
+    return NicePath(path.GetChars());
 }
