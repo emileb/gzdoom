@@ -83,6 +83,7 @@ EXTERN_CVAR (Int, vid_defwidth)
 EXTERN_CVAR (Int, vid_defheight)
 EXTERN_CVAR (Bool, cl_capfps)
 EXTERN_CVAR(Bool, vk_debug)
+EXTERN_CVAR(Int, gl_pipeline_depth);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -198,7 +199,11 @@ namespace Priv
 
 	void SetupPixelFormat(int multisample, const int *glver)
 	{
+#ifdef __MOBILE__
+		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,  16 );
+#else
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		if (multisample > 0) {
@@ -207,6 +212,21 @@ namespace Priv
 		}
 		if (gl_debug)
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+
+#ifdef __MOBILE__
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+        if( Args->CheckParm ("-gles2_renderer") )
+        {
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        }
+		else
+		{
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		}
+        return;
+#endif
 
 		if (gl_es)
 		{

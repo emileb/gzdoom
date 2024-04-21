@@ -1556,6 +1556,8 @@ void DAutomap::Ticker ()
 		return;
 
 	amclock++;
+	
+
 }
 
 
@@ -3275,6 +3277,20 @@ void DAutomap::Drawer (int bottom)
 		if (buttonMap.ButtonDown(Button_AM_PanDown))
 			m_paninc.y -= FTOM(F_PANINC) * delta * TICRATE;
 	}
+
+#ifdef __MOBILE__
+	extern void Mobile_AM_controls(double *zoom, double *pan_x, double *pan_y );
+	double zoom = am_zoomdir;
+	double xInc = 0;
+	double yInc = 0;
+
+	Mobile_AM_controls(&zoom, &xInc, &yInc);
+	m_paninc.x += xInc;
+	m_paninc.y += yInc;
+	m_paninc.x *= scale_ftom * 0.8;
+	m_paninc.y *= scale_ftom * 0.8;
+	am_zoomdir = zoom;
+#endif
 
 	// Change the zoom if necessary
 	if (buttonMap.ButtonDown(Button_AM_ZoomIn) || buttonMap.ButtonDown(Button_AM_ZoomOut) || am_zoomdir != 0)
