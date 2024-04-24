@@ -430,7 +430,7 @@ FName EvalExpressionName (DWORD x, AActor *self);
 #define ACTION_PARAM_NAME(var,i) \
 	FName var = EvalExpressionName(ParameterIndex+i, self);
 #define ACTION_PARAM_ANGLE(var,i) \
-	angle_t var = angle_t(EvalExpressionF(ParameterIndex+i, self)*ANGLE_90/90.f);
+	angle_t var = FLOAT2ANGLE(EvalExpressionF(ParameterIndex+i, self));
 
 #define ACTION_SET_RESULT(v) if (statecall != NULL) statecall->Result = v;
 
