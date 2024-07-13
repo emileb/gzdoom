@@ -490,10 +490,13 @@ FString M_GetCajunPath(const char* botfilename)
 
 #else
 
+extern "C" const char *userFilesPath_c;
+
 FString M_GetCajunPath(const char* botfilename)
 {
 #ifdef __ANDROID__
-	FString path = NicePath("./user_files/bots/");
+	FString path = userFilesPath_c;
+    path += "/bots/";
 	path << botfilename;
 #else
 	FString path;

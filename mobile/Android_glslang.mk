@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../libraries/glslang/glslang/
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := glslang
+LOCAL_MODULE := glslang_411
 
 LOCAL_CFLAGS :=
 
