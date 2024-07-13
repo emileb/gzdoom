@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../dumb
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := dumb_dev
+LOCAL_MODULE    := dumb_3.8.2
 
 LOCAL_CFLAGS := -DNEED_ITOA  -Wno-pointer-sign -Wno-uninitialized -fsigned-char
 

@@ -3,9 +3,9 @@ LOCAL_PATH := $(call my-dir)/../src
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := gzdoom_l
+LOCAL_MODULE    := g382 # gzdoom_3.8.2, need to shorted for Windows max command line lenght on linking
 
-LOCAL_CFLAGS   :=   -DNO_CLOCK_GETTIME -D__MOBILE__ -DNO_PIX_BUFF  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_DEV -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   :=   -DNO_CLOCK_GETTIME -D__MOBILE__ -DNO_PIX_BUFF  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_DEV -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_3.8.2\"
 
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14 -DHAVE_JWZGLES  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 LOCAL_CFLAGS  += -DNO_SEND_STATS
@@ -564,14 +564,9 @@ p_acs.cpp_CFLAGS := -O1
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=-lGLESv1_CM
-#LOCAL_LDLIBS += -lGLESv3
-
 LOCAL_LDLIBS +=  -lEGL
 
-# This is stop a linker warning for mp123 lib failing build
-#LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
-
-LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_dev lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev asmjit_dev logwritter
+LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_3.8.2 lzma_3.8.2 gdtoa_3.8.2 dumb_3.8.2 gme_3.8.2 bzip2_3.8.2 asmjit_3.8.2 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared core_shared saffal
 
 #Strip unused functions/data

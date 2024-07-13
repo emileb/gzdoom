@@ -4,7 +4,7 @@ LOCAL_PATH := $(call my-dir)/../gdtoa
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := gdtoa_dev
+LOCAL_MODULE    := gdtoa_3.8.2
 
 LOCAL_C_INCLUDES :=   . $(GZDOOM_TOP_PATH)/mobile/src/extrafiles
 

@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../asmjit
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := asmjit_dev
+LOCAL_MODULE    := asmjit_3.8.2
 
 LOCAL_CFLAGS := -frtti -DASMJIT_BUILD_EMBED -DASMJIT_STATIC -DASMJIT_BUILD_X86 #-DASMJIT_ARCH_X86=1
 

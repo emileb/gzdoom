@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)/../bzip2
 include $(CLEAR_VARS)
 
 
-LOCAL_MODULE    := bzip2_dev
+LOCAL_MODULE    := bzip2_3.8.2
 
 LOCAL_CFLAGS :=
 

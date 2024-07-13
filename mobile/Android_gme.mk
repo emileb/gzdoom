@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../game-music-emu
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := gme_dev
+LOCAL_MODULE    := gme_3.8.2
 
 LOCAL_CPPFLAGS := -DVGM_YM2612_GENS -std=c++14 -fexceptions
 

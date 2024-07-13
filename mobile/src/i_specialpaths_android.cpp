@@ -45,7 +45,7 @@ extern "C" const char *userFilesPath_c;
 FString M_GetAppDataPath(bool create)
 {
     FString path =  userFilesPath_c;
-    path += "/gzdoom_dev/config/" GAMENAMELOWERCASE;
+    path += "/gzdoom_3.8.2/config/" GAMENAMELOWERCASE;
 
 	if (create)
 	{
@@ -59,7 +59,7 @@ FString GetUserFile (const char *file)
     struct stat info;
 
     FString path = userFilesPath_c;
-    path += "/gzdoom_dev/config/";
+    path += "/gzdoom_3.8.2/config/";
 
 	if (stat (path, &info) == -1)
 	{
@@ -82,7 +82,7 @@ FString GetUserFile (const char *file)
 
 FString M_GetCachePath(bool create)
 {
-	FString path = NicePath("./user_files/gzdoom_dev/cache/");
+	FString path = NicePath("./user_files/gzdoom_3.8.2/cache/");
 
 	if (create)
 	{
@@ -152,7 +152,7 @@ FString M_GetConfigPath(bool for_reading)
 FString M_GetScreenshotsPath()
 {
     FString path = userFilesPath_c;
-    path += "/gzdoom_dev/screenshots/";
+    path += "/gzdoom_3.8.2/screenshots/";
 
     return NicePath(path.GetChars());
 }
@@ -168,7 +168,7 @@ FString M_GetScreenshotsPath()
 FString M_GetSavegamesPath()
 {
     FString path = userFilesPath_c;
-    path += "/gzdoom_dev/saves/";
+    path += "/gzdoom_3.8.2/saves/";
 
     return NicePath(path.GetChars());
 }
@@ -184,7 +184,7 @@ FString M_GetSavegamesPath()
 FString M_GetDocumentsPath()
 {
     FString path = userFilesPath_c;
-    path += "/gzdoom_dev/";
+    path += "/gzdoom_3.8.2/";
 
     return NicePath(path.GetChars());
 }
