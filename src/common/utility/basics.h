@@ -69,3 +69,10 @@ const double M_PI = 3.14159265358979323846;	// matches value in gcc v2 math.h
 using std::min;
 using std::max;
 using std::clamp;
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#include "LogWritter.h"
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#endif
+

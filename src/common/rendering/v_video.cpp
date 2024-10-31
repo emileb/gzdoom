@@ -81,7 +81,11 @@ CUSTOM_CVAR(Int, gl_pipeline_depth, 0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_N
 	Printf("Changing the pipeline depth requires a restart for " GAMENAME ".\n");
 }
 
+#ifdef __ANDROID__
+CUSTOM_CVAR(Int, vid_maxfps, 200, CVAR_ARCHIVE | CVAR_GLOBALCONFIG) // Very high FPS can cause controls to go strange
+#else
 CUSTOM_CVAR(Int, vid_maxfps, 500, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+#endif
 {
 	if (self < GameTicRate && self != 0)
 	{
