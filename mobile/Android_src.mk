@@ -409,6 +409,7 @@ PCH_SOURCES = \
 	common/fonts/v_font.cpp \
 	common/fonts/v_text.cpp \
 	common/textures/hw_ihwtexture.cpp \
+	common/textures/firetexture.cpp \
 	common/textures/hw_material.cpp \
 	common/textures/bitmap.cpp \
 	common/textures/m_png.cpp \
