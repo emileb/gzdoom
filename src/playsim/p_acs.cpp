@@ -5324,7 +5324,7 @@ int DLevelScript::SwapActorTeleFog(AActor *activator, int tid)
 	return retval;
 }
 
-#ifdef __MOBILE__ // Disable for now..
+#ifdef __MOBILE_dont_do__ // Disable for now..
 #define MIN_ARG_COUNT(minCount)
 #else
 // Macro for CallFunction. Checks passed number of arguments with minimum required. Sets needCount and returns if not enough.
