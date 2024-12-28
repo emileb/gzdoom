@@ -101,7 +101,7 @@ const char *GetVersionString();
 #endif
 
 #ifdef __MOBILE__
-#define OPTIONALWAD "./res/game_support.pk3"
+#define OPTIONALWAD "./res/game_support_4.11.pk3"
 #else
 #define OPTIONALWAD "game_support.pk3"
 #endif
