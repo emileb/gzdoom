@@ -35,7 +35,11 @@ CUSTOM_CVAR(Float, gl_bloom_amount, 1.4f, CVAR_ARCHIVE)
 
 CVAR(Float, gl_exposure_scale, 1.3f, CVAR_ARCHIVE)
 CVAR(Float, gl_exposure_min, 0.35f, CVAR_ARCHIVE)
+#ifdef __MOBILE__
+CVAR(Float, gl_exposure_base, 0.1f, CVAR_ARCHIVE)
+#else
 CVAR(Float, gl_exposure_base, 0.35f, CVAR_ARCHIVE)
+#endif
 CVAR(Float, gl_exposure_speed, 0.05f, CVAR_ARCHIVE)
 
 CUSTOM_CVAR(Int, gl_tonemap, 0, CVAR_ARCHIVE)

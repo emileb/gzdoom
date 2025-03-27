@@ -97,9 +97,18 @@ const char *GetVersionString();
 // #define ALLOWLOADIN "PORT1", "PORT2", "PORT3"
 #define ALLOWLOADIN "UZDOOM"
 
+#ifdef __MOBILE__
+#define BASEWAD "./res/lzdoom_4x.pk3"
+#else
 #define BASEWAD "lzdoom.pk3"
+#endif
 // Set OPTIONALWAD to "" (null) to disable searching for it
+#ifdef __MOBILE__
+#define OPTIONALWAD "./res/lzdoom_4x_game_support.pk3"
+#else
 #define OPTIONALWAD "game_support.pk3"
+#endif
+
 #define GZDOOM 1
 #define VR3D_ENABLED
 

@@ -154,7 +154,11 @@ CUSTOM_CVARD(Int, gl_maplightmode, -1, CVAR_NOINITCALL, "This is just for testin
 	if (self > 8 || self < -1) self = -1;
 }
 
+#ifdef __MOBILE__ // Default ot performance lighting mode
+CUSTOM_CVARD(Int, gl_lightmode, 0, CVAR_ARCHIVE, "Select lighting mode. 2 is vanilla accurate, 1 is accurate to the ZDoom software renderer and 0 is without player light radius (Dark)")
+#else
 CUSTOM_CVARD(Int, gl_lightmode, 1, CVAR_ARCHIVE, "Select lighting mode. 2 is vanilla accurate, 1 is accurate to the ZDoom software renderer and 0 is without player light radius (Dark)")
+#endif
 {
 	if (self < 0 || self > 2) self = 1;
 }

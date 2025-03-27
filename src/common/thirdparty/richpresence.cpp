@@ -75,6 +75,7 @@ static void handleDiscordJoin(const char* secret)
 
 static void handleDiscordJoinRequest(const DiscordUser* request)
 {
+#ifdef USE_DISCORD
 	// we can't join in-game
 	int response = DISCORD_REPLY_NO;
 	Discord_Respond(request->userId, response);
@@ -82,10 +83,12 @@ static void handleDiscordJoinRequest(const DiscordUser* request)
 		request->username,
 		request->discriminator,
 		request->userId);
+#endif
 }
 
 void I_UpdateDiscordPresence(bool SendPresence, const char* curstatus, const char* appid, const char* steamappid)
 {
+#ifdef USE_DISCORD
 	const char* curappid = DEFAULT_DISCORD_APP_ID;
 
 	if (appid && appid[0] != '\0')
@@ -125,5 +128,6 @@ void I_UpdateDiscordPresence(bool SendPresence, const char* curstatus, const cha
 	{
 		Discord_ClearPresence();
 	}
+#endif
 }
 

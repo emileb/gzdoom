@@ -116,7 +116,7 @@ public:
 
 		for (void **it = begin; it < end; ++it)
 		{
-			if (intptr_t(it) > 0xffff && *it && intptr_t(*it) > 0xffff)
+			if (uintptr_t(it) > 0xffff && *it && uintptr_t(*it) > 0xffff)
 			{
 				func(reinterpret_cast<ArgType>(*it));
 			}
@@ -131,7 +131,7 @@ public:
 
 		for (void **it = begin; it < end; ++it)
 		{
-			if (intptr_t(it) > 0xffff && *it && intptr_t(*it) > 0xffff)
+			if (uintptr_t(it) > 0xffff && *it && uintptr_t(*it) > 0xffff)
 			{
 				if (!func(reinterpret_cast<ArgType>(*it)))
 				{

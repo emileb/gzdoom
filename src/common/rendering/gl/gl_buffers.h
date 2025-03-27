@@ -26,8 +26,14 @@ protected:
 	~GLBuffer();
 	void SetData(size_t size, const void *data, BufferUsageType usage) override;
 	void SetSubData(size_t offset, size_t size, const void *data) override;
+#ifdef __ANDROID__
+public:
+#endif
 	void Map() override;
 	void Unmap() override;
+#ifdef __ANDROID__
+protected:
+#endif
 	void Resize(size_t newsize) override;
 	void *Lock(unsigned int size) override;
 	void Unlock() override;

@@ -41,6 +41,7 @@ void FMaterial::SetLayerCallback(IHardwareTexture* (*cb)(int layer, int translat
 	layercallback = cb;
 }
 
+
 //===========================================================================
 //
 // Constructor
@@ -128,6 +129,7 @@ FMaterial::FMaterial(FGameTexture * tx, int scaleflags)
 		}
 
 		auto index = tx->GetShaderIndex();
+
 		if (gl_customshader)
 		{
 			if (index >= FIRST_USER_SHADER)
