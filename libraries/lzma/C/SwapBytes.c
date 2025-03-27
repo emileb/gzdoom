@@ -419,7 +419,7 @@ SwapBytes4_128(CSwapUInt32 *items, const CSwapUInt32 *lim)
 
 
 
-
+#define FORCE_SWAP_MODE
 
 
 #if defined(Z7_MSC_VER_ORIGINAL) && defined(MY_CPU_X86)
