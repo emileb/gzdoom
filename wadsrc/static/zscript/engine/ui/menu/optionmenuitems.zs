@@ -559,7 +559,6 @@ class OptionMenuItemControlBase : OptionMenuItem
 		Menu.MenuSound("menu/choose");
 		mWaiting = true;
         // __MOBILE__
-        mBindings.UnbindACommand(mAction); //Only allow one button to be bound to avoid confusion
         g_bindingbutton = true;
         //
 		let input = new("EnterKey");
