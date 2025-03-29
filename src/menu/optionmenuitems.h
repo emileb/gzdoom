@@ -454,7 +454,6 @@ public:
 		S_Sound (CHAN_VOICE | CHAN_UI, "menu/choose", snd_menuvolume, ATTN_NONE);
 		mWaiting = true;
 #ifdef __MOBILE__
-		mBindings->UnbindACommand(mAction); //Only allow one button to be bound to avoid confusion
 		g_bindingbutton = true;
 #endif
 		DMenu *input = new DEnterKey(DMenu::CurrentMenu, &mInput);
