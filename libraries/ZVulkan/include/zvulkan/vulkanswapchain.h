@@ -27,7 +27,9 @@ public:
 
 	void Create(int width, int height, int imageCount, bool vsync, bool hdr, bool exclusivefullscreen);
 	bool Lost() const { return lost; }
-
+#ifdef __ANDROID__
+    void MakeLost() { lost = true; }
+#endif
 	int Width() const { return actualExtent.width; }
 	int Height() const { return actualExtent.height; }
 	VkSurfaceFormatKHR Format() const { return format; }
