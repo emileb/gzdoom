@@ -5,10 +5,9 @@ include $(CLEAR_VARS)
 
 #LOCAL_SHORT_COMMANDS := true
 
-LOCAL_MODULE    := g4
+LOCAL_MODULE    := g
 
-LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
-#-DHAVE_VULKAN
+LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -91,6 +90,7 @@ LOCAL_C_INCLUDES := \
         $(GZDOOM_TOP_PATH)/libraries/glslang \
         $(GZDOOM_TOP_PATH)/libraries/miniz \
         $(GZDOOM_TOP_PATH)/libraries/discordrpc/include \
+        $(GZDOOM_TOP_PATH)/libraries/ZVulkan/include \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
@@ -166,30 +166,26 @@ PLAT_SDL_SOURCES = \
 
 
 VULKAN_SOURCES = \
-	common/rendering/vulkan/system/vk_device.cpp \
-	common/rendering/vulkan/system/vk_swapchain.cpp \
-	common/rendering/vulkan/system/vk_builders.cpp \
-	common/rendering/vulkan/system/vk_framebuffer.cpp \
-	common/rendering/vulkan/system/vk_commandbuffer.cpp \
-	common/rendering/vulkan/system/vk_hwbuffer.cpp \
-	common/rendering/vulkan/system/vk_buffer.cpp \
-	common/rendering/vulkan/renderer/vk_renderstate.cpp \
-	common/rendering/vulkan/renderer/vk_renderpass.cpp \
-	common/rendering/vulkan/renderer/vk_streambuffer.cpp \
-	common/rendering/vulkan/renderer/vk_postprocess.cpp \
-	common/rendering/vulkan/renderer/vk_pprenderstate.cpp \
-	common/rendering/vulkan/renderer/vk_descriptorset.cpp \
-	common/rendering/vulkan/renderer/vk_raytrace.cpp \
-	common/rendering/vulkan/shaders/vk_shader.cpp \
-	common/rendering/vulkan/shaders/vk_ppshader.cpp \
-	common/rendering/vulkan/textures/vk_samplers.cpp \
-	common/rendering/vulkan/textures/vk_hwtexture.cpp \
-	common/rendering/vulkan/textures/vk_pptexture.cpp \
-	common/rendering/vulkan/textures/vk_imagetransition.cpp \
-	common/rendering/vulkan/textures/vk_renderbuffers.cpp \
-	common/rendering/vulkan/textures/vk_texture.cpp \
-	common/rendering/vulkan/thirdparty/volk/volk.c \
-	common/rendering/vulkan/thirdparty/vk_mem_alloc/vk_mem_alloc.cpp \
+    common/rendering/vulkan/system/vk_renderdevice.cpp \
+    common/rendering/vulkan/system/vk_commandbuffer.cpp \
+    common/rendering/vulkan/system/vk_hwbuffer.cpp \
+    common/rendering/vulkan/system/vk_buffer.cpp \
+    common/rendering/vulkan/renderer/vk_renderstate.cpp \
+    common/rendering/vulkan/renderer/vk_renderpass.cpp \
+    common/rendering/vulkan/renderer/vk_streambuffer.cpp \
+    common/rendering/vulkan/renderer/vk_postprocess.cpp \
+    common/rendering/vulkan/renderer/vk_pprenderstate.cpp \
+    common/rendering/vulkan/renderer/vk_descriptorset.cpp \
+    common/rendering/vulkan/renderer/vk_raytrace.cpp \
+    common/rendering/vulkan/shaders/vk_shader.cpp \
+    common/rendering/vulkan/shaders/vk_ppshader.cpp \
+    common/rendering/vulkan/textures/vk_samplers.cpp \
+    common/rendering/vulkan/textures/vk_hwtexture.cpp \
+    common/rendering/vulkan/textures/vk_pptexture.cpp \
+    common/rendering/vulkan/textures/vk_imagetransition.cpp \
+    common/rendering/vulkan/textures/vk_renderbuffers.cpp \
+    common/rendering/vulkan/textures/vk_texture.cpp \
+    common/rendering/vulkan/textures/vk_framebuffer.cpp \
 
 
 PCH_SOURCES = \
@@ -602,6 +598,7 @@ LOCAL_SRC_FILES = \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
 	${PCH_SOURCES} \
+	${VULKAN_SOURCES} \
 	common/utility/x86.cpp \
 	common/thirdparty/strnatcmp.c \
 	common/utility/zstring.cpp \
@@ -654,7 +651,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_gl3  bzip2_gl3 logwritter vpx_player webpmux zwidget
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_gl3  bzip2_gl3 logwritter vpx_player webpmux zwidget glslang
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
 #Strip unused functions/data
