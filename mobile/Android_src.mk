@@ -32,14 +32,14 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/scripting \
  $(GZDOOM_TOP_PATH)/src/scripting/vm \
  $(GZDOOM_TOP_PATH)/src/posix \
- $(GZDOOM_TOP_PATH)/src/posix\sdl \
+ $(GZDOOM_TOP_PATH)/src/posix/sdl \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
  $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
  $(TOP_DIR)/jpeg8d \
  $(TOP_DIR)/Clibs_OpenTouch \
- $(TOP_DIR)/Clibs_OpenTouch\idtech1 \
+ $(TOP_DIR)/Clibs_OpenTouch/idtech1 \
  $(TOP_DIR)/jwzgles \
  $(TOP_DIR)/MobileTouchControls  \
  $(GZDOOM_TOP_PATH)/mobile/src
