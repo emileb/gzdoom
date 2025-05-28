@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g411
 
-LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_411\"
+LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_411\" -DHAVE_VULKAN
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -83,8 +83,9 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/libraries/lzma/C \
         $(GZDOOM_TOP_PATH)/libraries/bzip2 \
         $(GZDOOM_TOP_PATH)/libraries/glslang \
-         $(GZDOOM_TOP_PATH)/libraries/miniz \
+        $(GZDOOM_TOP_PATH)/libraries/miniz \
         $(GZDOOM_TOP_PATH)/libraries/discordrpc/include \
+        $(GZDOOM_TOP_PATH)/libraries/ZVulkan/include \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
@@ -160,10 +161,7 @@ PLAT_SDL_SOURCES = \
 
 
 VULKAN_SOURCES = \
-	common/rendering/vulkan/system/vk_device.cpp \
-	common/rendering/vulkan/system/vk_swapchain.cpp \
-	common/rendering/vulkan/system/vk_builders.cpp \
-	common/rendering/vulkan/system/vk_framebuffer.cpp \
+	common/rendering/vulkan/system/vk_renderdevice.cpp \
 	common/rendering/vulkan/system/vk_commandbuffer.cpp \
 	common/rendering/vulkan/system/vk_hwbuffer.cpp \
 	common/rendering/vulkan/system/vk_buffer.cpp \
@@ -182,8 +180,7 @@ VULKAN_SOURCES = \
 	common/rendering/vulkan/textures/vk_imagetransition.cpp \
 	common/rendering/vulkan/textures/vk_renderbuffers.cpp \
 	common/rendering/vulkan/textures/vk_texture.cpp \
-	common/rendering/vulkan/thirdparty/volk/volk.c \
-	common/rendering/vulkan/thirdparty/vk_mem_alloc/vk_mem_alloc.cpp \
+	common/rendering/vulkan/textures/vk_framebuffer.cpp
 
 
 PCH_SOURCES = \
@@ -592,6 +589,7 @@ LOCAL_SRC_FILES = \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
 	${PCH_SOURCES} \
+	${VULKAN_SOURCES} \
 	common/utility/x86.cpp \
 	common/thirdparty/strnatcmp.c \
 	common/utility/zstring.cpp \
@@ -639,7 +637,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_411  bzip2_411 logwritter vpx_player webpmux
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_411  bzip2_411 logwritter vpx_player webpmux glslang_411
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
 #Strip unused functions/data

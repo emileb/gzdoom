@@ -246,8 +246,15 @@ int VulkanSwapChain::AcquireImage(VulkanSemaphore* semaphore, VulkanFence* fence
 	}
 }
 
+#ifdef __ANDROID__
+extern "C" void frameControlsSDLCallback(void);
+#endif
+
 void VulkanSwapChain::QueuePresent(int imageIndex, VulkanSemaphore* semaphore)
 {
+#ifdef __ANDROID__
+    frameControlsSDLCallback();
+#endif
 	uint32_t index = imageIndex;
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -343,7 +350,9 @@ VulkanSurfaceCapabilities VulkanSwapChain::GetSurfaceCapabilities(bool exclusive
 		if (result != VK_SUCCESS)
 			VulkanError("vkGetPhysicalDeviceSurfaceCapabilitiesKHR failed");
 	}
-
+#ifdef __ANDROID__
+    caps.Capabilites.currentTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+#endif
 #ifdef WIN32
 	if (exclusivefullscreen && device->SupportsExtension(VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME))
 	{
