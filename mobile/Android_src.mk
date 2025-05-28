@@ -656,6 +656,6 @@ LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
 
 #Strip unused functions/data
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections  -fPIC
-LOCAL_LDFLAGS += -Wl,--gc-sections -flto
+#LOCAL_LDFLAGS += -Wl,--gc-sections -flto
 
 include $(BUILD_SHARED_LIBRARY)
