@@ -34,7 +34,7 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/scripting \
  $(GZDOOM_TOP_PATH)/src/scripting/vm \
  $(GZDOOM_TOP_PATH)/src/posix \
- $(GZDOOM_TOP_PATH)/src/posix\sdl \
+ $(GZDOOM_TOP_PATH)/src/posix/sdl \
  $(GZDOOM_TOP_PATH)/src/../libraries/gdtoa \
  $(GZDOOM_TOP_PATH)/src/../libraries/bzip2 \
  $(GZDOOM_TOP_PATH)/src/../libraries/game-music-emu/ \
@@ -49,7 +49,7 @@ LOCAL_C_INCLUDES := \
  $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
  $(TOP_DIR)/jpeg8d \
  $(TOP_DIR)/Clibs_OpenTouch \
- $(TOP_DIR)/Clibs_OpenTouch\idtech1 \
+ $(TOP_DIR)/Clibs_OpenTouch/idtech1 \
  $(TOP_DIR)/jwzgles \
  $(TOP_DIR)/MobileTouchControls  \
  $(GZDOOM_TOP_PATH)/mobile/src
