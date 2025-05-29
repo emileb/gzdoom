@@ -865,6 +865,9 @@ static void End2DAndUpdate()
 	twod->OnFrameDone();
 }
 
+#ifdef __ANDROID__
+void VulkanCheckSurface();
+#endif
 //==========================================================================
 //
 // D_Display
@@ -886,6 +889,10 @@ void D_Display ()
 	{
 		return;
 	}
+
+#ifdef __ANDROID__
+    VulkanCheckSurface();
+#endif
 
 	cycle_t cycles;
 	
