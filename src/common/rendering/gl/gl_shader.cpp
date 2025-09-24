@@ -51,7 +51,13 @@
 #include <map>
 #include <memory>
 
+
 EXTERN_CVAR(Bool, r_skipmats)
+#ifdef __MOBILE__
+EXTERN_CVAR(Bool, gl_customshader)
+CVAR(Bool, gl_lite_shader, false, 0);
+#endif
+
 
 namespace OpenGLRenderer
 {
@@ -68,6 +74,9 @@ static std::map<FString, std::unique_ptr<ProgramBinary>> ShaderCache; // Not a T
 
 bool IsShaderCacheActive()
 {
+#ifdef __MOBILE__
+	return false;
+#endif
 	static bool active = true;
 	static bool firstcall = true;
 
@@ -312,6 +321,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		// these settings are actually pointless but there seem to be some old ATI drivers that fail to compile the shader without setting the precision here.
 		precision highp int;
 		precision highp float;
+		precision highp sampler2DArray;
 
 		// This must match the HWViewpointUniforms struct
 		layout(std140) uniform ViewpointUBO {
@@ -485,7 +495,10 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	assert(screen->mLights != NULL);
 	assert(screen->mBones != NULL);
 
-
+#ifdef __MOBILE__
+    bool lightbuffertype = screen->mLights->GetBufferType();
+	vp_comb.AppendFormat("#version 310 es\n#define NO_CLIPDISTANCE_SUPPORT\n#define NUM_UBO_LIGHTS %d\n#define NUM_UBO_BONES %d\n", screen->mLights->GetBlockSize(), screen->mBones->GetBlockSize());
+#else
 	if ((gl.flags & RFL_SHADER_STORAGE_BUFFER) && screen->allowSSBO())
 		vp_comb << "#version 430 core\n#define SUPPORTS_SHADOWMAPS\n";
 	else 
@@ -496,6 +509,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		vp_comb.AppendFormat("#define NUM_UBO_LIGHTS %d\n#define NUM_UBO_BONES %d\n", screen->mLights->GetBlockSize(), screen->mBones->GetBlockSize());
 	else
 		vp_comb << "#define SHADER_STORAGE_LIGHTS\n#define SHADER_STORAGE_BONES\n";
+#endif
 
 	FString fp_comb = vp_comb;
 	vp_comb << defines << i_data.GetChars();
@@ -843,6 +857,11 @@ FShader *FShaderCollection::Compile (const char *ShaderName, const char *ShaderP
 	if (!usediscard) defines += "#define NO_ALPHATEST\n";
 	if (passType == GBUFFER_PASS) defines += "#define GBUFFER_PASS\n";
 
+#ifdef __MOBILE__
+	if(gl_lite_shader)
+		defines += "#define SHADER_LITE\n";
+#endif
+
 	FShader *shader = NULL;
 	try
 	{
@@ -986,7 +1005,11 @@ bool FShaderCollection::CompileNextShader()
 		{
 			mCompileIndex = 0;
 			mCompileState++;
+#ifdef __MOBILE__
+			if (usershaders.Size() == 0 || !gl_customshader) mCompileState++;
+#else
 			if (usershaders.Size() == 0) mCompileState++;
+#endif
 		}
 	}
 	else if (mCompileState == 2)

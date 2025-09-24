@@ -92,7 +92,7 @@ UInt32 Z7_FASTCALL CrcUpdateT1(UInt32 v, const void *data, size_t size, const UI
           #if defined(MY_CPU_ARM64)
             #define ATTRIB_CRC __attribute__((__target__("crc")))
           #else
-            #define ATTRIB_CRC __attribute__((__target__("armv8-a,crc")))
+            //#define ATTRIB_CRC __attribute__((__target__("armv8-a,crc")))
           #endif
         #else
           #if defined(MY_CPU_ARM64)

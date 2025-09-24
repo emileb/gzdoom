@@ -38,7 +38,7 @@
 #elif defined(__APPLE__)
 #include <stdlib.h>
 #include <malloc/malloc.h>
-#elif defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__OpenBSD__) || defined(__DragonFly__) || defined(__ANDROID__)
 #include <stdlib.h>
 #else
 #include <malloc.h>
@@ -63,7 +63,8 @@ size_t _msize(void* block)
 #endif
 
 #ifndef _DEBUG
-#if !defined(__solaris__) && !defined(__sun__) && !defined(_sun) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+
+#if !defined(__solaris__) && !defined(__sun__) && !defined(_sun) && !defined(__OpenBSD__) && !defined(__DragonFly__) && !defined(__ANDROID__)
 void *M_Malloc(size_t size)
 {
 	void *block = malloc(size);
@@ -136,7 +137,8 @@ void* M_Calloc(size_t v1, size_t v2)
 #include <crtdbg.h>
 #endif
 
-#if !defined(__solaris__) && !defined(__sun__) && !defined(_sun) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+#if !defined(__solaris__) && !defined(__sun__) && !defined(_sun) && !defined(__OpenBSD__) && !defined(__DragonFly__) && !defined(__ANDROID__)
+
 void *M_Malloc_Dbg(size_t size, const char *file, int lineno)
 {
 	void *block = _malloc_dbg(size, _NORMAL_BLOCK, file, lineno);
@@ -198,12 +200,13 @@ void *M_Realloc_Dbg(void *memblock, size_t size, const char *file, int lineno)
 #endif
 #endif
 
+
 void M_Free (void *block)
 {
 	if (block != nullptr)
 	{
 		GC::ReportDealloc(_msize(block));
-#if !defined(__solaris__) && !defined(__sun__) && !defined(_sun) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+#if !defined(__solaris__) && !defined(__sun__) && !defined(_sun) && !defined(__OpenBSD__) && !defined(__DragonFly__)  && !defined(__ANDROID__)
 		free(block);
 #else
 		free(((size_t*) block)-1);
