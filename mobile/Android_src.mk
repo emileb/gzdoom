@@ -7,9 +7,9 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := g
 
-LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
+LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -DGZDOOM_DEV_DEV -DNO_DEBUG_SERVER -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
 
-LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -frtti -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
 LOCAL_CFLAGS  += -DNO_SEND_STATS -DMINIZ_NO_STDIO
 
@@ -83,14 +83,18 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/../libraries/glslang/glslang/Public \
     	$(GZDOOM_TOP_PATH)/src/../libraries/glslang/spirv \
     	$(GZDOOM_TOP_PATH)/src/../libraries/ZWidget/include \
+    	$(GZDOOM_TOP_PATH)/src/../libraries/ZWidget/ \
     	$(GZDOOM_TOP_PATH)/src/common/platform/posix \
     	$(GZDOOM_TOP_PATH)/src/common/platform/posix/sdl \
     	$(GZDOOM_TOP_PATH)/libraries/lzma/C \
         $(GZDOOM_TOP_PATH)/libraries/bzip2 \
         $(GZDOOM_TOP_PATH)/libraries/glslang \
         $(GZDOOM_TOP_PATH)/libraries/miniz \
+        $(GZDOOM_TOP_PATH)/libraries/cppdap/include \
         $(GZDOOM_TOP_PATH)/libraries/discordrpc/include \
         $(GZDOOM_TOP_PATH)/libraries/ZVulkan/include \
+        $(GZDOOM_TOP_PATH)/libraries/range_map/include \
+        $(GZDOOM_TOP_PATH)/libraries/ZMusic/include \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
@@ -100,7 +104,6 @@ LOCAL_C_INCLUDES := \
  $(TOP_DIR)/Clibs_OpenTouch/libvpx/include \
  $(TOP_DIR)/jwzgles \
  $(TOP_DIR)/MobileTouchControls  \
- $(TOP_DIR)/Doom/ZMusic/include  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/mobile/src \
  $(GZDOOM_TOP_PATH)/mobile/src/webp/src
@@ -479,6 +482,7 @@ PCH_SOURCES = \
 	common/utility/name.cpp \
 	common/utility/r_memory.cpp \
 	common/utility/writezip.cpp \
+	common/utility/vga2ansi.cpp \
 	common/thirdparty/base64.cpp \
 	common/thirdparty/md5.cpp \
  	common/thirdparty/superfasthash.cpp \
@@ -495,12 +499,14 @@ PCH_SOURCES = \
 	common/engine/palettecontainer.cpp \
 	common/engine/stringtable.cpp \
 	common/engine/i_net.cpp \
+	common/engine/i_protocol.cpp \
 	common/engine/i_interface.cpp \
 	common/engine/renderstyle.cpp \
 	common/engine/v_colortables.cpp \
 	common/engine/serializer.cpp \
 	common/engine/m_joy.cpp \
 	common/engine/m_random.cpp \
+	common/engine/m_haptics.cpp \
 	common/objects/autosegs.cpp \
 	common/objects/dobject.cpp \
 	common/objects/dobjgc.cpp \
@@ -548,6 +554,7 @@ PCH_SOURCES = \
 	common/rendering/gl/gl_samplers.cpp \
 	common/rendering/gl/gl_shader.cpp \
 	common/rendering/gl/gl_shaderprogram.cpp \
+	common/rendering/stb_include.cpp \
 	common/scripting/core/maps.cpp \
 	common/scripting/core/dictionary.cpp \
 	common/scripting/core/dynarrays.cpp \
@@ -571,6 +578,33 @@ PCH_SOURCES = \
 	utility/nodebuilder/nodebuild_extract.cpp \
 	utility/nodebuilder/nodebuild_gl.cpp \
 	utility/nodebuilder/nodebuild_utility.cpp \
+
+DAP = \
+	common/scripting/dap/BreakpointManager.cpp \
+	common/scripting/dap/DebugExecutionManager.cpp \
+	common/scripting/dap/DebugServer.cpp \
+	common/scripting/dap/IdHandleBase.cpp \
+	common/scripting/dap/IdMap.cpp \
+	common/scripting/dap/IdProvider.cpp \
+	common/scripting/dap/Nodes/ArrayStateNode.cpp \
+	common/scripting/dap/Nodes/CVarScopeStateNode.cpp \
+	common/scripting/dap/Nodes/LocalScopeStateNode.cpp \
+	common/scripting/dap/Nodes/GlobalScopeStateNode.cpp \
+	common/scripting/dap/Nodes/ObjectStateNode.cpp \
+	common/scripting/dap/Nodes/StackFrameStateNode.cpp \
+	common/scripting/dap/Nodes/StackStateNode.cpp \
+	common/scripting/dap/Nodes/StateNodeBase.cpp \
+	common/scripting/dap/Nodes/StructStateNode.cpp \
+	common/scripting/dap/Nodes/ValueStateNode.cpp \
+	common/scripting/dap/PexCache.cpp \
+	common/scripting/dap/Protocol/struct_extensions.cpp \
+	common/scripting/dap/RuntimeEvents.cpp \
+	common/scripting/dap/RuntimeState.cpp \
+	common/scripting/dap/ZScriptDebugger.cpp \
+	common/scripting/dap/Nodes/RegistersScopeStateNode.cpp \
+	common/scripting/dap/Nodes/StatePointerNode.cpp \
+	common/scripting/dap/Nodes/DummyNode.cpp \
+
 
 GLES_SOURCES = \
 		common/rendering/gles/gles_system.cpp \
@@ -651,8 +685,8 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_gl3  bzip2_gl3 logwritter vpx_player webpmux zwidget glslang
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared  saffal zmusic
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_gl3  bzip2_gl3 logwritter vpx_player webpmux zwidget glslang zmusic_g4d
+LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared saffal
 
 #Strip unused functions/data
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections  -fPIC

@@ -450,7 +450,9 @@ int PrintString (int iprintlevel, const char *outline)
 		}
 		if (!(iprintlevel & PRINT_NODAPEVENT))
 		{
+#ifndef NO_DEBUG_SERVER
 			DebugServer::RuntimeEvents::EmitLogEvent(iprintlevel, outline);
+#endif
 		}
 		return count;
 	}

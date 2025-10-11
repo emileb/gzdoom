@@ -10,7 +10,7 @@ LOCAL_C_INCLUDES :=     $(LOCAL_PATH)/include \
                         $(LOCAL_PATH)/src \
                         $(SDL_INCLUDE_PATHS) \
 
-LOCAL_CPPFLAGS :=  -std=c++17 -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -fsigned-char
+LOCAL_CPPFLAGS :=  -std=c++17 -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -fsigned-char -DUSE_SDL2
 
 LOCAL_SRC_FILES =  	\
 	src/core/canvas.cpp \
@@ -24,6 +24,7 @@ LOCAL_SRC_FILES =  	\
 	src/core/truetypefont.cpp \
 	src/core/picopng/picopng.cpp \
 	src/core/nanosvg/nanosvg.cpp \
+	src/core/theme.cpp \
 	src/widgets/lineedit/lineedit.cpp \
 	src/widgets/mainwindow/mainwindow.cpp \
 	src/widgets/menubar/menubar.cpp \
@@ -39,7 +40,11 @@ LOCAL_SRC_FILES =  	\
 	src/widgets/listview/listview.cpp \
 	src/widgets/tabwidget/tabwidget.cpp \
 	src/window/window.cpp \
-
+	src/window/stub/stub_open_file_dialog.cpp \
+	src/window/stub/stub_open_folder_dialog.cpp \
+	src/window/stub/stub_save_file_dialog.cpp \
+    src/window/sdl2/sdl2_display_backend.cpp \
+    src/window/sdl2/sdl2_display_window.cpp \
 
 
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections

@@ -1557,8 +1557,6 @@ void DAutomap::Ticker ()
 		return;
 
 	amclock++;
-	
-
 }
 
 

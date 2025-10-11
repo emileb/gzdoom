@@ -3019,7 +3019,7 @@ yy494:
 		}
 	}
 yy495:
-	{ RET(ParseVersion >= MakeVersion(4, 14, 2)? TK_Unsafe : TK_Identifier); }
+	{ RET(ParseVersion >= MakeVersion(4, 15, 1)? TK_Unsafe : TK_Identifier); }
 yy496:
 	yych = *++YYCURSOR;
 	if (yych == 'L') goto yy497;
