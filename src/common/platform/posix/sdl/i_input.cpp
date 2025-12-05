@@ -621,7 +621,7 @@ void MessagePump (const SDL_Event &sev)
 		if(event.data1 != 0)
 			I_JoyConsumeEvent(sev.jdevice.which, &event);
 		break;
-
+#ifndef __ANDROID__
 	case SDL_CONTROLLERBUTTONDOWN:
 	case SDL_CONTROLLERBUTTONUP:
 		event.type = sev.type == SDL_CONTROLLERBUTTONDOWN ? EV_KeyDown : EV_KeyUp;
@@ -653,7 +653,7 @@ void MessagePump (const SDL_Event &sev)
 		if(event.data1 != 0)
 			I_JoyConsumeEvent(sev.cbutton.which, &event);
 		break;
-
+#endif
 	case SDL_JOYDEVICEADDED:
 	case SDL_CONTROLLERDEVICEADDED:
 		if (sev.type == SDL_JOYDEVICEADDED && SDL_IsGameController(sev.jdevice.which)) // DeviceIndex Here

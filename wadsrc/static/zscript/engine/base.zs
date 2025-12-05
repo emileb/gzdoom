@@ -265,6 +265,9 @@ struct _ native unsafe(internal)	// These are the global variables, the struct i
 	native readonly double NotifyFontScale;
 	native readonly int paused;
 	native readonly ui uint8 ConsoleState;
+
+	// __MOBILE__
+	native bool g_bindingbutton;
 }
 
 struct System native

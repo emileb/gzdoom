@@ -4,6 +4,10 @@
 #include "basics.h"
 #include "zstring.h"
 
+#ifdef __ANDROID__
+#undef __cpp_lib_hardware_interference_size
+#endif
+
 #ifdef __cpp_lib_hardware_interference_size
 #include "version"
 #include <new>

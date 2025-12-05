@@ -534,8 +534,9 @@ bool playedtitlemusic;
 volatile sig_atomic_t gameloop_abort = false;
 
 FStartScreen* StartScreen;
+#ifndef NO_DEBUG_SERVER
 std::unique_ptr<DebugServer::DebugServer> debugServer;
-
+#endif
 cycle_t FrameCycles;
 
 // [SP] Store the capabilities of the renderer in a global variable, to prevent excessive per-frame processing
@@ -1090,6 +1091,9 @@ static void End2DAndUpdate()
 	twod->OnFrameDone();
 }
 
+#ifdef __ANDROID__
+void VulkanCheckSurface();
+#endif
 //==========================================================================
 //
 // D_Display
@@ -1115,6 +1119,10 @@ void D_Display ()
 	{
 		return;
 	}
+
+#ifdef __ANDROID__
+    VulkanCheckSurface();
+#endif
 
 	cycle_t cycles;
 
@@ -2928,10 +2936,10 @@ CUSTOM_CVAR(Int, mouse_capturemode, 1, CVAR_GLOBALCONFIG | CVAR_ARCHIVE)
 CUSTOM_CVAR(Bool, vm_debug, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 {
 	if (vm_debug == false){
-		if (debugServer){
-			debugServer->Stop();
-			debugServer = nullptr;
-		}
+		//if (debugServer){
+		//	debugServer->Stop();
+		//	debugServer = nullptr;
+		//}
 	} else {
 		// TODO: we wouldn't need to do this if we were able to recompile everything when it's enabled?
 		Printf("You must restart " GAMENAME " for this change to take effect.\n");
@@ -4133,7 +4141,9 @@ static int D_DoomMain_Internal (void)
 
 		// Launch debug server if enabled
 		if (should_debug) {
-			debugServer = std::make_unique<DebugServer::DebugServer>();
+#ifndef NO_DEBUG_SERVER
+            debugServer = std::make_unique<DebugServer::DebugServer>();
+#endif
 			int debug_port = vm_debug_port.get()->ToInt();
 			if (should_debug) {
 				if (debug_port_arg) {
@@ -4143,7 +4153,7 @@ static int D_DoomMain_Internal (void)
 			if (debug_port > 65535 || debug_port < 0) {
 				I_FatalError("Invalid debug port %d (must be between 0 and 65535)", debug_port);
 			}
-			debugServer->Listen(debug_port);
+			//debugServer->Listen(debug_port);
 		}
 
 		D_DoomLoop ();		// this only returns if a 'restart' CCMD is given.
@@ -4246,11 +4256,11 @@ int GameMain()
 
 void D_Cleanup()
 {
-	if (debugServer)
-	{
-		debugServer->Stop();
-		debugServer = nullptr;
-	}
+	//if (debugServer)
+	//{
+	//	debugServer->Stop();
+	//	debugServer = nullptr;
+	//}
 	if (demorecording)
 	{
 		G_CheckDemoStatus();

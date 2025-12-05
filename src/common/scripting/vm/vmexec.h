@@ -72,7 +72,9 @@ static int ExecScriptFunc(VMFrameStack *stack, VMReturn *ret, int numret)
 #if !COMPGOTO
 	VM_UBYTE op;
 	for(;;) {
+#ifndef NO_DEBUG_SERVER
 	DebugServer::RuntimeEvents::EmitInstructionExecutionEvent(stack, ret, numret, pc);
+#endif
 	switch(op = pc->op, a = pc->a, op)
 #else
 	pc--;

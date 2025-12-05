@@ -87,3 +87,10 @@ static inline void PrefetchL3(const void* Address)
     _mm_prefetch(static_cast<const char*>(Address), _MM_HINT_T1);
 #endif
 }
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#include "LogWritter.h"
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#endif
+
