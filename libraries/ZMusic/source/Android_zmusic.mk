@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 
-LOCAL_MODULE    := zmusic_g4d
+LOCAL_MODULE    := zmusic_uz
 
 LOCAL_CPPFLAGS := -DHAVE_SNDFILE -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -fexceptions -std=c++11 -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp  -fsigned-char
 

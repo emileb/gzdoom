@@ -5,9 +5,9 @@ include $(CLEAR_VARS)
 
 #LOCAL_SHORT_COMMANDS := true
 
-LOCAL_MODULE    := g
+LOCAL_MODULE    := uzdoom
 
-LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -DGZDOOM_DEV_DEV -DNO_DEBUG_SERVER -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
+LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -DUZDOOM -DNO_DEBUG_SERVER -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -frtti -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -686,7 +686,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_gl3  bzip2_gl3 logwritter vpx_player webpmux zwidget glslang zmusic_g4d
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_uz  bzip2_uz logwritter vpx_player webpmux zwidget_uz glslang_uz zmusic_uz
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared saffal
 
 #Strip unused functions/data

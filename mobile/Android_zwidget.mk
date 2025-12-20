@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../libraries/ZWidget/
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := zwidget
+LOCAL_MODULE := zwidget_uz
 
 LOCAL_C_INCLUDES :=     $(LOCAL_PATH)/include \
                         $(LOCAL_PATH)/include/zwidget \
