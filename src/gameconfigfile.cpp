@@ -80,6 +80,9 @@ EXTERN_CVAR(Bool, i_soundinbackground)
 EXTERN_CVAR(Int, in_mouse)
 #endif
 
+#ifdef __ANDROID__
+extern "C"  char * secondaryPath_c;
+#endif
 FGameConfigFile::FGameConfigFile ()
 {
 #ifdef __APPLE__
@@ -192,6 +195,22 @@ FGameConfigFile::FGameConfigFile ()
 		SetValueForKey("Path", "/usr/share/soundfonts", true);
 #endif
 	}
+
+#ifdef __ANDROID__
+    SetSection("SoundfontSearch.Directories");
+    DeleteCurrentSection(); // This is to stop is spamming the ini file with new Paths each time it saves
+    SetSection("SoundfontSearch.Directories", true);
+
+    SetValueForKey("Path", "./audiopack/snd_fluidsynth", true); // Default path
+    SetValueForKey("Path", "./AUDIO/soundfonts", true);
+
+    if(secondaryPath_c)
+    {
+        std::string path = secondaryPath_c;
+        path += "/AUDIO/soundfonts";
+        SetValueForKey("Path", path.c_str(), true);
+    }
+#endif
 
 	// Add some self-documentation.
 	SetSectionNote("IWADSearch.Directories",
