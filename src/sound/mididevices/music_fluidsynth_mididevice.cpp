@@ -100,7 +100,7 @@ const char *BaseFileSearch(const char *file, const char *ext, bool lookfirstinpr
 
 CVAR(String, fluid_lib, "", CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 #ifdef __ANDROID__
-CUSTOM_CVAR(String, fluid_patchset, "./audiopack/snd_fluidsynth/fluidsynth.sf2",0)
+CUSTOM_CVAR(String, fluid_patchset, "./audiopack/snd_fluidsynth/fluidsynth.sf2", CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 #else
 CUSTOM_CVAR(String, fluid_patchset, "gzdoom", CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 #endif
