@@ -62,7 +62,7 @@ EXTERN_CVAR(Bool, mus_usereplaygain)
 
 #define FORWARD_STRING_CVAR(key) \
 	auto ret = ChangeMusicSetting(zmusic_##key, mus_playing.handle,*self); \
-	if (ret) S_MIDIDeviceChanged(-1); 
+	if (ret) S_MIDIDeviceChanged(-1);
 
 #ifndef ZMUSIC_LITE
 CUSTOM_CVAR(Int, adl_chips_count, 6, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL)
@@ -147,7 +147,7 @@ CUSTOM_CVAR(String, fluid_lib, "", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTU
 
 
 #ifdef __ANDROID__
-CUSTOM_CVAR(String, fluid_patchset,  "./audiopack/snd_fluidsynth/fluidsynth.sf2", 0)
+CUSTOM_CVAR(String, fluid_patchset,  "./audiopack/snd_fluidsynth/fluidsynth.sf2", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL | CVAR_SYSTEM_ONLY)
 #else
 CUSTOM_CVAR(String, fluid_patchset, GAMENAMELOWERCASE, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL | CVAR_SYSTEM_ONLY)
 #endif
