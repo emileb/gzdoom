@@ -54,7 +54,7 @@ CUSTOM_CVAR(Int, snd_channels, 128, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)	// number 
 {
 	if (self < 64) self = 64;
 }
-CVAR(Bool, snd_waterreverb, true, CVAR_ARCHIVE | CVAR_GLOBALCONFIG) 
+CVAR(Bool, snd_waterreverb, true, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 CVAR (String, snd_aldevice, "Default", CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 CVAR (Bool, snd_efx, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 CVAR (String, snd_alresampler, "Default", CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
@@ -1092,6 +1092,18 @@ SoundHandle OpenALSoundRenderer::LoadSoundRaw(uint8_t *sfxdata, int length, int 
 	return retval;
 }
 
+#ifdef __MOBILE__
+static size_t GetChannelCount(ChannelConfig chans)
+{
+    switch(chans)
+    {
+        case ChannelConfig_Mono: return 1;
+        case ChannelConfig_Stereo: return 2;
+    }
+    return 0;
+}
+#endif
+
 SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length, int def_loop_start, int def_loop_end)
 {
 #ifdef __MOBILE__ // 3D sounds are very loud without making the sound mono. This needs to be fixed because it is making all sounds mono for now..
@@ -1122,6 +1134,9 @@ SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length, int def
 	SoundDecoder_GetInfo(decoder, &srate, &chans, &type);
 
 	ALenum format = GetFormat(type, chans);
+
+
+
 	if (format == AL_NONE)
 	{
 		SoundDecoder_Close(decoder);
@@ -1130,6 +1145,10 @@ SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length, int def
 		return retval;
 	}
 	int samplesize = SampleTypeSize(type) * ChannelCount(chans);
+#ifdef __MOBILE__
+    if (type == SampleType_UInt8) format = AL_FORMAT_MONO8, samplesize = 1;
+    if (type == SampleType_Int16) format = AL_FORMAT_MONO16, samplesize = 2;
+#endif
 
 	TArray<uint8_t> data;
 	unsigned total = 0;
@@ -1148,7 +1167,7 @@ SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length, int def
 	}
 	SoundDecoder_Close(decoder);
 
-#ifdef __MOBILE1__
+#ifdef __MOBILE__
 	if(chans != ChannelConfig_Mono && monoize)
 	{
 		size_t chancount = GetChannelCount(chans);
