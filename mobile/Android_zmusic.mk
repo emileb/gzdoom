@@ -19,7 +19,7 @@ $(LOCAL_PATH)/../timidity \
 $(LOCAL_PATH)/../timidityplus \
 $(LOCAL_PATH)/../wildmidi \
 $(LOCAL_PATH)/../game-music-emu \
-$(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
+$(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/src/main/jni/fluidsynth-android/include \
 $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
 $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
 
@@ -55,7 +55,8 @@ i_module.cpp \
 	zmusic/configuration.cpp \
 	zmusic/zmusic.cpp \
 
-LOCAL_STATIC_LIBRARIES := oplsynth_lz  opnmidi_lz timidity_lz timidityplus_lz wildmidi_lz adlmidi_lz gme_lz dumb_lz sndfile mpg123 fluidsynth-static
+LOCAL_STATIC_LIBRARIES := oplsynth_lz  opnmidi_lz timidity_lz timidityplus_lz wildmidi_lz adlmidi_lz gme_lz dumb_lz sndfile mpg123
+LOCAL_SHARED_LIBRARIES := fluidsynth
 
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections
 
