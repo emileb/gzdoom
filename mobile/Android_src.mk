@@ -97,7 +97,7 @@ LOCAL_C_INCLUDES := \
         $(GZDOOM_TOP_PATH)/libraries/ZMusic/include \
 \
  $(SDL_INCLUDE_PATHS) \
- $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
+ $(TOP_DIR)/AudioLibs_OpenTouch/openal-soft/src/main/jni/openal/include/AL \
  $(TOP_DIR)/jpeg8d \
  $(TOP_DIR)/Clibs_OpenTouch \
  $(TOP_DIR)/Clibs_OpenTouch/idtech1 \
@@ -687,7 +687,7 @@ LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
 LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_uz  bzip2_uz logwritter vpx_player webpmux zwidget_uz glslang_uz zmusic_uz
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 core_shared saffal
+LOCAL_SHARED_LIBRARIES := touchcontrols openal-soft  SDL2 core_shared saffal
 
 #Strip unused functions/data
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections  -fPIC

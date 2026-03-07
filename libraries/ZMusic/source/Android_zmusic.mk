@@ -64,8 +64,8 @@ LOCAL_SRC_FILES =  	\
 	../thirdparty/miniz/miniz.c \
 	loader/test.c
 
-LOCAL_STATIC_LIBRARIES := xmp_zmd oplsynth_zmd opnmidi_zmd timidity_zmd timidityplus_zmd wildmidi_zmd adlmidi_zmd gme_zmd dumb_zmd sndfile mpg123 fluidsynth-static
-LOCAL_SHARED_LIBRARIES := saffal
+LOCAL_STATIC_LIBRARIES := xmp_zmd oplsynth_zmd opnmidi_zmd timidity_zmd timidityplus_zmd wildmidi_zmd adlmidi_zmd gme_zmd dumb_zmd sndfile mpg123
+LOCAL_SHARED_LIBRARIES := fluidsynth saffal
 
 LOCAL_LDFLAGS += -Wl,--gc-sections -flto
 
