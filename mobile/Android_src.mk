@@ -12,7 +12,7 @@ LOCAL_CPPFLAGS := -DNOASM -DFMOD_STUDIO -DDISABLE_SSE -DHAVE_FLUIDSYNTH  -DHAVE_
 
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
- $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/src/main/jni/fluidsynth-android/include \
  $(GZDOOM_TOP_PATH)/src/  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/game-music-emu/ \
@@ -31,7 +31,7 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/g_strife \
  $(GZDOOM_TOP_PATH)/src/g_shared \
  $(SDL_INCLUDE_PATHS) \
- $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
+ $(TOP_DIR)/AudioLibs_OpenTouch/openal-soft/src/main/jni/openal/include/AL \
  $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
  $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
  $(TOP_DIR)/AudioLibs_OpenTouch/FMOD_studio/api/lowlevel/inc \
@@ -510,8 +510,8 @@ LOCAL_LDFLAGS := -Wl,--no-fatal-warnings
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 LOCAL_LDLIBS +=  -lEGL
 
-LOCAL_STATIC_LIBRARIES := sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_1.9 lzma_1.9 gdtoa_1.9 dumb_1.9 gme_1.9 bzip2_1.9 logwritter
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared fmod core_shared saffal
+LOCAL_STATIC_LIBRARIES := sndfile mpg123 SDL2_net libjpeg zlib_1.9 lzma_1.9 gdtoa_1.9 dumb_1.9 gme_1.9 bzip2_1.9 logwritter
+LOCAL_SHARED_LIBRARIES := touchcontrols openal-soft SDL2 jwzgles_shared fmod core_shared fluidsynth saffal
 
 #Strip unused functions/data
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections -fPIC

@@ -1505,7 +1505,7 @@ void OpenALSoundRenderer::SetSfxPaused(bool paused, int slot)
 }
 
 #ifdef __ANDROID__
-extern "C" void OpenSL_android_set_pause( ALCdevice_struct *Device, int pause );
+extern "C" void OpenSL_android_set_pause( ALCdevice *Device, int pause );
 #endif
 
 

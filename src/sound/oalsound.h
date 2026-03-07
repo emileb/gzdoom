@@ -7,7 +7,9 @@
 
 #ifndef NO_OPENAL
 
+#ifndef __ANDROID__
 #define AL_NO_PROTOTYPES
+#endif
 
 #include "al.h"
 #include "alc.h"
