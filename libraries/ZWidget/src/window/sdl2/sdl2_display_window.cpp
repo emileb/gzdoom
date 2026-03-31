@@ -521,8 +521,10 @@ void SDL2DisplayWindow::OnWindowEvent(const SDL_WindowEvent& event)
 		case SDL_WINDOWEVENT_LEAVE:
 		case SDL_WINDOWEVENT_TAKE_FOCUS:
 		case SDL_WINDOWEVENT_HIT_TEST:
+#ifndef __ANDROID__
 		case SDL_WINDOWEVENT_ICCPROF_CHANGED:
 		case SDL_WINDOWEVENT_DISPLAY_CHANGED:
+#endif
 			// nope
 			break;
 	}

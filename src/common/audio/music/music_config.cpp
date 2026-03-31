@@ -51,7 +51,7 @@ EXTERN_CVAR(Bool, mus_usereplaygain)
 
 #define FORWARD_STRING_CVAR(key) \
 	auto ret = ChangeMusicSetting(zmusic_##key, mus_playing.handle,*self); \
-	if (ret) S_MIDIDeviceChanged(-1); 
+	if (ret) S_MIDIDeviceChanged(-1);
 
 #ifndef ZMUSIC_LITE
 CUSTOM_CVAR(Int, adl_chips_count, 6, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL)
@@ -134,7 +134,12 @@ CUSTOM_CVAR(String, fluid_lib, "", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTU
 	FORWARD_STRING_CVAR(fluid_lib);
 }
 
+
+#ifdef __ANDROID__
+CUSTOM_CVAR(String, fluid_patchset,  "./audiopack/snd_fluidsynth/fluidsynth.sf2", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL | CVAR_SYSTEM_ONLY)
+#else
 CUSTOM_CVAR(String, fluid_patchset, GAMENAMELOWERCASE, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL | CVAR_SYSTEM_ONLY)
+#endif
 {
 	FORWARD_STRING_CVAR(fluid_patchset);
 }
@@ -338,7 +343,11 @@ CUSTOM_CVAR(Float, opn_gain, 1.0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUA
 //==========================================================================
 
 
+#ifdef __ANDROID__
+CUSTOM_CVAR(String, midi_config, "./audiopack/snd_timidity/timidity.cfg", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL)
+#else
 CUSTOM_CVAR(String, midi_config, "", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL | CVAR_SYSTEM_ONLY)
+#endif
 {
 	FORWARD_STRING_CVAR(gus_config);
 }
@@ -455,7 +464,11 @@ CUSTOM_CVAR(Float, timidity_min_sustain_time, 5000.f, CVAR_ARCHIVE | CVAR_GLOBAL
 }
 #endif
 
+#ifdef __ANDROID__
+CUSTOM_CVAR(String, timidity_config, "./audiopack/snd_timidity/timidity.cfg", CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL)
+#else
 CUSTOM_CVAR(String, timidity_config, GAMENAMELOWERCASE, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_VIRTUAL | CVAR_SYSTEM_ONLY)
+#endif
 {
 	FORWARD_STRING_CVAR(timidity_config);
 }

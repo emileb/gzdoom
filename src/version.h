@@ -82,10 +82,19 @@
 #ifndef LOAD_GZDOOM_4142_SAVES
     #define LOAD_GZDOOM_4142_SAVES 1
 #endif
-
+#ifdef __MOBILE__
+#define BASEWAD "./res/uzdoom.pk3"
+#else
 #define BASEWAD "uzdoom.pk3"
+#endif
+
 // Set OPTIONALWAD to "" (null) to disable searching for it
+#ifdef __MOBILE__
+#define OPTIONALWAD "./res/uzdoom_game_support.pk3"
+#else
 #define OPTIONALWAD "game_support.pk3"
+#endif
+
 #define GZDOOM 1
 #define VR3D_ENABLED
 

@@ -410,6 +410,11 @@ extern bool gameisdead;
 
 int PrintString (PrintFlag iprintlevel, const char *outline)
 {
+#ifdef __ANDROID__
+	LOGI("PrintString: %s",outline);
+	LogWritter_Write(outline);
+#endif
+
 	if (gameisdead)
 		return 0;
 
@@ -444,7 +449,9 @@ int PrintString (PrintFlag iprintlevel, const char *outline)
 		}
 		if (!(iprintlevel & PRINT_NODAPEVENT))
 		{
+#ifndef NO_DEBUG_SERVER
 			DebugServer::RuntimeEvents::EmitLogEvent(iprintlevel, outline);
+#endif
 		}
 		return count;
 	}

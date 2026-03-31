@@ -522,7 +522,7 @@ std::vector<dap::Module> PexCache::GetModules()
 
 uint64_t PexCache::AddDisassemblyLines(VMScriptFunction *func, DisassemblyMap &instructions)
 {
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)  || defined(__ANDROID__)
 	// TODO: add a windows-compatible fmemopen
 	return 0;
 #else

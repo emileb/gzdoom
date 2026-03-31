@@ -56,6 +56,13 @@
 #include "widgets/errorwindow.h"
 #include "widgets/launcherwindow.h"
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#include "LogWritter.h"
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#endif
+
+
 #if defined(__APPLE__)
 int I_PickIWad_Cocoa (WadStuff *wads, int numwads, bool showwin, int defaultiwad);
 #endif
@@ -129,6 +136,11 @@ void Unix_I_FatalError(const char* errortext)
 	else
 	{
 		printf("\n%s\n", errortext);
+#ifdef __ANDROID__
+        LOGI("FATAL ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
+
 	}
 
 	// Close window or exit fullscreen and release mouse capture
@@ -139,6 +151,11 @@ void Unix_I_FatalError(const char* errortext)
 
 void I_ShowFatalError(const char *message)
 {
+#ifdef __ANDROID__
+        LOGI("ERROR: %s", message);
+        LogWritter_Write(message);
+#endif
+
 #ifdef __APPLE__
 	Mac_I_FatalError(message);
 #elif defined __unix__
@@ -244,6 +261,7 @@ void I_PrintStr(const char *cp)
 {
 	g_AllPrintOutput.Push(cp);
 
+
 	const char * srcp = cp;
 	FString printData = "";
 	bool terminal = isatty(STDOUT_FILENO);
@@ -340,7 +358,6 @@ bool I_PickIWad (bool showwin, FStartupSelectionInfo& info)
 	{
 		return true;
 	}
-
 #ifdef __APPLE__
 	const int ret = I_PickIWad_Cocoa(&(*info.Wads)[0], (int)info.Wads->Size(), showwin, info.DefaultIWAD);
 	if (ret >= 0)
@@ -350,7 +367,11 @@ bool I_PickIWad (bool showwin, FStartupSelectionInfo& info)
 	}
 	return false;
 #else
+#ifdef __ANDROID__
+    return false;
+#else
 	return LauncherWindow::ExecModal(info);
+#endif
 #endif
 }
 
@@ -369,11 +390,17 @@ FString I_GetFromClipboard (bool use_primary_selection)
 	}
 	return "";
 }
+#ifdef __MOBILE__
+extern "C"
+{
+	char *get_current_dir_name(void);
+}
+#endif
 
 FString I_GetCWD()
 {
 	char* curdir = getcwd(NULL,0);
-	if (!curdir) 
+	if (!curdir)
 	{
 		return "";
 	}

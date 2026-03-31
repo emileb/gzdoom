@@ -33,6 +33,25 @@
 #include "basics.h"
 #include "st_start.h"
 
+#ifdef __MOBILE__
+
+#include "JNITouchControlsUtils.h"
+#define fprintf my_fprintf
+
+void my_fprintf(FILE * x, const char *format, ...)
+{
+	FString str;
+	va_list argptr;
+
+	va_start (argptr, format);
+	str.VFormat (format, argptr);
+	va_end (argptr);
+	//fprintf (stderr, "\r%-40s\n", str.GetChars());
+	addTextConsoleBox(str.GetChars());
+}
+
+#endif
+
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
