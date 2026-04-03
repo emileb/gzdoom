@@ -32,8 +32,11 @@
 #include "absl/strings/ascii.h"
 
 // CODE --------------------------------------------------------------------
-
+#ifdef __ANDROID__
+static size_t FindDuplicates()
+#else
 static constexpr size_t FindDuplicates()
+#endif
 {
 	auto tolower = [](uint8_t c) -> uint8_t {
 		if (c >= 'A' && c <= 'Z') c += 'a'-'A';
@@ -76,8 +79,9 @@ FName::NameManager& FName::NameManager::Instance()
 
 	static_assert(std::size(names) > 0, "Name list is empty.");
 	static_assert(0 == NAME_None && std::string_view(names[0]) == "None", "'None' must be name 0.");
+#ifndef __ANDROID__
 	static_assert(0 == FindDuplicates(), "Duplicate string found in PredefinedNames array.");
-
+#endif
 	static FName::NameManager instance { names };
 	return instance;
 }

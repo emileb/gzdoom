@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := uzdoom
 
-LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -DUZDOOM -DNO_DEBUG_SERVER -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
+LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -DUZDOOM -DNO_DEBUG_SERVER -D__STDINT_LIMITS -DENGINE_NAME=\"uzdoom\" -DHAVE_VULKAN
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++20 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -frtti -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -32,6 +32,7 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/common/models \
     	$(GZDOOM_TOP_PATH)/src/common/filesystem \
     	$(GZDOOM_TOP_PATH)/src/common/utility \
+    	$(GZDOOM_TOP_PATH)/src/utility \
     	$(GZDOOM_TOP_PATH)/src/common/cutscenes \
     	$(GZDOOM_TOP_PATH)/src/common/startscreen \
     	$(GZDOOM_TOP_PATH)/src/common/console \
@@ -482,7 +483,7 @@ PCH_SOURCES = \
 	common/utility/i_time.cpp \
 	common/utility/m_argv.cpp \
 	common/utility/s_playlist.cpp \
-	common/utility/name.cpp \
+	utility/name.cpp \
 	common/utility/r_memory.cpp \
 	common/utility/writezip.cpp \
 	common/utility/vga2ansi.cpp \
@@ -575,6 +576,7 @@ PCH_SOURCES = \
 	common/scripting/frontend/zcc_parser.cpp \
 	common/scripting/backend/vmbuilder.cpp \
 	common/scripting/backend/codegen.cpp \
+	utility/colorspace.cpp \
 	utility/nodebuilder/nodebuild.cpp \
 	utility/nodebuilder/nodebuild_classify_nosse2.cpp \
 	utility/nodebuilder/nodebuild_events.cpp \
@@ -629,9 +631,10 @@ GLES_SOURCES = \
 SYSTEM_SOURCES  = ${PLAT_POSIX_SOURCES} ${PLAT_SDL_SOURCES} ${PLAT_UNIX_SOURCES} ${GLES_SOURCES}
 
 #	${VULKAN_SOURCES} \
-  $(ANDROID_SRC_FILES) \
+
 
 LOCAL_SRC_FILES = \
+    $(ANDROID_SRC_FILES) \
 	${SYSTEM_SOURCES} \
 	${FASTMATH_SOURCES} \
 	${PCH_SOURCES} \
@@ -679,7 +682,10 @@ LOCAL_SRC_FILES = \
     common/filesystem/source/critsec.cpp \
     common/filesystem/source/file_hog.cpp \
     common/filesystem/source/file_mvl.cpp \
-    common/widgets/widgetresourcedata.cpp \
+    widgets/errorwindow.cpp \
+    widgets/netstartwindow.cpp \
+    widgets/widgetresourcedata.cpp \
+    widgets/themedata.cpp \
     ../libraries/miniz/miniz.c \
     common/thirdparty/stb/stb_sprintf.c \
 
@@ -688,7 +694,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_uz  bzip2_uz logwritter vpx_player webpmux zwidget_uz glslang_uz zmusic_uz
+LOCAL_STATIC_LIBRARIES :=  SDL2_net libjpeg lzma_uz  bzip2_uz logwritter vpx_player webpmux zwidget_uz glslang_uz zmusic_uz abseil_uz
 LOCAL_SHARED_LIBRARIES := touchcontrols openal-soft  SDL2 core_shared saffal
 
 #Strip unused functions/data
