@@ -85,11 +85,7 @@ EXTERN_CVAR (Bool, cl_capfps)
 EXTERN_CVAR(Bool, vk_debug)
 EXTERN_FARG(glversion);
 
-FARG(gles2_renderer, "Configuration", "Disables joystick support.", "",
-"Disables joystick support. If you have an old-fashioned gameport (non-USB) device attached,"
-" it can slow down the game even if you do not intend to use it. Use -nojoy to avoid the"
-" slowdown that comes from polling it for input. Only the Windows version supports a"
-" joystick.");
+FARG(gles2_renderer, "Android, select GLES2 context", "", "", "");
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
