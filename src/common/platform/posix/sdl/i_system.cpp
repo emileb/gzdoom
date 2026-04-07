@@ -131,7 +131,11 @@ void Unix_I_FatalError(const char* errortext)
 		for (const FString& line : g_AllPrintOutput)
 			alltext.append(line.GetChars(), line.Len());
 
+#ifdef __ANDROID__
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "UZDOOM", errortext, NULL);
+#else
 		g_QueueRestart = ErrorWindow::ExecModal(errortext, alltext);
+#endif
 	}
 	else
 	{
