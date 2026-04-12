@@ -8,7 +8,7 @@ LOCAL_MODULE    := xmp_zmd
 
 LOCAL_CFLAGS := -frtti -Wall -Wextra -Wno-unused-parameter -fomit-frame-pointer -fsigned-char -DHAVE_POWF=1 -DLIBXMP_STATIC=1 -DLIBXMP_NO_PROWIZARD=1 -DLIBXMP_NO_DEPACKERS=1
 
-LOCAL_C_INCLUDES :=  $(LOCAL_PATH)/include  $(LOCAL_PATH)/src
+LOCAL_C_INCLUDES :=  $(LOCAL_PATH)/include  $(LOCAL_PATH)/src $(LOCAL_PATH)/../../../miniz
 
 LOCAL_SRC_FILES =  	\
     src/virtual.c \

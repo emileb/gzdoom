@@ -269,6 +269,7 @@ PCH_SOURCES = \
 	gamedata/p_terrain.cpp \
 	gamedata/statistics.cpp \
 	gamedata/teaminfo.cpp \
+	gamedata/doomfont.cpp \
 	playsim/mapthinkers/a_decalfx.cpp \
 	playsim/mapthinkers/a_doors.cpp \
 	playsim/mapthinkers/a_lightning.cpp \
@@ -395,7 +396,6 @@ PCH_SOURCES = \
 	common/2d/v_draw.cpp \
 	common/2d/wipe.cpp \
 	common/thirdparty/gain_analysis.cpp \
-	common/thirdparty/sfmt/SFMT.cpp \
 	common/thirdparty/utf8proc/utf8proc.c \
 	common/thirdparty/animlib.cpp \
 	common/startscreen/startscreen.cpp \
@@ -473,7 +473,6 @@ PCH_SOURCES = \
 	common/cutscenes/screenjob.cpp \
 	common/utility/engineerrors.cpp \
 	common/utility/i_module.cpp \
-	common/utility/gitinfo.cpp \
 	common/utility/m_alloc.cpp \
 	common/utility/utf8.cpp \
 	common/utility/palette.cpp \

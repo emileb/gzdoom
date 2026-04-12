@@ -80,15 +80,17 @@ FString GetUserFile (const char *file)
 //
 //===========================================================================
 
-FString M_GetCachePath(bool create)
+FString M_GetCachePath(bool create, FString ns)
 {
-	FString path = NicePath("./user_files/uzdoom_dev/cache/");
+    FString path = NicePath("./user_files/uzdoom_dev/cache/");
 
-	if (create)
-	{
-		CreatePath(path.GetChars());
-	}
-	return path;
+    path += "/doom/" + ns;
+    path = NicePath(path.GetChars());
+    if (create)
+    {
+        CreatePath(path.GetChars());
+    }
+    return path;
 }
 
 //===========================================================================
