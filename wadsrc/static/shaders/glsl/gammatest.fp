@@ -19,7 +19,7 @@
 void main()
 {
 	vec3 colour = texture(InputTexture, TexCoord).rgb;
-	if (gl_FragCoord.x > uXmin && gl_FragCoord.x < uXmax && gl_FragCoord.y > uYmin && gl_FragCoord.y < uYmax)
+	if (gl_FragCoord.x > float(uXmin) && gl_FragCoord.x < float(uXmax) && gl_FragCoord.y > float(uYmin) && gl_FragCoord.y < float(uYmax))
 	{
 		float u_gamma = 1.0;
 		float u_black_point = 0.0;
