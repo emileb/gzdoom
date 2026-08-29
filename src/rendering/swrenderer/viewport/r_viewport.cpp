@@ -91,7 +91,7 @@ namespace swrenderer
 	VSMatrix RenderViewport::SoftwareViewToClip()
 	{
 		float near = 5.0f;
-		float far = 65536.0f;
+		float farX = 65536.0f;
 		float width = CenterX / FocalLengthX;
 		float height = viewheight * 0.5 / FocalLengthY;
 		float offset = CenterY / FocalLengthY - height;
@@ -105,8 +105,8 @@ namespace swrenderer
 		float top = height + offset;
 		float a = (right + left) / (right - left);
 		float b = (top + bottom) / (top - bottom);
-		float c = -(far + near) / (far - near);
-		float d = -(2.0f * far) / (far - near);
+		float c = -(farX + near) / (farX - near);
+		float d = -(2.0f * farX) / (farX - near);
 		float m[16] = { 0.0f };
 		m[0 + 0 * 4] = 2.0f * near / (right - left);
 		m[1 + 1 * 4] = 2.0f * near / (top - bottom);

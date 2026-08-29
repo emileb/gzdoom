@@ -612,7 +612,7 @@ void MatchFinder_Init(CMatchFinder *p)
 
   #if defined(__clang__) && (__clang_major__ >= 8) \
     || defined(__GNUC__) && (__GNUC__ >= 8)
-      #define USE_LZFIND_SATUR_SUB_128
+      //#define USE_LZFIND_SATUR_SUB_128
     #ifdef MY_CPU_ARM64
       // #define LZFIND_ATTRIB_SSE41 __attribute__((__target__("")))
     #else

@@ -222,7 +222,7 @@
 #include "absl/utility/utility.h"
 
 #if ABSL_INTERNAL_CPLUSPLUS_LANG >= 202002L
-#include <ranges>  // NOLINT(build/c++20)
+//#include <ranges>  // NOLINT(build/c++20)
 #endif
 
 namespace absl {

@@ -114,6 +114,10 @@ void HWViewpointBuffer::Clear()
 	bool needNewPipeline = mUploadIndex > 0; // Clear might be called multiple times before any actual rendering
 
 	mUploadIndex = 0;
+#ifdef __MOBILE__ // Needed to fix screen wipe when it's first run on a launch. Otherwise viewport does not get set properly for the first frame
+	mLastMappedIndex = UINT_MAX;
+#endif
+
 	mClipPlaneInfo.Clear();
 
 	if (needNewPipeline)

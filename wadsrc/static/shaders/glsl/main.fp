@@ -99,6 +99,9 @@ float grayscale(vec4 color)
 
 vec4 dodesaturate(vec4 texel, float factor)
 {
+#ifdef SHADER_LITE
+	return texel;
+#else
 	if (factor != 0.0)
 	{
 		float gray = grayscale(texel);
@@ -108,6 +111,7 @@ vec4 dodesaturate(vec4 texel, float factor)
 	{
 		return texel;
 	}
+#endif
 }
 
 //===========================================================================
@@ -236,7 +240,7 @@ vec4 getTexel(vec2 st)
 			return texel;
 
 	}
-
+#ifndef SHADER_LITE
 	if ((uTextureMode & TEXF_ClampY) != 0)
 	{
 		if (st.t < 0.0 || st.t > 1.0)
@@ -258,7 +262,9 @@ vec4 getTexel(vec2 st)
 	texel.rgb += uAddColor.rgb;
 	if (uObjectColor2.a == 0.0) texel *= uObjectColor;
 	else texel *= mix(uObjectColor, uObjectColor2, gradientdist.z);
-
+#else
+	texel *= uObjectColor;
+#endif
 	// Last but not least apply the desaturation from the sector's light.
 	return desaturate(texel);
 }
@@ -314,6 +320,9 @@ float R_ZDoomColormap(float light, float z)
 
 float R_DoomColormap(float light, float z)
 {
+#ifdef SHADER_LITE
+	return R_ZDoomColormap(light, z);
+#else
 	if ((uPalLightLevels >> 16) == 16) // gl_lightmode 16
 	{
 		float lightnum = clamp(light * 15.0, 0.0, 15.0);
@@ -332,6 +341,7 @@ float R_DoomColormap(float light, float z)
 	{
 		return R_ZDoomColormap(light, z);
 	}
+#endif	
 }
 
 //===========================================================================
@@ -351,7 +361,7 @@ float R_DoomLightingEquation(float light)
 	{
 		z = pixelpos.w;
 	}
-
+#ifndef SHADER_LITE
 	if ((uPalLightLevels >> 16) == 5) // gl_lightmode 5: Build software lighting emulation.
 	{
 		// This is a lot more primitive than Doom's lighting...
@@ -361,7 +371,7 @@ float R_DoomLightingEquation(float light)
 		float shade = clamp((curshade + visibility), 0.0, numShades - 1.0);
 		return clamp(shade * uLightDist, 0.0, 1.0);
 	}
-
+#endif
 	float colormap = R_DoomColormap(light, z);
 
 	if ((uPalLightLevels & 0xff) != 0)
@@ -714,7 +724,7 @@ void SetMaterialProps(inout Material material, vec2 texCoord)
 vec4 getLightColor(Material material, float fogdist, float fogfactor)
 {
 	vec4 color = vColor;
-
+#ifndef SHADER_LITE
 	if (uLightLevel >= 0.0)
 	{
 		float newlightlevel = 1.0 - R_DoomLightingEquation(uLightLevel);
@@ -745,6 +755,7 @@ vec4 getLightColor(Material material, float fogdist, float fogfactor)
 	{
 		color.rgb += desaturate(uGlowBottomColor * (1.0 - glowdist.y / uGlowBottomColor.a)).rgb;
 	}
+#endif
 	color = min(color, 1.0);
 
 	// these cannot be safely applied by the legacy format where the implementation cannot guarantee that the values are set.
@@ -833,7 +844,7 @@ vec3 AmbientOcclusionColor()
 void main()
 {
 #ifdef NO_CLIPDISTANCE_SUPPORT
-	if (ClipDistanceA.x < 0 || ClipDistanceA.y < 0 || ClipDistanceA.z < 0 || ClipDistanceA.w < 0 || ClipDistanceB.x < 0) discard;
+	if (ClipDistanceA.x < 0.0 || ClipDistanceA.y < 0.0 || ClipDistanceA.z < 0.0 || ClipDistanceA.w < 0.0 || ClipDistanceB.x < 0.0) discard;
 #endif
 
 #ifndef LEGACY_USER_SHADER
@@ -863,7 +874,11 @@ void main()
 	{
 		float fogdist = 0.0;
 		float fogfactor = 0.0;
-
+#ifdef SHADER_LITE
+		fogdist = max(16.0, pixelpos.w);
+		fogfactor = exp2 (uFogDensity * fogdist);
+		frag = getLightColor(material, fogdist, fogfactor);
+#else
 		//
 		// calculate fog factor
 		//
@@ -903,13 +918,14 @@ void main()
 		{
 			frag = vec4(uFogColor.rgb, (1.0 - fogfactor) * frag.a * 0.75 * vColor.a);
 		}
+#endif
 	}
 	else // simple 2D (uses the fog color to add a color overlay)
 	{
 		if ((uTextureMode & 0xffff) == 7)
 		{
 			float gray = grayscale(frag);
-			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2;
+			vec4 cm = (uObjectColor + gray * (uAddColor - uObjectColor)) * 2.0;
 			frag = vec4(clamp(cm.rgb, 0.0, 1.0), frag.a);
 		}
 			frag = frag * ProcessLight(material, vColor);

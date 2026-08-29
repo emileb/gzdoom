@@ -40,7 +40,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define USE_GLAD_LOADER 0 // Set to 1 to use the GLAD loader, otherwise use noramal GZDoom loader for PC
+#define USE_GLAD_LOADER 1 // Set to 1 to use the GLAD loader, otherwise use noramal GZDoom loader for PC
 
 #if (USE_GLAD_LOADER)
 	#include "glad/glad.h"

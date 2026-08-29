@@ -1,0 +1,5 @@
+#define GIT_DESCRIPTION "5.0.0"
+#define GIT_HASH "292cf4203ebd3ced951cb67f6819180f588c1d44"
+#define GIT_TIME "2026-08-28T18:25:23-04:00"
+#define GIT_TAG "5.0.0"
+#define GIT_DISTANCE 0

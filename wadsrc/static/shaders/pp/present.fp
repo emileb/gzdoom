@@ -44,6 +44,7 @@ vec4 ApplyGamma(vec4 c)
 	val = val * Contrast - (Contrast - 1.0) * 0.5;
 
 	val = val * (WhitePoint - BlackPoint) + BlackPoint;
+
 	val = pow(max(val, vec3(0.0)), vec3(InvGamma));
 
 	return vec4(val, c.a);

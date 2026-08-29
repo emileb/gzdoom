@@ -389,7 +389,9 @@ std::unique_ptr<VulkanShader> VkShaderManager::LoadVertShader(FString shadername
 		.OnIncludeSystem(OnInclude)
 		.Create(shadername.GetChars(), fb->device.get());
 }
-
+#ifdef __MOBILE__
+EXTERN_CVAR(Bool, gl_lite_shader)
+#endif
 std::unique_ptr<VulkanShader> VkShaderManager::LoadFragShader(FString shadername, const char *frag_lump, const char *material_lump, const char *light_lump, const char *defines, bool alphatest, bool gbufferpass)
 {
 	FString code = GetTargetGlslVersion();
@@ -408,6 +410,11 @@ std::unique_ptr<VulkanShader> VkShaderManager::LoadFragShader(FString shadername
 	if (!fb->device->EnabledFeatures.Features.shaderClipDistance) code << "#define NO_CLIPDISTANCE_SUPPORT\n";
 	if (!alphatest) code << "#define NO_ALPHATEST\n";
 	if (gbufferpass) code << "#define GBUFFER_PASS\n";
+
+#ifdef __MOBILE__
+    if(gl_lite_shader)
+		code << "#define SHADER_LITE\n";
+#endif
 
 	code << "\n#line 1\n";
 	code << LoadPrivateShaderLump(frag_lump).GetChars() << "\n";

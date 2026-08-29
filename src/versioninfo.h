@@ -17,6 +17,7 @@
 
 #include "basics.h"
 
+#include <compare>
 #include <string>
 
 class FString;
@@ -43,29 +44,30 @@ struct VersionInfo
 	}
 	explicit VersionInfo(const char *);
 
+	// Compare against 0: older libc++ (NDK 24) lacks strong_ordering == strong_ordering
 	bool operator <=(const VersionInfo& o) const
 	{
-		return operator<=>(o) != std::strong_ordering::greater;
+		return operator<=>(o) <= 0;
 	}
 	bool operator >=(const VersionInfo& o) const
 	{
-		return operator<=>(o) != std::strong_ordering::less;
+		return operator<=>(o) >= 0;
 	}
 	bool operator > (const VersionInfo& o) const
 	{
-		return operator<=>(o) == std::strong_ordering::greater;
+		return operator<=>(o) > 0;
 	}
 	bool operator < (const VersionInfo& o) const
 	{
-		return operator<=>(o) == std::strong_ordering::less;
+		return operator<=>(o) < 0;
 	}
 	bool operator == (const VersionInfo& o) const
 	{
-		return operator<=>(o) == std::strong_ordering::equal;
+		return operator<=>(o) == 0;
 	}
 	bool operator != (const VersionInfo& o) const
 	{
-		return operator<=>(o) != std::strong_ordering::equal;
+		return operator<=>(o) != 0;
 	}
 
 	std::strong_ordering operator <=> (const VersionInfo& o) const;

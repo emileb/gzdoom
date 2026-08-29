@@ -58,6 +58,8 @@ extern "C" int cc_install_handlers(int, char**, int, int*, const char*, int(*)(c
 void Mac_I_FatalError(const char* errortext);
 #endif
 
+#ifndef __ANDROID__
+
 #ifdef __linux__
 void Linux_I_FatalError(const char* errortext);
 
@@ -88,6 +90,7 @@ static void I_TryRestart(char **argv)
 }
 
 bool SDL_I_CheckForRestart(void);
+#endif
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 int GameMain();
@@ -178,7 +181,11 @@ void I_StartupJoysticks();
 		if (SDL_setenv(k, v, 0)) DEBUG_LOG("Failed to set %s", k); \
 	} while (0);
 
+#ifdef __ANDROID__
+int main_android (int argc, char **argv)
+#else
 int main (int argc, char **argv)
+#endif
 {
 #if !defined (__APPLE__)
 	{
@@ -238,13 +245,21 @@ int main (int argc, char **argv)
 
 	const int result = GameMain();
 
+#ifndef __ANDROID__
 	if (SDL_I_CheckForRestart())
 	{
 		I_TryRestart(argv);
 	}
+#endif
 
 	SDL_SetRelativeMouseMode(SDL_FALSE);
+
 	SDL_Quit();
+
+#ifdef __ANDROID__
+	usleep(500* 1000);
+	exit(0);
+#endif
 
 	return result;
 }

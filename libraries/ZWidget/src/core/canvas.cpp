@@ -382,7 +382,7 @@ void Canvas::line(const Point& p0, const Point& p1, const Colorf& color)
 
 inline std::unique_ptr<CanvasFontGroup>& Canvas::WithFont(const std::shared_ptr<Font> &font)
 {
-	if (!fonts.contains(font))
+	if (fonts.find(font) == fonts.end()) // no unordered_map::contains in NDK libc++
 	{
 		fonts.emplace(font, std::make_unique<CanvasFontGroup>(font->GetName(), font->GetHeight() * uiscale));
 	}

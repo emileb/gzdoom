@@ -225,7 +225,7 @@ std::strong_ordering VersionInfo::operator <=> (const VersionInfo& o) const
 		if (num_a < 0 || num_b < 0)
 		{
 			if (auto cmp = (num_a < 0) <=> (num_b < 0); cmp != 0) return cmp;
-			if (auto cmp = sub_a <=> sub_b; cmp != 0) return cmp;
+			if (auto cmp = sub_a.compare(sub_b) <=> 0; cmp != 0) return cmp; // NDK 24 libc++ lacks string_view <=>
 		}
 		else
 		{

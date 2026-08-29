@@ -150,7 +150,7 @@ MY_CPU_64BIT means that processor can work with 64-bit registers.
 #endif
 
 #if defined(MY_CPU_ARM) || defined(MY_CPU_ARM64)
-#define MY_CPU_ARM_OR_ARM64
+//#define MY_CPU_ARM_OR_ARM64
 #endif
 
 

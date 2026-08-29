@@ -108,6 +108,11 @@ void gl_LoadExtensions()
 	const char *glversion = (const char*)glGetString(GL_VERSION);
 
 	const char *version = Args->CheckValue(FArg_glversion);
+#ifdef __MOBILE__
+    glversion = "3.3";
+	gl.flags |= RFL_NO_CLIP_PLANES;
+	gl.flags |= RFL_INVALIDATE_BUFFER;
+#endif
 	realglversion = strtod(glversion, NULL);
 
 

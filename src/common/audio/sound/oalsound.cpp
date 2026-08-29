@@ -1150,6 +1150,18 @@ SoundHandle OpenALSoundRenderer::LoadSoundRaw(uint8_t *sfxdata, int length, int 
 	return retval;
 }
 
+#ifdef __MOBILE__
+static size_t GetChannelCount(ChannelConfig chans)
+{
+    switch(chans)
+    {
+        case ChannelConfig_Mono: return 1;
+        case ChannelConfig_Stereo: return 2;
+    }
+    return 0;
+}
+#endif
+
 SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length, int def_loop_start, int def_loop_end)
 {
 	SoundHandle retval = { NULL };
@@ -1176,6 +1188,9 @@ SoundHandle OpenALSoundRenderer::LoadSound(uint8_t *sfxdata, int length, int def
 	SoundDecoder_GetInfo(decoder, &srate, &chans, &type);
 
 	ALenum format = GetFormat(type, chans);
+
+
+
 	if (format == AL_NONE)
 	{
 		SoundDecoder_Close(decoder);
@@ -1643,6 +1658,9 @@ void OpenALSoundRenderer::SetSfxPaused(bool paused, int slot)
 	}
 }
 
+#ifdef __ANDROID__
+extern "C" void OpenSL_android_set_pause( ALCdevice *Device, int pause );
+#endif
 void OpenALSoundRenderer::SetInactive(SoundRenderer::EInactiveState state)
 {
 	switch(state)
@@ -1654,6 +1672,9 @@ void OpenALSoundRenderer::SetInactive(SoundRenderer::EInactiveState state)
 				alcDeviceResumeSOFT(Device);
 				getALCError(Device);
 			}
+#ifdef __ANDROID__
+			OpenSL_android_set_pause( Device, 0 );
+#endif
 			break;
 
 		case SoundRenderer::INACTIVE_Complete:
@@ -1665,6 +1686,9 @@ void OpenALSoundRenderer::SetInactive(SoundRenderer::EInactiveState state)
 			/* fall-through */
 		case SoundRenderer::INACTIVE_Mute:
 			alListenerf(AL_GAIN, 0.0f);
+#ifdef __ANDROID__
+			OpenSL_android_set_pause( Device, 1 );
+#endif
 			break;
 	}
 }

@@ -155,7 +155,9 @@ void SDL2DisplayWindow::Show()
 	if (Owner)
 	{
 		SDL_SetWindowModalFor(Handle.window, Owner->Handle.window);
+#ifndef __ANDROID__ // SDL2_OpenTouch predates SDL 2.0.16
 		SDL_SetWindowAlwaysOnTop(Handle.window, SDL_TRUE);
+#endif
 	}
 
 	// this is a hack, but it seems to prevent unpainted windows on my pc
@@ -609,8 +611,10 @@ void SDL2DisplayWindow::OnWindowEvent(const SDL_WindowEvent& event)
 		case SDL_WINDOWEVENT_LEAVE:
 		case SDL_WINDOWEVENT_TAKE_FOCUS:
 		case SDL_WINDOWEVENT_HIT_TEST:
+#ifndef __ANDROID__
 		case SDL_WINDOWEVENT_ICCPROF_CHANGED:
 		case SDL_WINDOWEVENT_DISPLAY_CHANGED:
+#endif
 			// nope
 			break;
 	}
