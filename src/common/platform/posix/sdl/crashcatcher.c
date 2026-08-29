@@ -406,6 +406,9 @@ static void crash_handler(const char *logfile)
 
 int cc_install_handlers(int argc, char **argv, int num_signals, int *signals, const char *logfile, int (*user_info)(char*, char*))
 {
+#ifdef __ANDROID__
+    return 0;
+#endif
 	struct sigaction sa;
 	stack_t altss;
 	int retval;

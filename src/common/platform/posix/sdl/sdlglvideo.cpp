@@ -51,6 +51,18 @@
 
 #ifdef HAVE_VULKAN
 #include "vulkan/system/vk_renderdevice.h"
+
+#include <zvulkan/vulkanbuilders.h>
+#include <zvulkan/vulkandevice.h>
+#include <zvulkan/vulkaninstance.h>
+#include <zvulkan/vulkansurface.h>
+
+#ifdef __ANDROID__
+#include "../../../../../libraries/ZVulkan/include/vulkan/vulkan.h"
+#include "../../../../../src/common/rendering/vulkan/textures/vk_framebuffer.h"
+#include <zvulkan/vulkanswapchain.h>
+#endif
+
 #endif
 
 // MACROS ------------------------------------------------------------------
@@ -72,6 +84,8 @@ EXTERN_CVAR (Int, vid_defheight)
 EXTERN_CVAR (Bool, cl_capfps)
 EXTERN_CVAR(Bool, vk_debug)
 EXTERN_FARG(glversion);
+
+FARG(gles2_renderer, "Android, select GLES2 context", "", "", "");
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -190,7 +204,11 @@ namespace Priv
 
 	void SetupPixelFormat(int multisample, const int *glver)
 	{
+#ifdef __MOBILE__
+		SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,  16 );
+#else
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		if (multisample > 0) {
@@ -199,6 +217,21 @@ namespace Priv
 		}
 		if (gl_debug)
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+
+#ifdef __MOBILE__
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+        if( Args->CheckParm (FArg_gles2_renderer) )
+        {
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        }
+		else
+		{
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		}
+        return;
+#endif
 
 		if (gl_es)
 		{
@@ -287,9 +320,10 @@ public:
 
 	DFrameBuffer *CreateFrameBuffer ();
 
-private:
+public:
 #ifdef HAVE_VULKAN
 	std::shared_ptr<VulkanSurface> surface;
+    VulkanRenderDevice *_fb = nullptr; //karin: created from SDLVideo::CreateFrameBuffer
 #endif
 };
 
@@ -392,13 +426,15 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer ()
 				builder.RequireExtension(names[i]);
 			auto instance = builder.Create();
 
-			VkSurfaceKHR surfacehandle = nullptr;
+			VkSurfaceKHR surfacehandle = VK_NULL_HANDLE;
 			if (!I_CreateVulkanSurface(instance->Instance, &surfacehandle))
 				VulkanError("I_CreateVulkanSurface failed");
 
 			surface = std::make_shared<VulkanSurface>(instance, surfacehandle);
 
 			fb = new VulkanRenderDevice(nullptr, vid_fullscreen, surface);
+
+            this->_fb = (VulkanRenderDevice *)fb;
 		}
 		catch (CVulkanError const &error)
 		{
@@ -686,3 +722,75 @@ void I_SetWindowTitle(const char* caption)
 		SDL_SetWindowTitle(Priv::window, default_caption.GetChars());
 	}
 }
+
+#ifdef __ANDROID__ // From karin
+extern "C" int  SDL_NewEGLSurfaceCreated();
+void VulkanCheckSurface()
+{
+    if (Priv::vulkanEnabled)
+	{
+		extern IVideo *Video;
+		if(!Video)
+		{
+	        Printf("IVideo not initialized.\n");
+			return;
+		}
+		SDLVideo *sdl_video = (SDLVideo *)Video;
+
+		if(!sdl_video->_fb)
+		{
+	        Printf("SDLVideo::CreateFrameBuffer not called.\n");
+			return;
+		}
+		if(!sdl_video->_fb->device)
+		{
+	        Printf("VulkanDevice not initialized.\n");
+			return;
+		}
+		if(!sdl_video->_fb->device->Instance)
+		{
+	        Printf("VulkanInstance not initialized.\n");
+			return;
+		}
+		if(sdl_video->_fb->device->Instance->Instance == VK_NULL_HANDLE)
+		{
+	        Printf("vkCreateInstance not called.\n");
+			return;
+		}
+		auto fbm = sdl_video->_fb->GetFramebufferManager();
+		if(!fbm)
+		{
+	        Printf("VkFramebufferManager not initialized.\n");
+			return;
+		}
+
+		if(!SDL_NewEGLSurfaceCreated())
+			return;
+
+		if(fbm->SwapChain && !fbm->SwapChain->Lost())
+		{
+	        Printf("VulkanSwapChain::SwapChain make lost.\n");
+			fbm->SwapChain->MakeLost();
+		}
+
+		if(sdl_video->surface && sdl_video->surface->Surface != VK_NULL_HANDLE)
+		{
+			Printf("Destroy old Vulkan surface.\n");
+			vkDestroySurfaceKHR(sdl_video->_fb->device->Instance->Instance, sdl_video->surface->Surface, NULL);
+			sdl_video->surface->Surface = VK_NULL_HANDLE;
+		}
+
+		VkSurfaceKHR surfacehandle = VK_NULL_HANDLE;
+		if (!I_CreateVulkanSurface(sdl_video->_fb->device->Instance->Instance, &surfacehandle))
+			VulkanError("I_CreateVulkanSurface failed");
+
+	    Printf("Create Vulkan surface: %zu.\n", surfacehandle);
+		sdl_video->surface->Surface = surfacehandle;
+		sdl_video->_fb->device->Surface = sdl_video->surface;
+	    Printf("VulkanSwapChain::AcquireImage.\n");
+		fbm->AcquireImage();
+
+		return;
+	}
+}
+#endif

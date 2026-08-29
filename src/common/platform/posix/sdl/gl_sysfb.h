@@ -26,7 +26,9 @@
 
 #include <SDL2/SDL.h>
 
+#ifndef __ANDROID__ // Causes issue with GLAD loader, not needed
 #include "gl_system.h"
+#endif
 #include "v_video.h"
 
 class SystemBaseFrameBuffer : public DFrameBuffer

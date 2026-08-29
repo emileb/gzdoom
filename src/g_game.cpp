@@ -817,6 +817,11 @@ void G_BuildTiccmd (usercmd_t *cmd)
 		forward += RoundHalfEven(mousey * m_forward); // why round to even?
 	}
 
+#ifdef __MOBILE__
+    extern void Mobile_IN_Move(usercmd_t* cmd );
+	Mobile_IN_Move(cmd);
+#endif
+
 	cmd->pitch = LocalViewPitch >> 16;
 
 	if (SendLand)

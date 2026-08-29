@@ -472,12 +472,20 @@ FString M_GetCajunPath(const char* botfilename)
 
 #else
 
+extern "C" const char *userFilesPath_c;
+
 FString M_GetCajunPath(const char* botfilename)
 {
+#ifdef __ANDROID__
+	FString path = userFilesPath_c;
+    path += "/bots/";
+	path << botfilename;
+#else
 	FString path;
 
 	// Check first in $HOME/.config/zdoom/botfilename.
 	path = GetUserFile(botfilename);
+#endif
 	if (!FileExists(path))
 	{
 		// Then check in SHARE_DIR/botfilename.

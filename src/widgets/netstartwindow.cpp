@@ -26,10 +26,21 @@
 #include "netstartwindow.h"
 #include "version.h"
 
+#ifdef __ANDROID__
+#include <csignal>
+#include <unistd.h>
+#include "JNITouchControlsUtils.h"
+extern volatile sig_atomic_t gameloop_abort;
+#endif
+
 NetStartWindow* NetStartWindow::Instance = nullptr;
 
 void NetStartWindow::NetInit(const char* message, bool host)
 {
+#ifdef __ANDROID__
+	openConsoleBox("Network synchronization");
+	addTextConsoleBox(message);
+#else
 	if (!Instance)
 	{
 		Instance = new NetStartWindow(host);
@@ -38,12 +49,17 @@ void NetStartWindow::NetInit(const char* message, bool host)
 	}
 
 	Instance->SetMessage(message);
+#endif
 }
 
 void NetStartWindow::NetMessage(const char* message)
 {
+#ifdef __ANDROID__
+	addTextConsoleBox(message);
+#else
 	if (Instance)
 		Instance->SetMessage(message);
+#endif
 }
 
 void NetStartWindow::NetConnect(int client, const char* name, unsigned flags, int status)
@@ -98,6 +114,14 @@ void NetStartWindow::NetDisconnect(int client)
 
 void NetStartWindow::NetProgress(int cur, int limit)
 {
+#ifdef __ANDROID__
+	FString msg;
+	if (limit <= 1)
+		msg.Format("Waiting for host...");
+	else
+		msg.Format("[%d/%d]", cur, limit);
+	addTextConsoleBox(msg.GetChars());
+#else
 	if (!Instance)
 		return;
 
@@ -105,12 +129,17 @@ void NetStartWindow::NetProgress(int cur, int limit)
 	Instance->SetProgress(cur);
 	for (int start = Instance->LobbyWindow->GetItemAmount(); start < Instance->maxpos; ++start)
 		Instance->LobbyWindow->AddItem(std::to_string(start));
+#endif
 }
 
 void NetStartWindow::NetDone()
 {
+#ifdef __ANDROID__
+	closeConsoleBox();
+#else
 	delete Instance;
 	Instance = nullptr;
+#endif
 }
 
 void NetStartWindow::NetClose()
@@ -149,6 +178,19 @@ int NetStartWindow::GetNetBanClient()
 
 bool NetStartWindow::NetLoop(bool (*loopCallback)(void*), void* data)
 {
+#ifdef __ANDROID__
+	while (!gameloop_abort)
+	{
+		usleep(1000 * 200);
+
+		if (getConsoleBoxCanceled())
+			return false;
+
+		if (loopCallback(data))
+			return true;
+	}
+	return false;
+#else
 	if (!Instance)
 		return false;
 
@@ -165,6 +207,7 @@ bool NetStartWindow::NetLoop(bool (*loopCallback)(void*), void* data)
 		std::rethrow_exception(Instance->CallbackException);
 
 	return Instance->exitreason;
+#endif
 }
 
 NetStartWindow::NetStartWindow(bool host) : Widget(nullptr, WidgetType::Window, RenderAPI::Unspecified, WindowParams{

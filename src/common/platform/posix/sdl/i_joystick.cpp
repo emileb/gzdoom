@@ -74,7 +74,7 @@ public:
 			{
 				NumAxes = SDL_CONTROLLER_AXIS_MAX;
 				NumHats = 0;
-				Haptics = SDL_GameControllerHasRumble(Mapping) | SDL_GameControllerHasRumbleTriggers(Mapping) << 1;
+//				Haptics = SDL_GameControllerHasRumble(Mapping) | SDL_GameControllerHasRumbleTriggers(Mapping) << 1;
 
 				SetDefaultConfig();
 			}
@@ -101,10 +101,14 @@ public:
 	{
 		if(IsValid() && SettingsChanged)
 			M_SaveJoystickConfig(this);
+
+#ifndef __MOBILE__ //crashes
 		if (Mapping)
 			SDL_GameControllerClose(Mapping);
 		if (Device)
 			SDL_JoystickClose(Device);
+#endif
+
 	}
 
 	bool IsValid() const
@@ -257,7 +261,7 @@ public:
 				static_cast<uint16_t> (0xffff * clamp(low_freq*HapticsStrength, 0.f, 1.f)),
 				duration_ms);
 		}
-
+#ifndef __ANDROID__
 		if (Haptics & HAPTICS_TRIGGERS)
 		{
 			SDL_GameControllerRumbleTriggers(
@@ -266,6 +270,7 @@ public:
 				static_cast<uint16_t> (0xffff * clamp(right_trig*HapticsStrength, 0.f, 1.f)),
 				duration_ms);
 		}
+#endif
 	}
 
 	void SetDefaultConfig()

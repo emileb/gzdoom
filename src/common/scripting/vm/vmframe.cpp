@@ -848,7 +848,9 @@ void CVMAbortException::MaybePrintMessage()
 	va_list ap;
 	va_start(ap, moreinfo);
 	CVMAbortException err(reason, moreinfo, ap);
-	DebugServer::RuntimeEvents::EmitExceptionEvent(reason, err.GetMessage(), err.stacktrace.GetChars());
+#ifndef NO_DEBUG_SERVER
+    DebugServer::RuntimeEvents::EmitExceptionEvent(reason, err.GetMessage(), err.stacktrace.GetChars());
+#endif
 	throw err;
 }
 
@@ -860,7 +862,9 @@ void CVMAbortException::MaybePrintMessage()
 	CVMAbortException err(reason, moreinfo, ap);
 
 	err.stacktrace.AppendFormat("Called from %s at %s, line %d\n", sfunc->PrintableName, sfunc->SourceFileName.GetChars(), sfunc->PCToLine(line));
-	DebugServer::RuntimeEvents::EmitExceptionEvent(reason, err.GetMessage(), err.stacktrace.GetChars());
+#ifndef NO_DEBUG_SERVER
+    DebugServer::RuntimeEvents::EmitExceptionEvent(reason, err.GetMessage(), err.stacktrace.GetChars());
+#endif
 	throw err;
 }
 
