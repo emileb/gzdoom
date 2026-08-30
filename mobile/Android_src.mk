@@ -86,7 +86,6 @@ LOCAL_C_INCLUDES := \
         $(GZDOOM_TOP_PATH)/libraries/discordrpc/include \
         $(GZDOOM_TOP_PATH)/libraries/ZVulkan/include \
         $(GZDOOM_TOP_PATH)/libraries/ZVulkan/src \
-        $(TOP_DIR)/Doom/spirv-cross \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal-soft/src/main/jni/openal/include/AL \
