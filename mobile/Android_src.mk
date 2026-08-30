@@ -85,6 +85,8 @@ LOCAL_C_INCLUDES := \
         $(GZDOOM_TOP_PATH)/libraries/miniz \
         $(GZDOOM_TOP_PATH)/libraries/discordrpc/include \
         $(GZDOOM_TOP_PATH)/libraries/ZVulkan/include \
+        $(GZDOOM_TOP_PATH)/libraries/ZVulkan/src \
+        $(TOP_DIR)/Doom/spirv-cross \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal-soft/src/main/jni/openal/include/AL \
@@ -110,6 +112,7 @@ ANDROID_SRC_FILES = \
     ../../../Clibs_OpenTouch/idtech1/touch_interface.cpp \
     ../../../Clibs_OpenTouch/idtech1/android_jni.cpp \
     ../mobile/src/i_specialpaths_android.cpp \
+    ../../../Clibs_OpenTouch/idtech1/gl_spirv_convert.cpp \
 
     #../mobile/src/extrafiles/etc1.cpp
 
@@ -637,7 +640,7 @@ LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
 LOCAL_STATIC_LIBRARIES := SDL2_net libjpeg lzma_411  bzip2_411 logwritter vpx_player webpmux glslang_411
-LOCAL_SHARED_LIBRARIES := touchcontrols openal-soft SDL2 core_shared saffal zmusic
+LOCAL_SHARED_LIBRARIES := touchcontrols openal-soft SDL2 core_shared saffal zmusic spirvcross
 
 #Strip unused functions/data
 LOCAL_CFLAGS += -fvisibility=hidden -fdata-sections -ffunction-sections  -fPIC
