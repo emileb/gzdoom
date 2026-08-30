@@ -29,6 +29,10 @@
 #include "hw_shaderpatcher.h"
 #include "filesystem.h"
 #include "printf.h"
+#ifdef __MOBILE__
+#include "gl_spirv_convert.h"
+EXTERN_CVAR(Int, gl_spirv_shaders)
+#endif
 #include "cmdlib.h"
 
 namespace OpenGLRenderer
@@ -91,6 +95,9 @@ void FShaderProgram::Compile(ShaderType type, const char *lumpName, const char *
 	int lump = fileSystem.CheckNumForFullName(lumpName);
 	if (lump == -1) I_FatalError("Unable to load '%s'", lumpName);
 	FString code = GetStringFromLump(lump);
+#ifdef __MOBILE__
+	mModShader |= fileSystem.GetFileContainer(lump) > fileSystem.GetMaxIwadNum();
+#endif
 
 	Compile(type, lumpName, code, defines, maxGlslVersion);
 }
@@ -130,6 +137,39 @@ void FShaderProgram::CompileShader(ShaderType type)
 	}
 }
 
+#ifdef __MOBILE__
+// Non-fatal variant used by the GLES-then-SPIRV-Cross retry in Link()
+bool FShaderProgram::CompileShader(ShaderType type, const FString &source, FString &error)
+{
+	CreateShader(type);
+
+	const auto &handle = mShaders[type];
+
+	FGLDebug::LabelObject(GL_SHADER, handle, mShaderNames[type].GetChars());
+
+	int lengths[1] = { (int)source.Len() };
+	const char *sources[1] = { source.GetChars() };
+	glShaderSource(handle, 1, sources, lengths);
+
+	glCompileShader(handle);
+
+	GLint status = 0;
+	glGetShaderiv(handle, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		error << mShaderNames[type].GetChars() << ":\n" << GetShaderInfoLog(handle) << "\n";
+		glDeleteShader(handle);
+		mShaders[type] = 0;
+		return false;
+	}
+
+	if (mProgram == 0)
+		mProgram = glCreateProgram();
+	glAttachShader(mProgram, handle);
+	return true;
+}
+#endif
+
 //==========================================================================
 //
 // Links a program with the compiled shaders
@@ -158,6 +198,40 @@ void FShaderProgram::Link(const char *name)
 
 	if (!loadedFromBinary)
 	{
+#ifdef __MOBILE__
+		// Try the hand-patched GLES source first; on failure (or when the mode says so) convert both stages with glslang/SPIRV-Cross
+		bool useSpirv = gl_spirv_shaders >= 3 || (gl_spirv_shaders == 2 && mModShader);
+		GLint status = GL_FALSE;
+		for (;;)
+		{
+			FString vsrc = mShaderSources[Vertex], fsrc = mShaderSources[Fragment], err;
+			if (useSpirv && !GL_ConvertProgramToGLES(name, vsrc, fsrc, err))
+				I_FatalError("SPIRV-Cross conversion of shader '%s' failed:\n%s\n", name, err.GetChars());
+
+			if (CompileShader(Vertex, vsrc, err) && CompileShader(Fragment, fsrc, err))
+			{
+				glLinkProgram(mProgram);
+				glGetProgramiv(mProgram, GL_LINK_STATUS, &status);
+				if (status == GL_TRUE) break;
+				err << "Linking:\n" << GetProgramInfoLog(mProgram) << "\n";
+			}
+
+			for (int i = 0; i < NumShaderTypes; i++)
+			{
+				if (mShaders[i] == 0) continue;
+				if (mProgram) glDetachShader(mProgram, mShaders[i]);
+				glDeleteShader(mShaders[i]);
+				mShaders[i] = 0;
+			}
+			if (!useSpirv && gl_spirv_shaders >= 1)
+			{
+				Printf("Shader '%s' failed to build for GLES, retrying with SPIRV-Cross:\n%s\n", name, err.GetChars());
+				useSpirv = true;
+				continue;
+			}
+			I_FatalError("Compile/Link Shader '%s':\n%s\n", name, err.GetChars());
+		}
+#else
 		CompileShader(Vertex);
 		CompileShader(Fragment);
 
@@ -165,6 +239,7 @@ void FShaderProgram::Link(const char *name)
 
 		GLint status = 0;
 		glGetProgramiv(mProgram, GL_LINK_STATUS, &status);
+#endif
 		if (status == GL_FALSE)
 		{
 			I_FatalError("Link Shader '%s':\n%s\n", name, GetProgramInfoLog(mProgram).GetChars());
