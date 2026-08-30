@@ -98,7 +98,6 @@ LOCAL_C_INCLUDES := \
         $(GZDOOM_TOP_PATH)/libraries/ZMusic/include \
         $(GZDOOM_TOP_PATH)/libraries/abseil \
         $(GZDOOM_TOP_PATH)/libraries/ZVulkan/src \
-        $(TOP_DIR)/Doom/spirv-cross \
 \
  $(SDL_INCLUDE_PATHS) \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal-soft/src/main/jni/openal/include/AL \
