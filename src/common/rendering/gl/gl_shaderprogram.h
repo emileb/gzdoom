@@ -59,6 +59,9 @@ private:
 	FShaderProgram &operator=(const FShaderProgram &) = delete;
 
 	void CompileShader(ShaderType type);
+#ifdef __MOBILE__
+	bool CompileShader(ShaderType type, const FString &source, FString &error);
+#endif
 	FString PatchShader(ShaderType type, const FString &code, const char *defines, int maxGlslVersion);
 
 	void CreateShader(ShaderType type);
@@ -68,6 +71,9 @@ private:
 	GLuint mProgram = 0;
 	GLuint mShaders[NumShaderTypes];
 	FString mShaderSources[NumShaderTypes];
+#ifdef __MOBILE__
+	bool mModShader = false; // lump loaded after the IWAD, i.e. from a mod
+#endif
 	FString mShaderNames[NumShaderTypes];
 	TArray<std::pair<FString, int>> samplerstobind;
 };
