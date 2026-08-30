@@ -55,6 +55,9 @@ EXTERN_CVAR(Bool, r_skipmats)
 #ifdef __MOBILE__
 EXTERN_CVAR(Bool, gl_customshader)
 CVAR(Bool, gl_lite_shader, false, 0);
+// 0 = off, 1 = convert with glslang/SPIRV-Cross only when the GLES build fails, 2 = always convert mod shaders (fallback for the rest), 3 = convert everything (testing)
+CVAR(Int, gl_spirv_shaders, 1, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+#include "gl_spirv_convert.h"
 #endif
 
 
@@ -222,6 +225,9 @@ void SaveCachedProgramBinary(const FString &vertex, const FString &fragment, con
 bool FShader::Load(const char * name, const char * vert_prog_lump, const char * frag_prog_lump, const char * proc_prog_lump, const char * light_fragprog, const char * defines)
 {
 	static char buffer[10000];
+#ifdef __MOBILE__
+	bool modShader = false;
+#endif
 	FString error;
 
 	FString i_data = R"(
@@ -433,7 +439,13 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		if (*proc_prog_lump != '#')
 		{
 			int pp_lump = fileSystem.CheckNumForFullName(proc_prog_lump, 0);	// if it's a core shader, ignore overrides by user mods.
-			if (pp_lump == -1) pp_lump = fileSystem.CheckNumForFullName(proc_prog_lump);
+			if (pp_lump == -1)
+			{
+				pp_lump = fileSystem.CheckNumForFullName(proc_prog_lump);
+#ifdef __MOBILE__
+				modShader = true; // not in the base pk3, so it comes from a mod
+#endif
+			}
 			if (pp_lump == -1) I_Error("Unable to load '%s'", proc_prog_lump);
 			FString pp_data = GetStringFromLump(pp_lump);
 
@@ -528,17 +540,28 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 
 	if (!linked)
 	{
+#ifdef __MOBILE__
+		// Try the hand-patched GLES source first; on failure (or when the mode says so) convert both stages with glslang/SPIRV-Cross
+		bool useSpirv = gl_spirv_shaders >= 3 || (gl_spirv_shaders == 2 && modShader);
+		for (;;)
+		{
+		FString vp_src = vp_comb, fp_src = fp_comb;
+		if (useSpirv && !GL_ConvertProgramToGLES(name, vp_src, fp_src, error))
+			I_Error("SPIRV-Cross conversion of shader '%s' failed:\n%s\n", name, error.GetChars());
+#else
+		const FString &vp_src = vp_comb, &fp_src = fp_comb;
+#endif
 		hVertProg = glCreateShader(GL_VERTEX_SHADER);
 		hFragProg = glCreateShader(GL_FRAGMENT_SHADER);
 
 		FGLDebug::LabelObject(GL_SHADER, hVertProg, vert_prog_lump);
 		FGLDebug::LabelObject(GL_SHADER, hFragProg, frag_prog_lump);
 
-		int vp_size = (int)vp_comb.Len();
-		int fp_size = (int)fp_comb.Len();
+		int vp_size = (int)vp_src.Len();
+		int fp_size = (int)fp_src.Len();
 
-		const char *vp_ptr = vp_comb.GetChars();
-		const char *fp_ptr = fp_comb.GetChars();
+		const char *vp_ptr = vp_src.GetChars();
+		const char *fp_ptr = fp_src.GetChars();
 
 		glShaderSource(hVertProg, 1, &vp_ptr, &vp_size);
 		glShaderSource(hFragProg, 1, &fp_ptr, &fp_size);
@@ -572,6 +595,19 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		linked = (status == GL_TRUE);
 		if (!linked)
 		{
+#ifdef __MOBILE__
+			if (!useSpirv && gl_spirv_shaders >= 1)
+			{
+				Printf("Shader '%s' failed to build for GLES, retrying with SPIRV-Cross:\n%s\n", name, error.GetChars());
+				glDetachShader(hShader, hVertProg);
+				glDetachShader(hShader, hFragProg);
+				glDeleteShader(hVertProg);
+				glDeleteShader(hFragProg);
+				error = "";
+				useSpirv = true;
+				continue;
+			}
+#endif
 			// only print message if there's an error.
 			I_Error("Init Shader '%s':\n%s\n", name, error.GetChars());
 		}
@@ -584,6 +620,10 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 			binary.Resize(binaryLength);
 			SaveCachedProgramBinary(vp_comb, fp_comb, binary, binaryFormat);
 		}
+#ifdef __MOBILE__
+		break;
+		}
+#endif
 	}
 	else
 	{
