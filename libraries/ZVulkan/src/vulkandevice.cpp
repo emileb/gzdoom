@@ -44,6 +44,10 @@ void VulkanDevice::CreateAllocator()
 {
 	VmaAllocatorCreateInfo allocinfo = {};
 	allocinfo.vulkanApiVersion = Instance->ApiVersion;
+#ifdef __MOBILE__
+	// VMA requires min(instance, device) apiVersion; the instance may exceed the device
+	allocinfo.vulkanApiVersion = std::min(Instance->ApiVersion, PhysicalDevice.Properties.Properties.apiVersion);
+#endif
 	if (SupportsExtension(VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME) && SupportsExtension(VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME))
 		allocinfo.flags |= VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
 	if (SupportsExtension(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME))

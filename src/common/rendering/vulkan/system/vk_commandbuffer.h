@@ -58,21 +58,40 @@ public:
 
 	void DeleteFrameObjects(bool uploadOnly = false);
 
+	enum { maxFrameSlots = 4 };
+
+	int GetFrameSlot() const { return mFrameSlot; }
+	int GetNumFrameSlots() const { return mNumFrameSlots; }
+	void DrainFrameSlots(); // full CPU<->GPU sync: retire every in-flight frame
+
 private:
 	void FlushCommands(VulkanCommandBuffer** commands, size_t count, bool finish, bool lastsubmit);
 
 	VulkanRenderDevice* fb = nullptr;
 
-	std::unique_ptr<VulkanCommandPool> mCommandPool;
-
 	std::unique_ptr<VulkanCommandBuffer> mTransferCommands;
 	std::unique_ptr<VulkanCommandBuffer> mDrawCommands;
 
 	enum { maxConcurrentSubmitCount = 8 };
-	std::unique_ptr<VulkanSemaphore> mSubmitSemaphore[maxConcurrentSubmitCount];
-	std::unique_ptr<VulkanFence> mSubmitFence[maxConcurrentSubmitCount];
-	VkFence mSubmitWaitFences[maxConcurrentSubmitCount];
-	int mNextSubmit = 0;
+
+	// Per in-flight frame state; >1 slot lets the CPU record the next frame while the GPU renders
+	struct FrameSlot
+	{
+		// Own pool per slot, reset on retire: Mali hoards memory freed with vkFreeCommandBuffers
+		std::unique_ptr<VulkanCommandPool> commandPool;
+		std::unique_ptr<VulkanSemaphore> submitSemaphores[maxConcurrentSubmitCount];
+		std::unique_ptr<VulkanFence> submitFences[maxConcurrentSubmitCount];
+		VkFence waitFences[maxConcurrentSubmitCount];
+		int numSubmits = 0;
+		std::unique_ptr<DeleteList> pendingTransferDelete;
+		std::unique_ptr<DeleteList> pendingDrawDelete;
+	};
+	FrameSlot mFrameSlots[maxFrameSlots];
+	int mNumFrameSlots = 1;
+	int mFrameSlot = 0;
+
+	void WaitForSlot(FrameSlot& slot);
+	void ResetSlotPool(FrameSlot& slot);
 
 	struct TimestampQuery
 	{

@@ -74,6 +74,14 @@ EXTERN_CVAR(Bool, cl_capfps)
 
 CVAR(Bool, vk_raytrace, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 
+#ifdef __MOBILE__
+// Frames in flight; the Vulkan analog of gl_pipeline_depth (0 = auto)
+CUSTOM_CVAR(Int, vk_pipeline_depth, 0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
+{
+	Printf("This won't take effect until the game is restarted.\n");
+}
+#endif
+
 // Physical device info
 static std::vector<VulkanCompatibleDevice> SupportedDevices;
 int vkversion;
@@ -178,6 +186,10 @@ void VulkanRenderDevice::InitializeState()
 	uniformblockalignment = (unsigned int)device->PhysicalDevice.Properties.Properties.limits.minUniformBufferOffsetAlignment;
 	maxuniformblock = device->PhysicalDevice.Properties.Properties.limits.maxUniformBufferRange;
 
+#ifdef __MOBILE__
+	mFramesInFlight = vk_pipeline_depth == 0 ? 2 : clamp(*vk_pipeline_depth, 1, (int)VkCommandBufferManager::maxFrameSlots);
+#endif
+
 	mCommands.reset(new VkCommandBufferManager(this));
 
 	mSamplerManager.reset(new VkSamplerManager(this));
@@ -195,7 +207,7 @@ void VulkanRenderDevice::InitializeState()
 	mRenderPassManager.reset(new VkRenderPassManager(this));
 	mRaytrace.reset(new VkRaytrace(this));
 
-	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight(), mFramesInFlight);
 	mSkyData = new FSkyVertexBuffer;
 	mViewpoints = new HWViewpointBuffer;
 	mLights = new FLightBuffer();
@@ -229,6 +241,16 @@ void VulkanRenderDevice::Update()
 
 	mCommands->WaitForCommands(true);
 	mCommands->UpdateGpuStats();
+
+	if (mFramesInFlight > 1)
+	{
+		// Wipes and startup loops present via Update() without BeginFrame, so the slot
+		// bookkeeping must follow the slot advance rather than rely on the next BeginFrame
+		mBufferManager->SetFrameSlot(mCommands->GetFrameSlot());
+		mDescriptorSetManager->UpdateHWBufferSet();
+		mVertexData->NextPipelineBuffer();
+		mRenderState->SetVertexBuffer(screen->mVertexData);
+	}
 
 	Super::Update();
 }
