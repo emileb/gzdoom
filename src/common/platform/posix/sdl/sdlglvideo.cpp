@@ -331,6 +331,11 @@ DFrameBuffer *SDLVideo::CreateFrameBuffer ()
 		}
 		catch (CVulkanError const &error)
 		{
+#ifdef __MOBILE__
+			// Release the VkSurfaceKHR first or it keeps the ANativeWindow connected and the GL fallback fails with EGL_BAD_ALLOC
+			surface.reset();
+#endif
+
 			if (Priv::window != nullptr)
 			{
 				Priv::DestroyWindow();

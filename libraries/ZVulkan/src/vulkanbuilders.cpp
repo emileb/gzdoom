@@ -1821,9 +1821,16 @@ std::vector<VulkanCompatibleDevice> VulkanDeviceBuilder::FindDevices(const std::
 			continue;
 
 		// Check if all required features are there
+#ifdef __MOBILE__
+		// samplerAnisotropy and multiDrawIndirect not required: old Mali (Bifrost) lacks them and the renderer copes without
+		if (info.Features.Features.fragmentStoresAndAtomics != VK_TRUE ||
+			info.Features.Features.independentBlend != VK_TRUE)
+			continue;
+#else
 		if (info.Features.Features.samplerAnisotropy != VK_TRUE ||
 			info.Features.Features.fragmentStoresAndAtomics != VK_TRUE)
 			continue;
+#endif
 
 		VulkanCompatibleDevice dev;
 		dev.Device = &instance->PhysicalDevices[idx];
