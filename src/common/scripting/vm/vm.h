@@ -661,8 +661,8 @@ struct AFuncDesc
 #else
 #define MSVC_ASEG
 #define MSVC_FSEG
-#define GCC_ASEG __attribute__((section(SECTION_AREG))) __attribute__((used))
-#define GCC_FSEG __attribute__((section(SECTION_FREG))) __attribute__((used))
+#define GCC_ASEG __attribute__((section(SECTION_AREG))) __attribute__((used)) AUTOSEG_RETAIN
+#define GCC_FSEG __attribute__((section(SECTION_FREG))) __attribute__((used)) AUTOSEG_RETAIN
 #endif
 
 // Macros to handle action functions. These are here so that I don't have to
