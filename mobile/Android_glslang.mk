@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := glslang_uz
 
-LOCAL_CFLAGS :=  -fexceptions -DUNIX -D_UNIX
+LOCAL_CFLAGS :=  -fexceptions -DUNIX -D_UNIX -D__MOBILE__
 
 LOCAL_C_INCLUDES :=   $(LOCAL_PATH)/../ $(LOCAL_PATH)/include/ $(LOCAL_PATH)/include/zvulkan
 

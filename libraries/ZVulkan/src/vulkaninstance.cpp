@@ -121,6 +121,13 @@ void VulkanInstance::CreateInstance()
 
 	volkLoadInstance(Instance);
 
+#ifdef __MOBILE__
+	// Old drivers (e.g. Mali on Android 9) accept apiVersions they don't support instead of
+	// failing with VK_ERROR_INCOMPATIBLE_DRIVER, leaving the 1.1+ entry points null
+	if (ApiVersion > VK_API_VERSION_1_0 && (vkGetPhysicalDeviceProperties2 == nullptr || vkGetPhysicalDeviceFeatures2 == nullptr))
+		ApiVersion = VK_API_VERSION_1_0;
+#endif
+
 	if (debugLayerFound)
 	{
 		VkDebugUtilsMessengerCreateInfoEXT dbgCreateInfo = {};
