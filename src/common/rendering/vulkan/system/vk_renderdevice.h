@@ -32,6 +32,7 @@ public:
 	std::shared_ptr<VulkanDevice> device;
 
 	VkCommandBufferManager* GetCommands() { return mCommands.get(); }
+	int GetFramesInFlight() const { return mFramesInFlight; }
 	VkShaderManager *GetShaderManager() { return mShaderManager.get(); }
 	VkSamplerManager *GetSamplerManager() { return mSamplerManager.get(); }
 	VkBufferManager* GetBufferManager() { return mBufferManager.get(); }
@@ -98,6 +99,7 @@ private:
 	void PrintStartupLog();
 	void CopyScreenToBuffer(int w, int h, uint8_t *data) override;
 
+	int mFramesInFlight = 1;
 	std::unique_ptr<VkCommandBufferManager> mCommands;
 	std::unique_ptr<VkBufferManager> mBufferManager;
 	std::unique_ptr<VkSamplerManager> mSamplerManager;

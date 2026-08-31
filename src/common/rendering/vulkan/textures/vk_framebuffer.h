@@ -23,8 +23,11 @@ public:
 	std::shared_ptr<VulkanSwapChain> SwapChain;
 	int PresentImageIndex = -1;
 
-	std::unique_ptr<VulkanSemaphore> SwapChainImageAvailableSemaphore;
-	std::unique_ptr<VulkanSemaphore> RenderFinishedSemaphore;
+	// One pair per frame slot so overlapping frames don't reuse a pending semaphore
+	std::vector<std::unique_ptr<VulkanSemaphore>> SwapChainImageAvailableSemaphores;
+	std::vector<std::unique_ptr<VulkanSemaphore>> RenderFinishedSemaphores;
+	VulkanSemaphore* GetSwapChainImageAvailableSemaphore();
+	VulkanSemaphore* GetRenderFinishedSemaphore();
 
 private:
 	VulkanRenderDevice* fb = nullptr;

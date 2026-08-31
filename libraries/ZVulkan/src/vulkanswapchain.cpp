@@ -3,6 +3,7 @@
 #include "vulkanobjects.h"
 #include "vulkansurface.h"
 #include "vulkanbuilders.h"
+#include <limits>
 
 VulkanSwapChain::VulkanSwapChain(VulkanDevice* device) : device(device)
 {
@@ -126,12 +127,21 @@ bool VulkanSwapChain::CreateSwapchain(int width, int height, int imageCount, boo
 		}
 		else
 		{
-			if (supportsMailbox)
+			// Note: MAILBOX would uncap on Android (no IMMEDIATE there) but paces worse than FIFO
+			/*if (supportsMailbox)
 				presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
-			else if (supportsImmediate)
+			else*/ if (supportsImmediate)
 				presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 		}
 	}
+
+#ifdef __MOBILE__
+	VulkanPrintLog("vulkan", "Present modes: fifo" +
+		std::string(supportsFifoRelaxed ? ", fifo-relaxed" : "") +
+		std::string(supportsMailbox ? ", mailbox" : "") +
+		std::string(supportsImmediate ? ", immediate" : "") +
+		" -> using mode " + std::to_string((int)presentMode) + (vsync ? " (vsync)" : " (no vsync)"));
+#endif
 
 	SelectFormat(caps, hdr);
 
@@ -225,7 +235,13 @@ int VulkanSwapChain::AcquireImage(VulkanSemaphore* semaphore, VulkanFence* fence
 		return -1;
 
 	uint32_t imageIndex;
-	VkResult result = vkAcquireNextImageKHR(device->device, swapchain, 1'000'000'000, semaphore ? semaphore->semaphore : VK_NULL_HANDLE, fence ? fence->fence : VK_NULL_HANDLE, &imageIndex);
+#ifdef __MOBILE__
+	// Mali treats finite timeouts as infinite and logs a warning every call; pass infinite to silence the spam
+	const uint64_t timeout = std::numeric_limits<uint64_t>::max();
+#else
+	const uint64_t timeout = 1'000'000'000;
+#endif
+	VkResult result = vkAcquireNextImageKHR(device->device, swapchain, timeout, semaphore ? semaphore->semaphore : VK_NULL_HANDLE, fence ? fence->fence : VK_NULL_HANDLE, &imageIndex);
 	if (result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
 	{
 		return imageIndex;

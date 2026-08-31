@@ -94,6 +94,12 @@ void VulkanInstance::CreateInstance()
 	VkResult result = VK_ERROR_INITIALIZATION_FAILED;
 	for (uint32_t apiVersion : ApiVersionsToTry)
 	{
+#ifdef __MOBILE__
+		// A 1.1 loader legally accepts higher apiVersions, but SPIR-V and VMA are keyed off
+		// the requested version and old Mali drivers misbehave instead of failing cleanly
+		if (apiVersion > volkGetInstanceVersion())
+			continue;
+#endif
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		appInfo.pApplicationName = "VulkanDrv";
