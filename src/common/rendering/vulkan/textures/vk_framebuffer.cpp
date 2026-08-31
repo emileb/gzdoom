@@ -25,6 +25,7 @@
 #include <zvulkan/vulkanbuilders.h>
 #include <zvulkan/vulkanswapchain.h>
 #include "vulkan/system/vk_renderdevice.h"
+#include "vulkan/system/vk_commandbuffer.h"
 #include "vulkan/renderer/vk_postprocess.h"
 #include "vk_framebuffer.h"
 
@@ -36,17 +37,30 @@ VkFramebufferManager::VkFramebufferManager(VulkanRenderDevice* fb) : fb(fb)
 	SwapChain = VulkanSwapChainBuilder()
 		.Create(fb->device.get());
 
-	SwapChainImageAvailableSemaphore = SemaphoreBuilder()
-		.DebugName("SwapChainImageAvailableSemaphore")
-		.Create(fb->device.get());
+	for (int i = 0; i < fb->GetFramesInFlight(); i++)
+	{
+		SwapChainImageAvailableSemaphores.push_back(SemaphoreBuilder()
+			.DebugName("SwapChainImageAvailableSemaphore")
+			.Create(fb->device.get()));
 
-	RenderFinishedSemaphore = SemaphoreBuilder()
-		.DebugName("RenderFinishedSemaphore")
-		.Create(fb->device.get());
+		RenderFinishedSemaphores.push_back(SemaphoreBuilder()
+			.DebugName("RenderFinishedSemaphore")
+			.Create(fb->device.get()));
+	}
 }
 
 VkFramebufferManager::~VkFramebufferManager()
 {
+}
+
+VulkanSemaphore* VkFramebufferManager::GetSwapChainImageAvailableSemaphore()
+{
+	return SwapChainImageAvailableSemaphores[fb->GetCommands()->GetFrameSlot()].get();
+}
+
+VulkanSemaphore* VkFramebufferManager::GetRenderFinishedSemaphore()
+{
+	return RenderFinishedSemaphores[fb->GetCommands()->GetFrameSlot()].get();
 }
 
 void VkFramebufferManager::AcquireImage()
@@ -54,6 +68,9 @@ void VkFramebufferManager::AcquireImage()
 	bool exclusiveFullscreen = fb->IsFullscreen() && vk_exclusivefullscreen;
 	if (SwapChain->Lost() || fb->GetClientWidth() != CurrentWidth || fb->GetClientHeight() != CurrentHeight || fb->GetVSync() != CurrentVSync || CurrentHdr != vk_hdr || CurrentExclusiveFullscreen != exclusiveFullscreen)
 	{
+		// In-flight frames may still reference the old swapchain framebuffers
+		fb->GetCommands()->DrainFrameSlots();
+
 		Framebuffers.clear();
 
 		CurrentWidth = fb->GetClientWidth();
@@ -65,7 +82,7 @@ void VkFramebufferManager::AcquireImage()
 		SwapChain->Create(CurrentWidth, CurrentHeight, CurrentVSync ? 2 : 3, CurrentVSync, CurrentHdr, CurrentExclusiveFullscreen);
 	}
 
-	PresentImageIndex = SwapChain->AcquireImage(SwapChainImageAvailableSemaphore.get());
+	PresentImageIndex = SwapChain->AcquireImage(GetSwapChainImageAvailableSemaphore());
 	if (PresentImageIndex != -1)
 	{
 		fb->GetPostprocess()->DrawPresentTexture(fb->mOutputLetterbox, true, false);
@@ -75,5 +92,5 @@ void VkFramebufferManager::AcquireImage()
 void VkFramebufferManager::QueuePresent()
 {
 	if (PresentImageIndex != -1)
-		SwapChain->QueuePresent(PresentImageIndex, RenderFinishedSemaphore.get());
+		SwapChain->QueuePresent(PresentImageIndex, GetRenderFinishedSemaphore());
 }
