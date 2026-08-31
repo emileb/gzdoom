@@ -22,6 +22,7 @@
 
 #include "vk_buffer.h"
 #include "vk_hwbuffer.h"
+#include "vk_renderdevice.h"
 #include "vulkan/renderer/vk_streambuffer.h"
 #include "hwrenderer/data/shaderuniforms.h"
 
@@ -52,6 +53,12 @@ void VkBufferManager::AddBuffer(VkHardwareBuffer* buffer)
 	buffer->it = Buffers.insert(Buffers.end(), buffer);
 }
 
+void VkBufferManager::SetFrameSlot(int slot)
+{
+	for (VkHardwareBuffer* buffer : Buffers)
+		buffer->SetFrameSlot(slot);
+}
+
 void VkBufferManager::RemoveBuffer(VkHardwareBuffer* buffer)
 {
 	buffer->Reset();
@@ -77,6 +84,19 @@ IIndexBuffer* VkBufferManager::CreateIndexBuffer()
 IDataBuffer* VkBufferManager::CreateDataBuffer(int bindingpoint, bool ssbo, bool needsresize)
 {
 	auto buffer = new VkHardwareDataBuffer(fb, bindingpoint, ssbo, needsresize);
+
+	// Per-frame streamed buffers get one region per in-flight frame (-1 = VkStreamBuffer)
+	switch (bindingpoint)
+	{
+	case -1:
+	case VIEWPOINT_BINDINGPOINT:
+	case LIGHTBUF_BINDINGPOINT:
+	case BONEBUF_BINDINGPOINT:
+		buffer->EnableFrameSlots(fb->GetFramesInFlight());
+		break;
+	default:
+		break;
+	}
 
 	switch (bindingpoint)
 	{

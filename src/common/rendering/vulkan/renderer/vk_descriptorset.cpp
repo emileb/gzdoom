@@ -82,12 +82,14 @@ void VkDescriptorSetManager::UpdateHWBufferSet()
 		HWBufferSet = HWBufferDescriptorPool->allocate(HWBufferSetLayout.get());
 	}
 
+	// Bind each buffer's current frame-slot region so overlapping frames don't share data
+	auto buffers = fb->GetBufferManager();
 	WriteDescriptors()
-		.AddBuffer(HWBufferSet.get(), 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, fb->GetBufferManager()->ViewpointUBO->mBuffer.get(), 0, sizeof(HWViewpointUniforms))
-		.AddBuffer(HWBufferSet.get(), 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, fb->GetBufferManager()->MatrixBuffer->UniformBuffer->mBuffer.get(), 0, sizeof(MatricesUBO))
-		.AddBuffer(HWBufferSet.get(), 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, fb->GetBufferManager()->StreamBuffer->UniformBuffer->mBuffer.get(), 0, sizeof(StreamUBO))
-		.AddBuffer(HWBufferSet.get(), 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, fb->GetBufferManager()->LightBufferSSO->mBuffer.get())
-		.AddBuffer(HWBufferSet.get(), 4, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, fb->GetBufferManager()->BoneBufferSSO->mBuffer.get())
+		.AddBuffer(HWBufferSet.get(), 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, buffers->ViewpointUBO->mBuffer.get(), buffers->ViewpointUBO->FrameSlotOffset(), sizeof(HWViewpointUniforms))
+		.AddBuffer(HWBufferSet.get(), 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, buffers->MatrixBuffer->UniformBuffer->mBuffer.get(), buffers->MatrixBuffer->UniformBuffer->FrameSlotOffset(), sizeof(MatricesUBO))
+		.AddBuffer(HWBufferSet.get(), 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, buffers->StreamBuffer->UniformBuffer->mBuffer.get(), buffers->StreamBuffer->UniformBuffer->FrameSlotOffset(), sizeof(StreamUBO))
+		.AddBuffer(HWBufferSet.get(), 3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, buffers->LightBufferSSO->mBuffer.get(), buffers->LightBufferSSO->FrameSlotOffset(), buffers->LightBufferSSO->Size())
+		.AddBuffer(HWBufferSet.get(), 4, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, buffers->BoneBufferSSO->mBuffer.get(), buffers->BoneBufferSSO->FrameSlotOffset(), buffers->BoneBufferSSO->Size())
 		.Execute(fb->device.get());
 }
 

@@ -48,6 +48,7 @@ void VkHardwareBuffer::Reset()
 		{
 			mBuffer->Unmap();
 			map = nullptr;
+			mMappedBase = nullptr;
 		}
 		if (mBuffer)
 			fb->GetCommands()->DrawDeleteList->Add(std::move(mBuffer));
@@ -101,16 +102,27 @@ void VkHardwareBuffer::SetData(size_t size, const void *data, BufferUsageType us
 	{
 		mPersistent = true;
 
+		size_t allocsize = bufsize;
+		if (mNumFrameSlots > 1)
+		{
+			// One region per in-flight frame so the CPU never writes what the GPU still reads
+			const auto& limits = fb->device->PhysicalDevice.Properties.Properties.limits;
+			VkDeviceSize alignment = max(limits.minUniformBufferOffsetAlignment, limits.minStorageBufferOffsetAlignment);
+			mSlotStride = (bufsize + alignment - 1) / alignment * alignment;
+			allocsize = mSlotStride * mNumFrameSlots;
+		}
+
 		mBuffer = BufferBuilder()
 			.Usage(mBufferType, VMA_MEMORY_USAGE_UNKNOWN, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT)
 			.MemoryType(
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
-			.Size(bufsize)
+			.Size(allocsize)
 			.DebugName("VkHardwareBuffer.Persistent")
 			.Create(fb->device.get());
 
-		map = mBuffer->Map(0, bufsize);
+		mMappedBase = (uint8_t*)mBuffer->Map(0, allocsize);
+		map = mMappedBase + FrameSlotOffset();
 		if (data)
 			memcpy(map, data, size);
 	}
@@ -164,9 +176,20 @@ void VkHardwareBuffer::Resize(size_t newsize)
 
 	// Grab old buffer
 	size_t oldsize = buffersize;
+	VkDeviceSize oldSlotStride = mSlotStride;
 	std::unique_ptr<VulkanBuffer> oldBuffer = std::move(mBuffer);
 	oldBuffer->Unmap();
 	map = nullptr;
+	mMappedBase = nullptr;
+
+	size_t allocsize = newsize;
+	if (mNumFrameSlots > 1)
+	{
+		const auto& limits = fb->device->PhysicalDevice.Properties.Properties.limits;
+		VkDeviceSize alignment = max(limits.minUniformBufferOffsetAlignment, limits.minStorageBufferOffsetAlignment);
+		mSlotStride = (newsize + alignment - 1) / alignment * alignment;
+		allocsize = mSlotStride * mNumFrameSlots;
+	}
 
 	// Create new buffer
 	mBuffer = BufferBuilder()
@@ -174,19 +197,35 @@ void VkHardwareBuffer::Resize(size_t newsize)
 		.MemoryType(
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
-		.Size(newsize)
+		.Size(allocsize)
 		.DebugName("VkHardwareBuffer.Resized")
 		.Create(fb->device.get());
 	buffersize = newsize;
 
-	// Transfer data from old to new
-	fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), 0, 0, oldsize);
+	// Transfer data from old to new (per frame region when partitioned)
+	if (mNumFrameSlots > 1)
+	{
+		for (int s = 0; s < mNumFrameSlots; s++)
+			fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), oldSlotStride * s, mSlotStride * s, oldsize);
+	}
+	else
+	{
+		fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), 0, 0, oldsize);
+	}
 	fb->GetCommands()->TransferDeleteList->Add(std::move(oldBuffer));
 	fb->GetCommands()->WaitForCommands(false);
 	fb->GetDescriptorSetManager()->UpdateHWBufferSet(); // Old buffer may be part of the bound descriptor set
 
 	// Fetch pointer to new buffer
-	map = mBuffer->Map(0, newsize);
+	mMappedBase = (uint8_t*)mBuffer->Map(0, allocsize);
+	map = mMappedBase + FrameSlotOffset();
+}
+
+void VkHardwareBuffer::SetFrameSlot(int slot)
+{
+	mFrameSlot = slot;
+	if (mPersistent && mNumFrameSlots > 1 && mMappedBase)
+		map = mMappedBase + FrameSlotOffset();
 }
 
 void VkHardwareBuffer::Map()
