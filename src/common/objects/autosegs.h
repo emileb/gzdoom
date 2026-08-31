@@ -180,4 +180,11 @@ namespace AutoSegs
 #define SECTION_VREG AUTOSEG_STR(AUTOSEG_VREG)
 #endif
 
+// 'used' only stops the compiler dropping autoseg entries; 'retain' is what survives --gc-sections, which NDK 25+ passes for shared libs
+#if defined(__has_attribute) && __has_attribute(retain)
+#define AUTOSEG_RETAIN __attribute__((retain))
+#else
+#define AUTOSEG_RETAIN
+#endif
+
 #endif
