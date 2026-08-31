@@ -52,7 +52,7 @@ class FSerializer;
 #define GCC_YSEG
 #else
 #define MSVC_YSEG
-#define GCC_YSEG __attribute__((section(SECTION_YREG))) __attribute__((used))
+#define GCC_YSEG __attribute__((section(SECTION_YREG))) __attribute__((used)) AUTOSEG_RETAIN
 #endif
 
 // The structure used to control scripts between maps

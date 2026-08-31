@@ -721,7 +721,7 @@ void C_ForgetCVars (void);
 #define GCC_VSEG
 #else
 #define MSVC_VSEG
-#define GCC_VSEG __attribute__((section(SECTION_VREG))) __attribute__((used))
+#define GCC_VSEG __attribute__((section(SECTION_VREG))) __attribute__((used)) AUTOSEG_RETAIN
 #endif
 
 #define CUSTOM_CVAR(type,name,def,flags) \

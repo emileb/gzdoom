@@ -138,7 +138,7 @@ public: \
 #	pragma section(SECTION_CREG,read)
 #	define _DECLARE_TI(cls) __declspec(allocate(SECTION_CREG)) ClassReg * const cls::RegistrationInfoPtr = &cls::RegistrationInfo;
 #else
-#	define _DECLARE_TI(cls) ClassReg * const cls::RegistrationInfoPtr __attribute__((section(SECTION_CREG))) = &cls::RegistrationInfo;
+#	define _DECLARE_TI(cls) ClassReg * const cls::RegistrationInfoPtr __attribute__((section(SECTION_CREG))) AUTOSEG_RETAIN = &cls::RegistrationInfo;
 #endif
 
 #define _IMP_PCLASS(cls, ptrs, create) \
