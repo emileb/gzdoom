@@ -48,6 +48,7 @@ public:
 
 	void AddBuffer(VkHardwareBuffer* buffer);
 	void RemoveBuffer(VkHardwareBuffer* buffer);
+	void SetFrameSlot(int slot);
 
 	VkHardwareDataBuffer* ViewpointUBO = nullptr;
 	VkHardwareDataBuffer* LightBufferSSO = nullptr;

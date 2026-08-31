@@ -53,6 +53,11 @@ public:
 	void *Lock(unsigned int size) override;
 	void Unlock() override;
 
+	// Partition a persistent buffer into one region per in-flight frame; call before SetData
+	void EnableFrameSlots(int numSlots) { mNumFrameSlots = numSlots; }
+	void SetFrameSlot(int slot);
+	VkDeviceSize FrameSlotOffset() const { return mSlotStride * mFrameSlot; }
+
 	VulkanRenderDevice* fb = nullptr;
 	std::list<VkHardwareBuffer*>::iterator it;
 
@@ -61,6 +66,11 @@ public:
 	std::unique_ptr<VulkanBuffer> mStaging;
 	bool mPersistent = false;
 	TArray<uint8_t> mStaticUpload;
+
+	int mNumFrameSlots = 1;
+	int mFrameSlot = 0;
+	VkDeviceSize mSlotStride = 0;
+	uint8_t* mMappedBase = nullptr;
 };
 
 class VkHardwareVertexBuffer : public IVertexBuffer, public VkHardwareBuffer

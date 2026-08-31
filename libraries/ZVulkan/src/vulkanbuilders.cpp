@@ -1,5 +1,6 @@
 #include "vulkanbuilders.h"
 #include "vulkansurface.h"
+#include <algorithm>
 #include "vulkancompatibledevice.h"
 #include "vulkanswapchain.h"
 #include "glslang/glslang/Public/ShaderLang.h"
@@ -265,7 +266,13 @@ std::unique_ptr<VulkanShader> ShaderBuilder::Create(const char *shadername, Vulk
 	glslang::TShader shader(stage);
 	shader.setStringsWithLengthsAndNames(sourcesC.data(), lengthsC.data(), namesC.data(), (int)sources.size());
 	shader.setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, 100);
-    if (device->Instance->ApiVersion >= VK_API_VERSION_1_2)
+#ifdef __MOBILE__
+    // The device may support a lower version than the instance; target the lower one
+    uint32_t shaderApiVersion = std::min(device->Instance->ApiVersion, device->PhysicalDevice.Properties.Properties.apiVersion);
+#else
+    uint32_t shaderApiVersion = device->Instance->ApiVersion;
+#endif
+    if (shaderApiVersion >= VK_API_VERSION_1_2)
     {
         shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
         shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_4);
