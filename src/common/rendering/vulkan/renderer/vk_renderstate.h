@@ -32,6 +32,8 @@
 #include "hw_renderstate.h"
 #include "hw_material.h"
 
+VkFormat SceneColorFormat(); // vk_renderbuffers.cpp
+
 class VulkanRenderDevice;
 class VkRenderPassSetup;
 class VkTextureImage;
@@ -139,7 +141,7 @@ protected:
 		VulkanImageView *DepthStencil = nullptr;
 		int Width = 0;
 		int Height = 0;
-		VkFormat Format = VK_FORMAT_R16G16B16A16_SFLOAT;
+		VkFormat Format = SceneColorFormat();
 		VkSampleCountFlagBits Samples = VK_SAMPLE_COUNT_1_BIT;
 		int DrawBuffers = 1;
 	} mRenderTarget;

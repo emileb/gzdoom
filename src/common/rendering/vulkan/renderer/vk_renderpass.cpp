@@ -177,7 +177,7 @@ std::unique_ptr<VulkanRenderPass> VkRenderPassSetup::CreateRenderPass(int clearT
 {
 	auto buffers = fb->GetBuffers();
 
-	VkFormat drawBufferFormats[] = { VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R8G8B8A8_UNORM, buffers->SceneNormalFormat };
+	VkFormat drawBufferFormats[] = { SceneColorFormat(), VK_FORMAT_R8G8B8A8_UNORM, buffers->SceneNormalFormat };
 
 	RenderPassBuilder builder;
 

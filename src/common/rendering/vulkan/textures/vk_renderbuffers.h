@@ -35,6 +35,9 @@ enum class WhichDepthStencil {
 	Pipeline,
 };
 
+// Scene/pipeline color format: RGBA8 on mobile (half the tile traffic of RGBA16F) unless vk_rgba16f is set
+VkFormat SceneColorFormat();
+
 class VkRenderBuffers
 {
 public:

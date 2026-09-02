@@ -68,7 +68,7 @@ void VkPPRenderState::Draw()
 	else if (Output.Type == PPTextureType::ShadowMap)
 		key.OutputFormat = VK_FORMAT_R32_SFLOAT;
 	else
-		key.OutputFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
+		key.OutputFormat = SceneColorFormat();
 
 	if (Output.Type == PPTextureType::SceneColor)
 	{
