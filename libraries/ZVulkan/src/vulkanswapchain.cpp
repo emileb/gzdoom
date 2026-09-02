@@ -5,6 +5,10 @@
 #include "vulkanbuilders.h"
 #include <limits>
 
+#ifdef __MOBILE__
+bool zvulkan_prefer_mailbox = false; // set by the app from the vk_mailbox cvar
+#endif
+
 VulkanSwapChain::VulkanSwapChain(VulkanDevice* device) : device(device)
 {
 }
@@ -127,11 +131,20 @@ bool VulkanSwapChain::CreateSwapchain(int width, int height, int imageCount, boo
 		}
 		else
 		{
-			// Note: MAILBOX would uncap on Android (no IMMEDIATE there) but paces worse than FIFO
+#ifdef __MOBILE__
+			// Some drivers (old Adreno) block ~2 vsyncs per frame in FIFO acquire/present;
+			// MAILBOX avoids that but paces worse on Mali, so it's opt-in (vk_mailbox)
+			extern bool zvulkan_prefer_mailbox;
+			if (supportsImmediate)
+				presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+			else if (zvulkan_prefer_mailbox && supportsMailbox)
+				presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+#else
 			/*if (supportsMailbox)
 				presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
 			else*/ if (supportsImmediate)
 				presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+#endif
 		}
 	}
 
