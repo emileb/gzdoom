@@ -31,6 +31,11 @@
 
 CVAR(Bool, vk_hdr, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG);
 CVAR(Bool, vk_exclusivefullscreen, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG);
+#ifdef __MOBILE__
+// MAILBOX present: uncapped and avoids FIFO's driver blocking (big win on Adreno), paces worse on Mali
+CVAR(Bool, vk_mailbox, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG);
+extern bool zvulkan_prefer_mailbox;
+#endif
 
 VkFramebufferManager::VkFramebufferManager(VulkanRenderDevice* fb) : fb(fb)
 {
@@ -66,7 +71,14 @@ VulkanSemaphore* VkFramebufferManager::GetRenderFinishedSemaphore()
 void VkFramebufferManager::AcquireImage()
 {
 	bool exclusiveFullscreen = fb->IsFullscreen() && vk_exclusivefullscreen;
-	if (SwapChain->Lost() || fb->GetClientWidth() != CurrentWidth || fb->GetClientHeight() != CurrentHeight || fb->GetVSync() != CurrentVSync || CurrentHdr != vk_hdr || CurrentExclusiveFullscreen != exclusiveFullscreen)
+#ifdef __MOBILE__
+	static bool currentMailbox = false;
+	bool mailboxChanged = currentMailbox != vk_mailbox;
+	currentMailbox = zvulkan_prefer_mailbox = vk_mailbox;
+#else
+	const bool mailboxChanged = false;
+#endif
+	if (SwapChain->Lost() || mailboxChanged || fb->GetClientWidth() != CurrentWidth || fb->GetClientHeight() != CurrentHeight || fb->GetVSync() != CurrentVSync || CurrentHdr != vk_hdr || CurrentExclusiveFullscreen != exclusiveFullscreen)
 	{
 		// In-flight frames may still reference the old swapchain framebuffers
 		fb->GetCommands()->DrainFrameSlots();

@@ -236,6 +236,7 @@ void VkCommandBufferManager::WaitForCommands(bool finish, bool uploadOnly)
 	}
 }
 
+
 void VkCommandBufferManager::WaitForSlot(FrameSlot& slot)
 {
 	int numWaitFences = min(slot.numSubmits, (int)maxConcurrentSubmitCount);
