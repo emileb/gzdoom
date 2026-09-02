@@ -61,6 +61,20 @@ VkSampleCountFlagBits VkRenderBuffers::GetBestSampleCount()
 	return (VkSampleCountFlagBits)best;
 }
 
+#ifdef __MOBILE__
+CVAR(Bool, vk_rgba16f, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG) // HDR scene buffers; needs restart
+
+VkFormat SceneColorFormat()
+{
+	return vk_rgba16f ? VK_FORMAT_R16G16B16A16_SFLOAT : VK_FORMAT_R8G8B8A8_UNORM;
+}
+#else
+VkFormat SceneColorFormat()
+{
+	return VK_FORMAT_R16G16B16A16_SFLOAT;
+}
+#endif
+
 void VkRenderBuffers::BeginFrame(int width, int height, int sceneWidth, int sceneHeight)
 {
 	VkSampleCountFlagBits samples = GetBestSampleCount();
@@ -131,13 +145,13 @@ void VkRenderBuffers::CreatePipeline(int width, int height)
 	{
 		PipelineImage[i].Image = ImageBuilder()
 			.Size(width, height)
-			.Format(VK_FORMAT_R16G16B16A16_SFLOAT)
+			.Format(SceneColorFormat())
 			.Usage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT)
 			.DebugName("VkRenderBuffers.PipelineImage")
 			.Create(fb->device.get());
 
 		PipelineImage[i].View = ImageViewBuilder()
-			.Image(PipelineImage[i].Image.get(), VK_FORMAT_R16G16B16A16_SFLOAT)
+			.Image(PipelineImage[i].Image.get(), SceneColorFormat())
 			.DebugName("VkRenderBuffers.PipelineView")
 			.Create(fb->device.get());
 
@@ -171,13 +185,13 @@ void VkRenderBuffers::CreateSceneColor(int width, int height, VkSampleCountFlagB
 	SceneColor.Image = ImageBuilder()
 		.Size(width, height)
 		.Samples(samples)
-		.Format(VK_FORMAT_R16G16B16A16_SFLOAT)
+		.Format(SceneColorFormat())
 		.Usage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT)
 		.DebugName("VkRenderBuffers.SceneColor")
 		.Create(fb->device.get());
 
 	SceneColor.View = ImageViewBuilder()
-		.Image(SceneColor.Image.get(), VK_FORMAT_R16G16B16A16_SFLOAT)
+		.Image(SceneColor.Image.get(), SceneColorFormat())
 		.DebugName("VkRenderBuffers.SceneColorView")
 		.Create(fb->device.get());
 }

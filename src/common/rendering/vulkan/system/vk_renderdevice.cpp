@@ -288,7 +288,7 @@ void VulkanRenderDevice::RenderTextureView(FCanvasTexture* tex, std::function<vo
 		.AddImage(image, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, false)
 		.Execute(mCommands->GetDrawCommands());
 
-	mRenderState->SetRenderTarget(&GetBuffers()->SceneColor, GetBuffers()->SceneDepthStencil.View.get(), GetBuffers()->GetWidth(), GetBuffers()->GetHeight(), VK_FORMAT_R16G16B16A16_SFLOAT, GetBuffers()->GetSceneSamples());
+	mRenderState->SetRenderTarget(&GetBuffers()->SceneColor, GetBuffers()->SceneDepthStencil.View.get(), GetBuffers()->GetWidth(), GetBuffers()->GetHeight(), SceneColorFormat(), GetBuffers()->GetSceneSamples());
 
 	tex->SetUpdated(true);
 }
@@ -588,7 +588,7 @@ void VulkanRenderDevice::AmbientOccludeScene(float m5)
 
 void VulkanRenderDevice::SetSceneRenderTarget(bool useSSAO)
 {
-	mRenderState->SetRenderTarget(&GetBuffers()->SceneColor, GetBuffers()->SceneDepthStencil.View.get(), GetBuffers()->GetWidth(), GetBuffers()->GetHeight(), VK_FORMAT_R16G16B16A16_SFLOAT, GetBuffers()->GetSceneSamples());
+	mRenderState->SetRenderTarget(&GetBuffers()->SceneColor, GetBuffers()->SceneDepthStencil.View.get(), GetBuffers()->GetWidth(), GetBuffers()->GetHeight(), SceneColorFormat(), GetBuffers()->GetSceneSamples());
 }
 
 bool VulkanRenderDevice::RaytracingEnabled()
