@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)/../libraries/ZVulkan
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := glslang
+LOCAL_MODULE := glslang_lz4x
 
 LOCAL_CFLAGS :=  -fexceptions -DUNIX -D_UNIX -D__MOBILE__
 

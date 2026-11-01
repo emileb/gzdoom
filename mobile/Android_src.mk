@@ -5,9 +5,9 @@ include $(CLEAR_VARS)
 
 #LOCAL_SHORT_COMMANDS := true
 
-LOCAL_MODULE    := g
+LOCAL_MODULE    := lzdoom_4x
 
-LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\" -DHAVE_VULKAN
+LOCAL_CFLAGS   := -DNO_CLOCK_GETTIME -DUSE_GL_HW_BUFFERS -fvisibility=hidden  -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -DLZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"lzdoom_4x\" -DHAVE_VULKAN
 
 LOCAL_CPPFLAGS := -include g_pch.h -DHAVE_GLES2 -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++17 -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
@@ -81,7 +81,6 @@ LOCAL_C_INCLUDES := \
     	$(GZDOOM_TOP_PATH)/src/../libraries/gdtoa \
     	$(GZDOOM_TOP_PATH)/src/../libraries/glslang/glslang/Public \
     	$(GZDOOM_TOP_PATH)/src/../libraries/glslang/spirv \
-    	$(GZDOOM_TOP_PATH)/src/../libraries/ZWidget/include \
     	$(GZDOOM_TOP_PATH)/src/common/platform/posix \
     	$(GZDOOM_TOP_PATH)/src/common/platform/posix/sdl \
     	$(GZDOOM_TOP_PATH)/libraries/lzma/C \
@@ -139,6 +138,7 @@ PLAT_SDL_SOURCES = \
  FASTMATH_SOURCES = \
 	rendering/swrenderer/r_all.cpp \
 	rendering/swrenderer/r_swscene.cpp \
+	common/rendering/polyrenderer/poly_all.cpp \
 	common/textures/hires/hqnx/init.cpp \
 	common/textures/hires/hqnx/hq2x.cpp \
 	common/textures/hires/hqnx/hq3x.cpp \
@@ -164,6 +164,10 @@ PLAT_SDL_SOURCES = \
 	rendering/hwrenderer/scene/hw_walls_vertex.cpp \
 	rendering/hwrenderer/scene/hw_weapon.cpp \
 	common/utility/matrix.cpp \
+	common/rendering/polyrenderer/backend/poly_framebuffer.cpp \
+	common/rendering/polyrenderer/backend/poly_buffers.cpp \
+	common/rendering/polyrenderer/backend/poly_hwtexture.cpp \
+	common/rendering/polyrenderer/backend/poly_renderstate.cpp \
 
 
 VULKAN_SOURCES = \
@@ -209,6 +213,7 @@ PCH_SOURCES = \
 	d_net.cpp \
 	d_netinfo.cpp \
 	d_protocol.cpp \
+	d_steam.cpp \
 	doomstat.cpp \
 	g_cvars.cpp \
 	g_dumpinfo.cpp \
@@ -480,6 +485,7 @@ PCH_SOURCES = \
 	common/utility/name.cpp \
 	common/utility/r_memory.cpp \
 	common/utility/writezip.cpp \
+	common/utility/vga2ansi.cpp \
 	common/thirdparty/base64.cpp \
 	common/thirdparty/md5.cpp \
  	common/thirdparty/superfasthash.cpp \
@@ -643,7 +649,6 @@ LOCAL_SRC_FILES = \
     common/filesystem/source/critsec.cpp \
     common/filesystem/source/file_hog.cpp \
     common/filesystem/source/file_mvl.cpp \
-    common/widgets/widgetresourcedata.cpp \
     ../libraries/miniz/miniz.c \
     common/thirdparty/stb/stb_sprintf.c \
 
@@ -652,7 +657,7 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
 LOCAL_LDLIBS +=  -lEGL -lGLESv1_CM
 
-LOCAL_STATIC_LIBRARIES := SDL2_net libjpeg lzma_gl3  bzip2_gl3 logwritter vpx_player webpmux zwidget glslang
+LOCAL_STATIC_LIBRARIES := SDL2_net libjpeg lzma_lz4x  bzip2_lz4x logwritter vpx_player webpmux glslang_lz4x
 LOCAL_SHARED_LIBRARIES := touchcontrols openal-soft SDL2 core_shared  saffal zmusic spirvcross
 
 #Strip unused functions/data
