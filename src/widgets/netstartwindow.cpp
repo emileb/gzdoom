@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include "JNITouchControlsUtils.h"
 extern volatile sig_atomic_t gameloop_abort;
+static FString AndroidNetMessage;
 #endif
 
 NetStartWindow* NetStartWindow::Instance = nullptr;
@@ -39,6 +40,7 @@ void NetStartWindow::NetInit(const char* message, bool host)
 {
 #ifdef __ANDROID__
 	openConsoleBox("Network synchronization");
+	AndroidNetMessage = message;
 	addTextConsoleBox(message);
 #else
 	if (!Instance)
@@ -55,7 +57,8 @@ void NetStartWindow::NetInit(const char* message, bool host)
 void NetStartWindow::NetMessage(const char* message)
 {
 #ifdef __ANDROID__
-	addTextConsoleBox(message);
+	AndroidNetMessage = message;
+	addTextConsoleBox(FStringf("\n%s", message).GetChars());
 #else
 	if (Instance)
 		Instance->SetMessage(message);
@@ -115,12 +118,9 @@ void NetStartWindow::NetDisconnect(int client)
 void NetStartWindow::NetProgress(int cur, int limit)
 {
 #ifdef __ANDROID__
-	FString msg;
-	if (limit <= 1)
-		msg.Format("Waiting for host...");
-	else
-		msg.Format("[%d/%d]", cur, limit);
-	addTextConsoleBox(msg.GetChars());
+	// Rewrite the current line so the count updates in place
+	if (limit > 1)
+		addTextConsoleBox(FStringf("\r%s [%d/%d]", AndroidNetMessage.GetChars(), cur, limit).GetChars());
 #else
 	if (!Instance)
 		return;
@@ -144,6 +144,9 @@ void NetStartWindow::NetDone()
 
 void NetStartWindow::NetClose()
 {
+#ifdef __ANDROID__
+	closeConsoleBox();
+#endif
 	if (Instance != nullptr)
 		Instance->OnClose();
 }

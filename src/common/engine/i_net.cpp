@@ -193,6 +193,7 @@ CUSTOM_CVAR(String, net_password, "", CVAR_IGNORE)
 // Game-specific API
 size_t Net_SetEngineInfo(uint8_t*& stream);
 FVerificationError Net_VerifyEngine(uint8_t*& stream, size_t& offset);
+const char* Net_GetResourceHash(int wadnum);
 void Net_SetupUserInfo();
 const char* Net_GetClientName(int client, unsigned int charLimit);
 void Net_SetUserInfo(int client, TArrayView<uint8_t>& stream);
@@ -1079,7 +1080,7 @@ static FString ReadVerificationError(TArrayView<uint8_t> stream)
 	{
 		if (!fileSystem.IsOptionalResource(i))
 		{
-			const FString crc = fileSystem.GetResourceHash(i);
+			const FString crc = Net_GetResourceHash(i);
 			FString name = fileSystem.GetResourceFileName(i);
 			FixPathSeperator(name);
 			auto a = name.Split('/', FString::TOK_SKIPEMPTY);

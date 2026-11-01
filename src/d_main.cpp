@@ -2051,7 +2051,12 @@ static void GetCmdLineFiles(std::vector<FileSys::ResourceName>& wadfiles, bool o
 		// for the time being.
 		const size_t s = wadfiles.size();
 		D_AddWildFile(wadfiles, args[i].GetChars(), ".wad", GameConfig, optional);
+#ifdef __ANDROID__
+		// Keep -optfile unverified online so launcher add-ons (lights) match desktop autoloads
+		if (!optional && wadfiles.size() > s)
+#else
 		if (wadfiles.size() > s)
+#endif
 		{
 			for (size_t j = 0u; j < wadfiles.size() - s; ++j)
 				wadfiles[s + j].bOptional = false;

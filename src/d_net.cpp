@@ -1762,6 +1762,16 @@ void NetUpdate(int tics)
 // from the frontend should be put in these, all backend handling should be
 // done in the core files.
 
+const char* Net_GetResourceHash(int wadnum)
+{
+#ifdef __ANDROID__
+	// Our core pk3 has mobile changes (no playsim effect), so report the official 5.0.1 one to match desktop
+	if (wadnum == 0)
+		return "006D3A97-02DE-41B5F2EAD1834918BB51B2DC0B835963";
+#endif
+	return fileSystem.GetResourceHash(wadnum);
+}
+
 size_t Net_SetEngineInfo(uint8_t*& stream)
 {
 	stream[0] = VER_MAJOR % 256;
@@ -1777,7 +1787,7 @@ size_t Net_SetEngineInfo(uint8_t*& stream)
 			continue;
 
 		++numWads;
-		const FString crc = fileSystem.GetResourceHash(i);
+		const FString crc = Net_GetResourceHash(i);
 		memcpy(&stream[bufferIndex], crc.GetChars(), crc.Len() + 1u);
 		bufferIndex += crc.Len() + 1u;
 	}
@@ -1800,7 +1810,7 @@ FVerificationError Net_VerifyEngine(uint8_t*& stream, size_t& offset)
 	{
 		if (!fileSystem.IsOptionalResource(i))
 		{
-			crcs.Push(fileSystem.GetResourceHash(i));
+			crcs.Push(Net_GetResourceHash(i));
 			names.Push(fileSystem.GetResourceFileName(i));
 		}
 	}

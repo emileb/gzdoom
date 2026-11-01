@@ -335,7 +335,11 @@ void FResourceFile::GenerateHash(bool no_reader)
 	for(uint32_t i = 0; i < NumLumps; i++)
 	{
 		auto name = getName(i);
+#ifdef __ANDROID__
+		uint64_t size = Length(i); // Same hash on 32-bit as on 64-bit hosts
+#else
 		auto size = Length(i);
+#endif
 		if (name == nullptr)
 			continue;
 		md5_append(&state, (const uint8_t*)name, (unsigned)strlen(name) + 1);
