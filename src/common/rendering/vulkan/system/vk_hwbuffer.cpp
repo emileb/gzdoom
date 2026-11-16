@@ -102,15 +102,20 @@ void VkHardwareBuffer::SetData(size_t size, const void *data, BufferUsageType us
 	{
 		mPersistent = true;
 
+		const auto& limits = fb->device->PhysicalDevice.Properties.Properties.limits;
+		VkDeviceSize alignment = max(limits.minUniformBufferOffsetAlignment, limits.minStorageBufferOffsetAlignment);
+
+		// Mali (r32p1) hoists guarded lights[-1]/bones[-1] loads out of their branch; keep that address inside the buffer
+		mGuardSize = (mBufferType & VK_BUFFER_USAGE_STORAGE_BUFFER_BIT) ? (256 + alignment - 1) / alignment * alignment : 0;
+
 		size_t allocsize = bufsize;
 		if (mNumFrameSlots > 1)
 		{
 			// One region per in-flight frame so the CPU never writes what the GPU still reads
-			const auto& limits = fb->device->PhysicalDevice.Properties.Properties.limits;
-			VkDeviceSize alignment = max(limits.minUniformBufferOffsetAlignment, limits.minStorageBufferOffsetAlignment);
 			mSlotStride = (bufsize + alignment - 1) / alignment * alignment;
 			allocsize = mSlotStride * mNumFrameSlots;
 		}
+		allocsize += mGuardSize;
 
 		mBuffer = BufferBuilder()
 			.Usage(mBufferType, VMA_MEMORY_USAGE_UNKNOWN, VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT)
@@ -190,6 +195,7 @@ void VkHardwareBuffer::Resize(size_t newsize)
 		mSlotStride = (newsize + alignment - 1) / alignment * alignment;
 		allocsize = mSlotStride * mNumFrameSlots;
 	}
+	allocsize += mGuardSize;
 
 	// Create new buffer
 	mBuffer = BufferBuilder()
@@ -206,11 +212,11 @@ void VkHardwareBuffer::Resize(size_t newsize)
 	if (mNumFrameSlots > 1)
 	{
 		for (int s = 0; s < mNumFrameSlots; s++)
-			fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), oldSlotStride * s, mSlotStride * s, oldsize);
+			fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), mGuardSize + oldSlotStride * s, mGuardSize + mSlotStride * s, oldsize);
 	}
 	else
 	{
-		fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), 0, 0, oldsize);
+		fb->GetCommands()->GetTransferCommands()->copyBuffer(oldBuffer.get(), mBuffer.get(), mGuardSize, mGuardSize, oldsize);
 	}
 	fb->GetCommands()->TransferDeleteList->Add(std::move(oldBuffer));
 	fb->GetCommands()->WaitForCommands(false);
