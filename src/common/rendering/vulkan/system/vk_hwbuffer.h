@@ -56,7 +56,7 @@ public:
 	// Partition a persistent buffer into one region per in-flight frame; call before SetData
 	void EnableFrameSlots(int numSlots) { mNumFrameSlots = numSlots; }
 	void SetFrameSlot(int slot);
-	VkDeviceSize FrameSlotOffset() const { return mSlotStride * mFrameSlot; }
+	VkDeviceSize FrameSlotOffset() const { return mGuardSize + mSlotStride * mFrameSlot; }
 
 	VulkanRenderDevice* fb = nullptr;
 	std::list<VkHardwareBuffer*>::iterator it;
@@ -70,6 +70,7 @@ public:
 	int mNumFrameSlots = 1;
 	int mFrameSlot = 0;
 	VkDeviceSize mSlotStride = 0;
+	VkDeviceSize mGuardSize = 0; // unused bytes before slot 0
 	uint8_t* mMappedBase = nullptr;
 };
 
